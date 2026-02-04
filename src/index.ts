@@ -76,18 +76,32 @@ async function main() {
         tagline: config.owner.title,
         location: config.owner.location,
       },
-      techStack: { categories: [] }, // Populate from config if schema has it? Schema layout had content blocks.
-      // For now, using empty or mocks as schema didn't fully define content block structure in this phase
+      techStack: {
+        categories:
+          config.content?.tech_stack?.categories?.map((c) => ({
+            name: c.name,
+            items: c.items,
+          })) ?? [],
+      },
       recentCommits: commits.value,
       stats: { publicRepos: 10, followers: 50, following: 10, totalStars: 100 },
       streak: streak.value,
       languageStats: [],
       careerTimeline: [],
-      contactInfo: [],
+      contactInfo:
+        config.content?.contact?.items?.map((i) => ({
+          label: i.label,
+          value: i.value,
+          icon: i.icon,
+        })) ?? [],
       extraLines: [],
-      dailyQuote: null,
-      learningJourney: null,
-      todayFocus: null,
+      dailyQuote: config.content?.learning?.enabled ? "Keep building!" : null,
+      learningJourney: config.content?.learning?.enabled
+        ? { current: config.content.learning.current ?? "" }
+        : null,
+      todayFocus: config.content?.current_focus?.enabled
+        ? (config.content.current_focus.text ?? null)
+        : null,
     },
   };
 

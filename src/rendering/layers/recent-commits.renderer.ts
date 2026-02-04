@@ -3,7 +3,7 @@ import { sanitizeForSvg } from "../../shared/sanitize";
 import type { Theme } from "../../theme/types";
 
 export const renderRecentCommits = (
-  commits: Commit[],
+  commits: readonly Commit[],
   theme: Theme,
 ): string => {
   const titleHeight = 24;
