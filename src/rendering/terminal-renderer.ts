@@ -47,65 +47,45 @@ export class TerminalRenderer {
       builder.addDefs(defs);
     }
 
-    // 1. Prompt (Top Left)
-    const promptY = 40;
+    // 1. Tmux Status Bar (Top)
+    // Moved to top as per user request
+    builder.addLayer(renderTmuxBar(state.session, theme, 0));
+
+    // 2. Prompt (Offset by Tmux Bar)
+    // Tmux bar is 24px height. Give it some padding.
+    // Previous Y=40. New Y = 24 + 40 = 64.
+    const promptY = 64;
     builder.addLayer(renderPrompt(state.prompt, theme, promptY));
 
-    // 2. Streak (Top Right)
-    // Position it roughly aligned with prompt but on right side
-    builder.addLayer(renderStreak(state.content.streak, theme, 600, 40));
+    // 3. Streak (Top Right)
+    // Align with prompt
+    builder.addLayer(renderStreak(state.content.streak, theme, 600, promptY));
 
-    // 3. Content Area (Middle)
+    // 4. Content Area (Middle)
     // Stack items vertically
-    const contentStartY = 100;
+    // Previous Y=100. New Y = 100 + 24 = 124?
+    // Or just 120 to keep it clean.
+    const contentStartY = 120;
     let innerContent = "";
 
-    // 3.1 Developer Info
+    // 4.1 Developer Info
     innerContent += renderDeveloperInfo(state.content.developerInfo, theme);
 
-    // 3.2 Tech Stack (Offset by prev height approx 80px)
-    // We wrap tech stack in a group to position it relative to content area start
-    // renderTechStack returns a group with transform(0, 60) hardcoded in my implementation?
-    // Wait, let's check tech-stack.renderer.ts.
-    // It had `transform="translate(0, 60)"`. This is hardcoded relative to parent.
-    // If I put it in content area, it will be at y=60 inside content area.
+    // 4.2 Tech Stack (Offset by prev height approx 80px)
+    // TechStack itself has hardcoded translate(0, 60).
+    // If we want it relative to dev info, we rely on that.
     innerContent += renderTechStack(state.content.techStack, theme);
 
-    // 3.3 Recent Commits
+    // 4.3 Recent Commits
     innerContent += renderRecentCommits(state.content.recentCommits, theme);
 
-    // 3.4 Engagement (Learning & Quote)
-    // Position below content area start?
-    // Wait, renderContentArea wraps innerContent.
-    // Engagement renderer has its own group id="engagement".
-    // If I append it to innerContent, it will be inside content-area group.
-    // Spec shows:
-    // <g id="content">
-    //   <g id="developer-info">...
-    //   <g id="engagement">...
-    //   <g id="contact">...
-    // </g>
-
-    // So yes, append to innerContent.
-    // But I need to manage Y positioning within content area.
-    // DevInfo (0) -> TechStack (~60) -> Commits (Right side).
-    // Engagement should probably go below Developer Info on left? or below everything?
-    // Let's put Engagement below Tech Stack on left side.
-    const engagementY = 60 + 100; // rough estimate or dynamic tracker
-    // Ideally we should track CurrentY.
-    // For now, let's hardcode position to avoid collision with TechStack (which starts at 60 and might grow).
-    // Tech Stack has ~3 categories. title(24) + items.
-    // Let's put Engagement at y=200.
+    // 4.4 Engagement (Lower Left)
     innerContent += renderEngagement(state.content, theme, 200);
 
-    // 3.5 Contact
-    // Put securely at bottom left?
+    // 4.5 Contact
     innerContent += renderContact(state.content.contactInfo, theme, 280);
 
     builder.addLayer(renderContentArea(contentStartY, innerContent));
-
-    // 4. Tmux Status Bar (Bottom)
-    builder.addLayer(renderTmuxBar(state.session, theme));
 
     // 5. Footer
     builder.addLayer(

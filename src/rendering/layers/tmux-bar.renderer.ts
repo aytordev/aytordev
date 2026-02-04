@@ -1,7 +1,11 @@
 import type { TmuxSession } from "../../domain/entities/tmux-session";
 import type { Theme } from "../../theme/types";
 
-export const renderTmuxBar = (session: TmuxSession, theme: Theme): string => {
+export const renderTmuxBar = (
+  session: TmuxSession,
+  theme: Theme,
+  y: number = 376, // Default to bottom if not specified
+): string => {
   // Constants for layout
   const barHeight = 24;
   const fontSize = 12;
@@ -25,7 +29,7 @@ export const renderTmuxBar = (session: TmuxSession, theme: Theme): string => {
   const yText = barHeight - 8; // vertically centered approx
 
   return `
-    <g id="tmux-bar" transform="translate(0, ${400 - barHeight})">
+    <g id="tmux-bar" transform="translate(0, ${y})">
       <!-- Background -->
       <rect width="100%" height="${barHeight}" fill="${theme.colors.bgDark}" class="tmux__bg" />
 
