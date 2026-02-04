@@ -36,4 +36,48 @@ describe("Domain Value Objects", () => {
     };
     expect(stack.categories[0].name).toBe("Languages");
   });
+
+  it("should support TimeOfDay type", () => {
+    // Compile-time check mainly, but useful for documentation
+    const time: import("../../domain/value-objects/time-of-day").TimeOfDay =
+      "morning";
+    expect(time).toBe("morning");
+  });
+
+  it("should support CareerMilestone structure", () => {
+    const milestone: import("../../domain/value-objects/career-milestone").CareerMilestone =
+      {
+        year: 2024,
+        title: "Senior Engineer",
+        company: "Tech Corp",
+      };
+    expect(milestone.year).toBe(2024);
+  });
+
+  it("should support ContactItem structure", () => {
+    const contact: import("../../domain/value-objects/contact-item").ContactItem =
+      {
+        label: "Email",
+        value: "test@example.com",
+        icon: "📧",
+      };
+    expect(contact.icon).toBe("📧");
+  });
+
+  it("should support ExtraLine type", () => {
+    const line: import("../../domain/value-objects/extra-line").ExtraLine =
+      "Custom text line";
+    expect(line).toContain("Custom");
+  });
+
+  it("should support LanguageStat structure", () => {
+    const stat: import("../../domain/value-objects/language-stat").LanguageStat =
+      {
+        name: "TypeScript",
+        percentage: 85.5,
+        bytes: 10240,
+        color: "#3178C6",
+      };
+    expect(stat.percentage).toBeGreaterThan(0);
+  });
 });
