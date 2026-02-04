@@ -36,4 +36,16 @@ describe("SvgBuilder", () => {
     const result = builder.sanitize("<div>unsafe</div>");
     expect(result).toBe("&lt;div&gt;unsafe&lt;/div&gt;");
   });
+
+  it("should valid SVG with defs", () => {
+    const builder = new SvgBuilder(KanagawaTheme, {
+      width: 100,
+      height: 100,
+    });
+    builder.addDefs('<linearGradient id="grad"></linearGradient>');
+    const svg = builder.build();
+    expect(svg).toContain("<defs>");
+    expect(svg).toContain("grad");
+    expect(svg).toContain("</defs>");
+  });
 });

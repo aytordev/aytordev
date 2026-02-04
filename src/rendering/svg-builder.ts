@@ -9,6 +9,7 @@ interface Dimensions {
 
 export class SvgBuilder {
   private layers: string[] = [];
+  private defs: string[] = [];
 
   constructor(
     private readonly theme: Theme,
@@ -19,6 +20,10 @@ export class SvgBuilder {
     this.layers.push(content);
   }
 
+  public addDefs(content: string): void {
+    this.defs.push(content);
+  }
+
   public sanitize(content: string): string {
     return sanitizeForSvg(content);
   }
@@ -27,6 +32,9 @@ export class SvgBuilder {
     const css = generateCss(this.theme);
     const { width, height } = this.dimensions;
 
+    const defsBlock =
+      this.defs.length > 0 ? `<defs>\n${this.defs.join("\n")}\n</defs>` : "";
+
     return `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">
   <title>Terminal Profile</title>
@@ -34,6 +42,8 @@ export class SvgBuilder {
   <style>
     ${css}
   </style>
+
+  ${defsBlock}
 
   <!-- Background -->
   <rect width="100%" height="100%" class="background" rx="4.5" />
