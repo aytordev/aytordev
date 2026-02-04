@@ -1,9 +1,9 @@
 import * as fs from "fs/promises";
 import * as path from "path";
 import { SystemClockAdapter } from "./adapters/clock.adapter";
+import { FileConfigAdapter } from "./adapters/config.adapter";
 import { NodeFileSystemAdapter } from "./adapters/file-system.adapter";
 import { MockGitHubAdapter } from "./adapters/github.adapter";
-import { loadConfigFromString } from "./config/loader";
 import type { TerminalState } from "./domain/entities/terminal-state";
 import { TerminalRenderer } from "./rendering/terminal-renderer";
 
@@ -13,6 +13,7 @@ async function main() {
   const fsAdapter = new NodeFileSystemAdapter();
   const clockAdapter = new SystemClockAdapter();
   const githubAdapter = new MockGitHubAdapter();
+  const configAdapter = new FileConfigAdapter();
 
   // 1. Load Config
   const configPath = path.resolve(process.cwd(), "terminal_profile.yml");
@@ -21,8 +22,7 @@ async function main() {
     process.exit(1);
   }
 
-  const configContent = await fsAdapter.readFile(configPath);
-  const configResult = loadConfigFromString(configContent);
+  const configResult = await configAdapter.load(configPath);
 
   if (!configResult.ok) {
     console.error("❌ Invalid configuration:", configResult.error);
