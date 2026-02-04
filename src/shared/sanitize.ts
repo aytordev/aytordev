@@ -1,4 +1,4 @@
-export function sanitizeForSvg(text: string): string {
+export const sanitizeForSvg = (text: string): string => {
   return text
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -8,4 +8,4 @@ export function sanitizeForSvg(text: string): string {
     .replace(/\n/g, " ")
     .replace(/\r/g, "")
     .slice(0, 200);
-}
+};

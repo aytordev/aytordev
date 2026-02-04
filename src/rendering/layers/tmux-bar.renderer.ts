@@ -1,7 +1,7 @@
 import type { TmuxSession } from "../../domain/entities/tmux-session";
 import type { Theme } from "../../theme/types";
 
-export function renderTmuxBar(session: TmuxSession, theme: Theme): string {
+export const renderTmuxBar = (session: TmuxSession, theme: Theme): string => {
   // Constants for layout
   const barHeight = 24;
   const fontSize = 12;
@@ -51,4 +51,4 @@ export function renderTmuxBar(session: TmuxSession, theme: Theme): string {
       </text>
     </g>
   `.trim();
-}
+};

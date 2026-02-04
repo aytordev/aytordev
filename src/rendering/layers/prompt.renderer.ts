@@ -1,11 +1,11 @@
 import type { StarshipPrompt } from "../../domain/entities/starship-prompt";
 import type { Theme } from "../../theme/types";
 
-export function renderPrompt(
+export const renderPrompt = (
   prompt: StarshipPrompt,
   theme: Theme,
   y: number,
-): string {
+): string => {
   const fontSize = 14;
   const lineHeight = 20;
 
@@ -54,4 +54,4 @@ export function renderPrompt(
       <rect x="25" y="${line2Y - 10}" width="8" height="16" class="cursor" fill="${theme.colors.springGreen}" />
     </g>
   `;
-}
+};

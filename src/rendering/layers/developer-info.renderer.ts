@@ -1,7 +1,10 @@
 import type { DeveloperInfo } from "../../domain/entities/terminal-content";
 import type { Theme } from "../../theme/types";
 
-export function renderDeveloperInfo(info: DeveloperInfo, theme: Theme): string {
+export const renderDeveloperInfo = (
+  info: DeveloperInfo,
+  theme: Theme,
+): string => {
   const lineHeight = 20;
 
   return `
@@ -16,4 +19,4 @@ export function renderDeveloperInfo(info: DeveloperInfo, theme: Theme): string {
       <text x="0" y="${lineHeight * 2}" class="dev__location" fill="${theme.colors.textMuted}" font-family="monospace" font-size="12">📍 ${info.location}</text>
     </g>
   `.trim();
-}
+};

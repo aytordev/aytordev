@@ -1,6 +1,6 @@
 import type { Theme } from "../theme/types";
 
-export function generateVariables(theme: Theme): string {
+export const generateVariables = (theme: Theme): string => {
   const { colors } = theme;
   return `
     :root {
@@ -23,9 +23,9 @@ export function generateVariables(theme: Theme): string {
       --crystal: ${colors.dragonBlue};
     }
   `;
-}
+};
 
-export function generateCss(theme: Theme): string {
+export const generateCss = (theme: Theme): string => {
   const variables = generateVariables(theme);
 
   return `
@@ -95,4 +95,4 @@ export function generateCss(theme: Theme): string {
     /* Footer */
     .footer__text { fill: var(--text-muted); font-size: 10px; }
   `;
-}
+};
