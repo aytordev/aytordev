@@ -1,7 +1,10 @@
 import type { TerminalState } from "../domain/entities/terminal-state";
 import { getTheme } from "../theme";
+import { renderContact } from "./layers/contact.renderer";
 import { renderContentArea } from "./layers/content-area.renderer";
 import { renderDeveloperInfo } from "./layers/developer-info.renderer";
+import { renderEngagement } from "./layers/engagement.renderer";
+import { renderFooter } from "./layers/footer.renderer";
 import { renderPrompt } from "./layers/prompt.renderer";
 import { renderRecentCommits } from "./layers/recent-commits.renderer";
 import { renderStreak } from "./layers/streak.renderer";
@@ -69,19 +72,45 @@ export class TerminalRenderer {
     innerContent += renderTechStack(state.content.techStack, theme);
 
     // 3.3 Recent Commits
-    // renderRecentCommits had `transform="translate(400, 60)"`.
-    // This places it on the right side?
-    // Let's verify recent-commits.renderer.ts content via memory.
-    // "translate(400, 60)". Yes.
-    // So Dev info is left (0,0). Tech stack is left (0, 60). Commits right (400, 60).
-    // This seems to implied a 2-column layout in my previous "quick" implementations.
-    // Let's stick to this implicit layout for now as it makes sense.
     innerContent += renderRecentCommits(state.content.recentCommits, theme);
+
+    // 3.4 Engagement (Learning & Quote)
+    // Position below content area start?
+    // Wait, renderContentArea wraps innerContent.
+    // Engagement renderer has its own group id="engagement".
+    // If I append it to innerContent, it will be inside content-area group.
+    // Spec shows:
+    // <g id="content">
+    //   <g id="developer-info">...
+    //   <g id="engagement">...
+    //   <g id="contact">...
+    // </g>
+
+    // So yes, append to innerContent.
+    // But I need to manage Y positioning within content area.
+    // DevInfo (0) -> TechStack (~60) -> Commits (Right side).
+    // Engagement should probably go below Developer Info on left? or below everything?
+    // Let's put Engagement below Tech Stack on left side.
+    const engagementY = 60 + 100; // rough estimate or dynamic tracker
+    // Ideally we should track CurrentY.
+    // For now, let's hardcode position to avoid collision with TechStack (which starts at 60 and might grow).
+    // Tech Stack has ~3 categories. title(24) + items.
+    // Let's put Engagement at y=200.
+    innerContent += renderEngagement(state.content, theme, 200);
+
+    // 3.5 Contact
+    // Put securely at bottom left?
+    innerContent += renderContact(state.content.contactInfo, theme, 280);
 
     builder.addLayer(renderContentArea(contentStartY, innerContent));
 
     // 4. Tmux Status Bar (Bottom)
     builder.addLayer(renderTmuxBar(state.session, theme));
+
+    // 5. Footer
+    builder.addLayer(
+      renderFooter("Powered by Terminal Profile", theme, width, height),
+    );
 
     return builder.build();
   }
