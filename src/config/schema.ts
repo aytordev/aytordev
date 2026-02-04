@@ -13,10 +13,6 @@ const ContactItemSchema = z.object({
 
 const ExtraLineSchema = z.string().max(80);
 
-// ============================================================================
-// Section Schemas
-// ============================================================================
-
 export const OwnerSchema = z.object({
   name: z.string().min(1).max(50),
   username: z
@@ -136,10 +132,6 @@ export const GitHubSchema = z.object({
   include_private: z.boolean().default(false),
 });
 
-// ============================================================================
-// Main Config Schema
-// ============================================================================
-
 export const ConfigSchema = z
   .object({
     version: z.literal(1),
@@ -154,10 +146,6 @@ export const ConfigSchema = z
     github: GitHubSchema.optional(),
   })
   .strict();
-
-// ============================================================================
-// Type Exports
-// ============================================================================
 
 export type Config = z.infer<typeof ConfigSchema>;
 export type Owner = z.infer<typeof OwnerSchema>;
