@@ -28,10 +28,6 @@ export const ThemeSchema = z.enum([
   "kanagawa-wave",
   "kanagawa-dragon",
   "kanagawa-lotus",
-  "catppuccin-mocha",
-  "catppuccin-latte",
-  "tokyo-night",
-  "dracula",
 ]);
 
 export const DimensionsSchema = z.object({
