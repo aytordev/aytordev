@@ -1,6 +1,7 @@
 import type { Ports } from "../../adapters";
 import type { Config } from "../../config/schema";
 import type { TerminalState } from "../../domain/entities/terminal-state";
+import { getEasterEgg } from "../../domain/services/easter-egg.service";
 import type { GenerateProfileUseCase } from "../../domain/use-cases/generate-profile";
 import { type Result, err, ok } from "../../shared/result";
 
@@ -10,6 +11,9 @@ export const createGenerateProfileUseCase = (
   return async (config: Config): Promise<Result<TerminalState, Error>> => {
     try {
       const maxCommits = config.content?.commits?.max_count ?? 5;
+
+      // Get Time
+      const timestamp = ports.clock.getCurrentTime(config.owner.timezone);
 
       const [userInfo, commits, streak, languageStats] = await Promise.all([
         ports.github.getUserInfo(config.owner.username),
@@ -69,6 +73,7 @@ export const createGenerateProfileUseCase = (
           nixIndicator: true,
           time: ports.clock.formatTime(new Date(), config.owner.timezone),
         },
+        easterEgg: getEasterEgg(timestamp) || undefined,
         content: {
           developerInfo: {
             name: config.owner.name,

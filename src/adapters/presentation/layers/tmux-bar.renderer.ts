@@ -1,4 +1,5 @@
 import type { TmuxSession } from "../../../domain/entities/tmux-session";
+import type { EasterEggType } from "../../../domain/value-objects/easter-egg";
 import type { Theme } from "../../../theme/types";
 
 const CHAR_WIDTH = 8; // Estimate for Monospace 12px
@@ -24,10 +25,22 @@ const renderSegment = (
 export const renderTmuxBar = (
   session: TmuxSession,
   theme: Theme,
-  y: number = 376,
+  y: number = 0,
+  easterEgg?: EasterEggType,
 ): string => {
-  // Left: Session (index) + Active Window
+  const { width } = { width: 800 }; // Context provided or passed
+
   const sessionIndex = "0"; // Mock or from session? sessionName usually string, let's assume index 0 based on screenshot style
+
+  // F28: Easter Egg Logic
+  let sessionIcon = "👻"; // Default ghostty icon
+  if (easterEgg === "halloween") sessionIcon = "🎃";
+  if (easterEgg === "christmas") sessionIcon = "🎄";
+  if (easterEgg === "may-the-4th") sessionIcon = "🪐";
+  if (easterEgg === "friday-13th") sessionIcon = "🔪";
+
+  const sessionName = ` ${sessionIcon} ${session.sessionName} `;
+
   const activeWindow = session.windows.find(
     (w) => w.index === session.activeWindowIndex,
   );
@@ -41,14 +54,14 @@ export const renderTmuxBar = (
   // 1. Session Index [0]
   // Color: Darker Background (bgDark is sumiInk4, sess uses sumiInk3 or similar depth)
   // Screenshot shows very dark grey.
-  const sessWidth = 30;
+  const sessWidth = 30 + sessionName.length * 6; // Adjust width for content
   segments.push(
     renderSegment(
       currentX,
       sessWidth,
       theme.colors.sumiInk0, // sumiInk0 is #16161D, very dark
       theme.colors.textMuted,
-      sessionIndex,
+      sessionName,
     ),
   );
   currentX += sessWidth;

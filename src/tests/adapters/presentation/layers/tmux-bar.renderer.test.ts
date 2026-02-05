@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { TmuxSession } from "../../../../domain/entities/tmux-session";
 import { renderTmuxBar } from "../../../../adapters/presentation/layers/tmux-bar.renderer";
+import type { TmuxSession } from "../../../../domain/entities/tmux-session";
 import { KanagawaTheme } from "../../../../theme/kanagawa";
 
 describe("Tmux Bar Renderer", () => {
@@ -54,5 +54,11 @@ describe("Tmux Bar Renderer", () => {
     const svg = renderTmuxBar(session, KanagawaTheme);
     expect(svg).toContain("RAM");
     expect(svg).toContain(`fill="${KanagawaTheme.colors.waveAqua}"`);
+  });
+
+  it("renders Easter Egg icon for Halloween", () => {
+    const svg = renderTmuxBar(session, KanagawaTheme, 0, "halloween");
+    expect(svg).toContain("🎃"); // Pumpkin icon
+    expect(svg).not.toContain("👻"); // Default ghost
   });
 });

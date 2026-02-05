@@ -12,8 +12,7 @@ export const mockTerminalState: TerminalState = {
     title: "Developer",
     location: "Internet",
     timezone: "UTC",
-    githubUrl: "https://github.com/testuser",
-    avatarUrl: "https://github.com/testuser.png",
+    // githubUrl and avatarUrl removed as they are not in Owner interface
   },
   session: {
     sessionName: "dev",
@@ -61,6 +60,6 @@ export const mockTerminalState: TerminalState = {
     dailyQuote: null,
     learningJourney: null,
     todayFocus: null,
-    asciiArt: null,
+    asciiArt: undefined,
   },
 };
