@@ -1,4 +1,5 @@
 import type { Dimensions, Owner } from "../../config/schema"; // We can reuse Owner type from config or define domain one
+import type { EasterEggType } from "../value-objects/easter-egg";
 import type { TimeOfDay } from "../value-objects/time-of-day";
 import type { StarshipPrompt } from "./starship-prompt";
 import type { TerminalContent } from "./terminal-content";
@@ -14,4 +15,8 @@ export interface TerminalState {
   readonly content: TerminalContent;
   readonly themeName: string; // Using simple string to decouple from Theme implementation details
   readonly dimensions: Dimensions;
+  readonly easterEgg?: EasterEggType;
+  readonly renderOptions?: {
+    readonly disableAnimations?: boolean;
+  };
 }
