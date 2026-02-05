@@ -29,5 +29,19 @@ describe("Theme Registry", () => {
 
   it("should list available themes", () => {
     expect(themes["kanagawa-wave"]).toBeDefined();
+    expect(themes["kanagawa-dragon"]).toBeDefined();
+    expect(themes["kanagawa-lotus"]).toBeDefined();
+  });
+
+  it("should retrieve Kanagawa Dragon", () => {
+    const theme = getTheme("kanagawa-dragon");
+    expect(theme.name).toBe("kanagawa-dragon");
+    expect(theme.colors.bg).toBe("#181616"); // Dragon BG
+  });
+
+  it("should retrieve Kanagawa Lotus", () => {
+    const theme = getTheme("kanagawa-lotus");
+    expect(theme.name).toBe("kanagawa-lotus");
+    expect(theme.colors.bg).toBe("#f2ecbc"); // Lotus BG
   });
 });

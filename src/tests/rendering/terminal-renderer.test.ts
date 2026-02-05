@@ -73,4 +73,34 @@ describe("Terminal Renderer Orchestrator", () => {
     expect(svg).toContain('id="greeting"');
     expect(svg).toContain("Hello");
   });
+
+  it("should render ASCII Art when present", () => {
+    const stateWithAscii = {
+      ...mockState,
+      content: {
+        ...mockState.content,
+        asciiArt: "  /\\_/\\  \n ( o.o ) ",
+      },
+    };
+    const renderer = new TerminalRenderer();
+    const svg = renderer.render(stateWithAscii);
+
+    expect(svg).toContain(" /\\_/\\ ");
+    expect(svg).toContain("( o.o )");
+    // Check if it pushed content down? hard to check offset in string without parsing attributes
+    // But presence is enough for now.
+  });
+
+  it("should respect custom dimensions", () => {
+    const customState = {
+      ...mockState,
+      dimensions: { width: 1200, height: 600 },
+    };
+    const renderer = new TerminalRenderer();
+    const svg = renderer.render(customState);
+
+    expect(svg).toContain('viewBox="0 0 1200 600"');
+    expect(svg).toContain('width="1200"');
+    expect(svg).toContain('height="600"');
+  });
 });
