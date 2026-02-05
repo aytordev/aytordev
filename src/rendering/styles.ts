@@ -34,10 +34,12 @@ export const generateCss = (theme: Theme): string => {
     /* Base Styles */
     .background {
       fill: var(--bg);
+      stroke: var(--border);
+      stroke-width: 2px;
     }
 
     .terminal-text {
-      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-family: 'Monaspace Neon', 'JetBrains Mono', 'Fira Code', monospace;
       font-size: 14px;
       dominant-baseline: middle;
     }

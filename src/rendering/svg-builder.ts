@@ -45,8 +45,8 @@ export class SvgBuilder {
 
   ${defsBlock}
 
-  <!-- Background -->
-  <rect width="100%" height="100%" class="background" rx="4.5" />
+  <!-- Background with Ghostty-like border -->
+  <rect width="100%" height="100%" class="background" rx="10" ry="10" />
 
   <!-- Layers -->
   ${this.layers.join("\n")}
