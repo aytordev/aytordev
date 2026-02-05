@@ -62,6 +62,7 @@ async function main() {
   // Note: Mapping Config+Data to Domain State
   const state: TerminalState = {
     themeName: config.theme,
+    dimensions: config.dimensions ?? { width: 800, height: 400 },
     timestamp: new Date(),
     timeOfDay: clockAdapter.getTimeOfDay(config.owner.timezone),
     greeting: (() => {

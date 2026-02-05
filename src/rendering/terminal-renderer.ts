@@ -18,8 +18,7 @@ import { buildDefs } from "./effects";
 export class TerminalRenderer {
   public render(state: TerminalState): string {
     const theme = getTheme(state.themeName);
-    const width = 800;
-    const height = 400;
+    const { width, height } = state.dimensions;
 
     const builder = new SvgBuilder(theme, { width, height });
 

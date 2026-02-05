@@ -5,6 +5,7 @@ import { TerminalRenderer } from "../../rendering/terminal-renderer";
 describe("Terminal Renderer Orchestrator", () => {
   const mockState: TerminalState = {
     themeName: "kanagawa-wave",
+    dimensions: { width: 800, height: 400 },
     greeting: "Hello",
     timestamp: new Date(),
     timeOfDay: "evening",
