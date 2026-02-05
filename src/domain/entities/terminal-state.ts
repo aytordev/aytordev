@@ -16,4 +16,7 @@ export interface TerminalState {
   readonly themeName: string; // Using simple string to decouple from Theme implementation details
   readonly dimensions: Dimensions;
   readonly easterEgg?: EasterEggType;
+  readonly renderOptions?: {
+    readonly disableAnimations?: boolean;
+  };
 }

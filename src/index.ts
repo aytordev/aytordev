@@ -1,10 +1,9 @@
-import * as fs from "fs/promises";
 import * as path from "path";
 import { FileConfigAdapter } from "./adapters/infrastructure/config.adapter";
 import { NodeFileSystemAdapter } from "./adapters/infrastructure/file-system.adapter";
 import { TerminalRenderer } from "./adapters/presentation/terminal-renderer";
 import { createGenerateProfileUseCase } from "./application/use-cases/generate-profile";
-import type { GenerateProfileUseCase } from "./domain/use-cases/generate-profile";
+import { createGenerateShareCardUseCase } from "./application/use-cases/generate-share-card";
 
 import { createPorts } from "./adapters";
 
@@ -28,31 +27,34 @@ async function main() {
     process.exit(1);
   }
 
-  const config = configResult.value;
+  let config = configResult.value;
   console.log(`✅ Loaded configuration for @${config.owner.username}`);
 
   const ports = createPorts(config);
 
-  // 2. Application Layer (Use Cases)
-  const generateProfile: GenerateProfileUseCase =
-    createGenerateProfileUseCase(ports);
-  const stateResult = await generateProfile(config);
+  const isShareCard = process.argv.includes("--share-card");
 
-  if (!stateResult.ok) {
-    throw stateResult.error;
+  // 2. Generate Profile
+  // F18: Use Share Card Use Case if requested
+  const useCase = isShareCard
+    ? createGenerateShareCardUseCase(ports)
+    : createGenerateProfileUseCase(ports);
+
+  const result = await useCase(config);
+
+  if (!result.ok) {
+    console.error("❌ Failed to generate profile:", result.error);
+    process.exit(1);
   }
 
-  const state = stateResult.value;
-
   // 3. Render
-  console.log("🎨 Rendering SVG...");
   const renderer = new TerminalRenderer();
-  const svg = renderer.render(state);
+  const svg = renderer.render(result.value);
 
-  // 4. Write Output
-  const outputPath = path.resolve(process.cwd(), "profile.svg");
-  await fs.writeFile(outputPath, svg);
-  console.log(`✨ Generated profile at: ${outputPath}`);
+  // 4. Save
+  const outputPath = isShareCard ? "share-card.svg" : "profile.svg";
+  await ports.fileSystem.writeFile(outputPath, svg);
+  console.log(`✅ Terminal Profile generated at ${outputPath}`);
 }
 
 main().catch((err) => {

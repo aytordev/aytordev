@@ -54,9 +54,13 @@ export class TerminalRenderer {
 
     // 1.5 Greeting (Below Tmux Bar, Above Prompt)
     const greetingY = 50;
-    // Apply typing effect (F15)
+    // Apply typing effect (F15) only if enabled
+    const disableAnimations = state.renderOptions?.disableAnimations ?? false;
+
     // Note: We use monospace font for ch alignment, already set by class="terminal-text"
-    const animatedGreeting = wrapWithTyping(state.greeting);
+    const animatedGreeting = !disableAnimations
+      ? wrapWithTyping(state.greeting)
+      : state.greeting;
 
     // We need to inject the HTML/ForeignObject for typing if using CSS checks?
     // Wait, SVG text doesn't support 'width' CSS animation nicely on <text>.
