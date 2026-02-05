@@ -5,6 +5,7 @@ import { renderContentArea } from "./layers/content-area.renderer";
 import { renderDeveloperInfo } from "./layers/developer-info.renderer";
 import { renderEngagement } from "./layers/engagement.renderer";
 import { renderFooter } from "./layers/footer.renderer";
+import { renderLanguageStats } from "./layers/language-stats.renderer";
 import { renderPrompt } from "./layers/prompt.renderer";
 import { renderRecentCommits } from "./layers/recent-commits.renderer";
 import { renderStreak } from "./layers/streak.renderer";
@@ -76,7 +77,14 @@ export class TerminalRenderer {
     // If we want it relative to dev info, we rely on that.
     innerContent += renderTechStack(state.content.techStack, theme);
 
-    // 4.3 Recent Commits
+    // 4.3 Language Stats (F10 + F41)
+    innerContent += renderLanguageStats(
+      state.content.languageStats,
+      theme,
+      140,
+    );
+
+    // 4.4 Recent Commits
     innerContent += renderRecentCommits(state.content.recentCommits, theme);
 
     // 4.4 Engagement (Lower Left)

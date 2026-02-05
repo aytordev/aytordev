@@ -3,8 +3,10 @@ import * as path from "path";
 import { SystemClockAdapter } from "./adapters/clock.adapter";
 import { FileConfigAdapter } from "./adapters/config.adapter";
 import { NodeFileSystemAdapter } from "./adapters/file-system.adapter";
+import { GitHubApiAdapter } from "./adapters/github-api.adapter";
 import { MockGitHubAdapter } from "./adapters/github.adapter";
 import type { TerminalState } from "./domain/entities/terminal-state";
+import type { GitHubDataPort } from "./domain/ports/github-data.port";
 import { TerminalRenderer } from "./rendering/terminal-renderer";
 
 async function main() {
@@ -12,8 +14,19 @@ async function main() {
 
   const fsAdapter = new NodeFileSystemAdapter();
   const clockAdapter = new SystemClockAdapter();
-  const githubAdapter = new MockGitHubAdapter();
   const configAdapter = new FileConfigAdapter();
+
+  // Use real GitHub adapter if token available, otherwise mock
+  const githubToken = process.env.GITHUB_TOKEN;
+  const githubAdapter: GitHubDataPort = githubToken
+    ? new GitHubApiAdapter(githubToken)
+    : new MockGitHubAdapter();
+
+  if (githubToken) {
+    console.log("🔑 Using real GitHub API adapter");
+  } else {
+    console.log("⚠️  No GITHUB_TOKEN, using mock data");
+  }
 
   // 1. Load Config
   const configPath = path.resolve(process.cwd(), "terminal_profile.yml");
@@ -33,15 +46,17 @@ async function main() {
   console.log(`✅ Loaded configuration for @${config.owner.username}`);
 
   // 2. Fetch Data (Mock for now)
-  const [userInfo, commits, streak] = await Promise.all([
+  const [userInfo, commits, streak, languageStats] = await Promise.all([
     githubAdapter.getUserInfo(config.owner.username),
     githubAdapter.getRecentCommits(config.owner.username, 5),
     githubAdapter.getContributionStreak(config.owner.username),
+    githubAdapter.getLanguageStats(config.owner.username),
   ]);
 
   if (!userInfo.ok) throw userInfo.error;
   if (!commits.ok) throw commits.error;
-  if (!streak.ok) throw streak.error; // In real app, might handle gracefully with defaults
+  if (!streak.ok) throw streak.error;
+  if (!languageStats.ok) throw languageStats.error;
 
   // 3. Build State
   // Note: Mapping Config+Data to Domain State
@@ -86,7 +101,7 @@ async function main() {
       recentCommits: commits.value,
       stats: { publicRepos: 10, followers: 50, following: 10, totalStars: 100 },
       streak: streak.value,
-      languageStats: [],
+      languageStats: languageStats.value,
       careerTimeline: [],
       contactInfo:
         config.content?.contact?.items?.map((i) => ({
