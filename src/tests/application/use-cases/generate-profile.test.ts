@@ -11,10 +11,12 @@ const mockPorts: Ports = {
     getRecentCommits: vi.fn(),
     getContributionStreak: vi.fn(),
     getLanguageStats: vi.fn(),
+    getContributionStats: vi.fn(),
   },
   clock: {
     getTimeOfDay: vi.fn().mockReturnValue("afternoon"),
     formatTime: vi.fn().mockReturnValue("14:00"),
+    getCurrentTime: vi.fn().mockReturnValue(new Date()),
   },
   fileSystem: {
     readFile: vi.fn(),
@@ -39,9 +41,10 @@ describe("GenerateProfileUseCase", () => {
       ok([
         {
           message: "feat: test commit",
-          date: new Date(),
-          repo: "test-repo",
-          sha: "abc1234",
+          emoji: "✨",
+          type: "feat",
+          hash: "abc1234",
+          relativeTime: "2 hours ago",
         },
       ]),
     );
@@ -49,10 +52,8 @@ describe("GenerateProfileUseCase", () => {
       ok({
         currentStreak: 5,
         longestStreak: 10,
-        totalContributions: 100,
-        todayContributions: 2,
-        start: new Date(),
-        end: new Date(),
+        lastContributionDate: new Date(),
+        isActive: true,
       }),
     );
     vi.mocked(mockPorts.github.getLanguageStats).mockResolvedValue(ok([]));
