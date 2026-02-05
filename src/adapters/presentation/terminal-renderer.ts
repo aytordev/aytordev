@@ -84,7 +84,9 @@ export class TerminalRenderer {
     // Tmux bar is 24px height. Greeting is at 50. Prompt starts around 74?
     // Let's shift prompt deeper.
     const promptY = 80;
-    builder.addLayer(renderPrompt(state.prompt, theme, promptY));
+    builder.addLayer(
+      renderPrompt(state.prompt, theme, promptY, state.dimensions.width),
+    );
 
     // 3. Streak (Top Right)
     // Align with prompt
