@@ -69,7 +69,15 @@ export const createGenerateProfileUseCase = (
           directory: "~/github/profile",
           gitBranch: "main",
           gitStatus: "clean",
+          // TODO: Implement real Git stats fetching
+          gitStats: {
+            added: 12,
+            deleted: 3,
+            modified: 0,
+          },
+
           nodeVersion: process.version,
+
           nixIndicator: true,
           time: ports.clock.formatTime(new Date(), config.owner.timezone),
         },

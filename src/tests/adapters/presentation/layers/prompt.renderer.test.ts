@@ -1,49 +1,68 @@
 import { describe, expect, it } from "vitest";
-import type { StarshipPrompt } from "../../../../domain/entities/starship-prompt";
 import { renderPrompt } from "../../../../adapters/presentation/layers/prompt.renderer";
+import type { StarshipPrompt } from "../../../../domain/entities/starship-prompt";
 import { KanagawaTheme } from "../../../../theme/kanagawa";
 
 describe("Starship Prompt Renderer", () => {
   const prompt: StarshipPrompt = {
-    directory: "~/Developer/terminal-profile",
+    directory: "/home/dev/terminal-profile",
     gitBranch: "feat/rendering",
     gitStatus: "dirty",
+
+    gitStats: { added: 12, deleted: 3, modified: 0 },
     nodeVersion: "v18.19.0",
     nixIndicator: true,
     time: "20:30",
   };
 
   const y = 50; // Arbitrary Y position for test
+  const width = 800;
 
-  it("should render directory", () => {
-    const svg = renderPrompt(prompt, KanagawaTheme, y);
+  it("should render left side items (Directory, Git)", () => {
+    const svg = renderPrompt(prompt, KanagawaTheme, y, width);
+    // Directory
     expect(svg).toContain(prompt.directory);
-    expect(svg).toContain('class="prompt__dir"');
+    // Git
+    expect(svg).toContain("git:feat/rendering");
+    expect(svg).toContain("?"); // Dirty indicator
   });
 
-  it("should render git info when present", () => {
-    const svg = renderPrompt(prompt, KanagawaTheme, y);
-    expect(svg).toContain(prompt.gitBranch);
-    expect(svg).toContain('class="prompt__git"');
-  });
+  it("should render right side items (Time, Nix, Node, GitStats)", () => {
+    const svg = renderPrompt(prompt, KanagawaTheme, y, width);
 
-  it("should render nix indicator when valid", () => {
-    const svg = renderPrompt(prompt, KanagawaTheme, y);
-    expect(svg).toContain("❄️"); // Assuming snowflake or text for nix
-    expect(svg).toContain('class="prompt__nix"');
-  });
+    // Time
+    expect(svg).toContain("20:30");
 
-  it("should render node version", () => {
-    const svg = renderPrompt(prompt, KanagawaTheme, y);
-    expect(svg).toContain("⬢"); // Node icon
+    // Nix
+    expect(svg).toContain("nix");
+    expect(svg).toContain("❄️");
+
+    // Node
+    expect(svg).toContain("node");
     expect(svg).toContain("v18.19.0");
-    expect(svg).toContain('class="prompt__node"');
+    expect(svg).toContain("⬢");
+
+    // Git Stats
+    expect(svg).toContain("+12");
+    expect(svg).toContain("-3");
+    // Modified is 0, so should NOT be present (based on my recent change)
+    expect(svg).not.toContain("~");
   });
 
-  it("should render prompt indicator/arrow on a new line", () => {
-    const svg = renderPrompt(prompt, KanagawaTheme, y);
-    expect(svg).toContain("❯");
-    expect(svg).toContain('class="prompt__indicator"');
+  it("should use text-anchor end for right alignment", () => {
+    const svg = renderPrompt(prompt, KanagawaTheme, y, width);
+    expect(svg).toContain('text-anchor="end"');
+  });
+
+  it("should NOT render the prompt symbol (❯)", () => {
+    const svg = renderPrompt(prompt, KanagawaTheme, y, width);
+    expect(svg).not.toContain("❯");
+  });
+
+  it("should render blinking cursor at x=10", () => {
+    const svg = renderPrompt(prompt, KanagawaTheme, y, width);
+    expect(svg).toContain('class="cursor"');
+    expect(svg).toContain('x="10"');
   });
 
   it("should handle missing optional fields", () => {
@@ -55,15 +74,11 @@ describe("Starship Prompt Renderer", () => {
       nixIndicator: false,
       time: "10:00",
     };
-    const svg = renderPrompt(minimalPrompt, KanagawaTheme, y);
-    expect(svg).not.toContain('class="prompt__git"');
-    expect(svg).not.toContain('class="prompt__nix"');
-    expect(svg).toContain("~");
-  });
+    const svg = renderPrompt(minimalPrompt, KanagawaTheme, y, width);
 
-  it("should render blinking cursor", () => {
-    const svg = renderPrompt(prompt, KanagawaTheme, y);
-    expect(svg).toContain('class="cursor"');
-    expect(svg).toContain("<rect");
+    expect(svg).toContain("~");
+    expect(svg).not.toContain("git:");
+    expect(svg).not.toContain("node");
+    expect(svg).not.toContain("nix");
   });
 });
