@@ -1,6 +1,11 @@
-import type { Theme } from "../../../../theme/types";
+export * from "./glow";
+export * from "./gradients";
+export * from "./typing";
+
+import type { Theme } from "../../../theme/types";
 import { createGlowFilter } from "./glow";
 import { createSkillGradient } from "./gradients";
+import { typingKeyframes } from "./typing";
 
 // Since we haven't defined Config types in domain yet (they are in schema),
 // we might need to import from config or just accept a simplified interface here.
@@ -31,8 +36,11 @@ export const buildDefs = (theme: Theme, effects: EffectsConfig): string => {
   }
 
   if (effects.subtle_glow) {
-    defs.push(createGlowFilter("glow"));
+    defs.push(createGlowFilter("glow")); // Removed color arg as per signature
   }
+
+  // Always add typing keyframes if we are using them (lightweight)
+  defs.push(typingKeyframes);
 
   return defs.join("\n");
 };

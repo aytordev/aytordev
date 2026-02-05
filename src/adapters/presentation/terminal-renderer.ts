@@ -14,6 +14,7 @@ import { renderTmuxBar } from "./layers/tmux-bar.renderer";
 import { SvgBuilder } from "./svg-builder";
 
 import { buildDefs } from "./effects";
+import { wrapWithTyping } from "./effects/typing";
 
 export class TerminalRenderer {
   public render(state: TerminalState): string {
@@ -53,8 +54,27 @@ export class TerminalRenderer {
 
     // 1.5 Greeting (Below Tmux Bar, Above Prompt)
     const greetingY = 50;
-    const greetingText = `<text x="10" y="${greetingY}" class="terminal-text" fill="${theme.colors.fujiWhite}" font-weight="bold">${state.greeting}</text>`;
-    builder.addLayer(`<g id="greeting">${greetingText}</g>`);
+    // Apply typing effect (F15)
+    // Note: We use monospace font for ch alignment, already set by class="terminal-text"
+    const animatedGreeting = wrapWithTyping(state.greeting);
+
+    // We need to inject the HTML/ForeignObject for typing if using CSS checks?
+    // Wait, SVG text doesn't support 'width' CSS animation nicely on <text>.
+    // wrapWithTyping generates a <span>...</span>.
+    // SVG <text> cannot contain <span>.
+    // GUIDANCE: We need a <foreignObject> to use HTML/CSS animations nicely, OR use SVG specific tricks.
+    // The wrapWithTyping returns HTML.
+
+    // Let's use <foreignObject> for the greeting line.
+    const foreignObj = `
+      <foreignObject x="10" y="${greetingY - 15}" width="600" height="40">
+        <div xmlns="http://www.w3.org/1999/xhtml" style="font-family: monospace; color: ${theme.colors.fujiWhite}; font-weight: bold; font-size: 14px;">
+          ${animatedGreeting}
+        </div>
+      </foreignObject>
+    `;
+
+    builder.addLayer(`<g id="greeting">${foreignObj}</g>`);
 
     // 2. Prompt (Offset by Tmux Bar + Greeting)
     // Tmux bar is 24px height. Greeting is at 50. Prompt starts around 74?

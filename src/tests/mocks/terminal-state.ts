@@ -1,0 +1,66 @@
+import type { TerminalState } from "../../domain/entities/terminal-state";
+
+export const mockTerminalState: TerminalState = {
+  themeName: "kanagawa-wave",
+  dimensions: { width: 800, height: 600 },
+  timestamp: new Date("2024-02-01T12:00:00Z"),
+  timeOfDay: "afternoon",
+  greeting: "Hello, Developer",
+  owner: {
+    name: "Test User",
+    username: "testuser",
+    title: "Developer",
+    location: "Internet",
+    timezone: "UTC",
+    githubUrl: "https://github.com/testuser",
+    avatarUrl: "https://github.com/testuser.png",
+  },
+  session: {
+    sessionName: "dev",
+    activeWindowIndex: 1,
+    currentBranch: "main",
+    windows: [
+      { index: 1, name: "zsh" },
+      { index: 2, name: "nvim" },
+    ],
+    stats: { cpuLoad: 10, memoryUsage: 40, uptime: "2d 4h" },
+  },
+  prompt: {
+    directory: "~/projects/app",
+    gitBranch: "main",
+    gitStatus: "clean",
+    nodeVersion: "v20.0.0",
+    nixIndicator: true,
+    time: "12:00",
+  },
+  content: {
+    developerInfo: {
+      name: "Test User",
+      username: "testuser",
+      tagline: "Building cool things",
+      location: "Internet",
+    },
+    techStack: { categories: [] },
+    recentCommits: [],
+    stats: {
+      publicRepos: 10,
+      followers: 100,
+      following: 50,
+      totalStars: 500,
+    },
+    streak: {
+      currentStreak: 5,
+      longestStreak: 10,
+      lastContributionDate: new Date(),
+      isActive: true,
+    },
+    languageStats: [],
+    careerTimeline: [],
+    contactInfo: [],
+    extraLines: [],
+    dailyQuote: null,
+    learningJourney: null,
+    todayFocus: null,
+    asciiArt: null,
+  },
+};
