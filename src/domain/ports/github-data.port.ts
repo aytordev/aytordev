@@ -1,7 +1,7 @@
-import type { Owner } from "../../config/schema";
 import type { Result } from "../../shared/result";
 import type { Commit } from "../value-objects/commit";
 import type { LanguageStat } from "../value-objects/language-stat";
+import type { Owner } from "../value-objects/owner";
 import type { StreakInfo } from "../value-objects/streak-info";
 
 export interface ContributionStats {

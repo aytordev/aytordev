@@ -1,12 +1,12 @@
 import { graphql } from "@octokit/graphql";
 import { Octokit } from "@octokit/rest";
-import type { Owner } from "../config/schema";
 import type {
   ContributionStats,
   GitHubDataPort,
 } from "../domain/ports/github-data.port";
 import type { Commit, CommitType } from "../domain/value-objects/commit";
 import type { LanguageStat } from "../domain/value-objects/language-stat";
+import type { Owner } from "../domain/value-objects/owner";
 import type { StreakInfo } from "../domain/value-objects/streak-info";
 import { type Result, err, ok } from "../shared/result";
 
