@@ -73,7 +73,7 @@ export const createGenerateProfileUseCase = (
           gitStats: {
             added: 12,
             deleted: 3,
-            modified: 5,
+            modified: 0,
           },
 
           nodeVersion: process.version,

@@ -47,7 +47,7 @@ const mockTheme: Theme = {
 describe("Prompt Renderer (Redesign)", () => {
   const prompt = {
     ...mockTerminalState.prompt,
-    gitStats: { added: 10, deleted: 5, modified: 2 },
+    gitStats: { added: 10, deleted: 5, modified: 0 },
   };
 
   it("should render left and right sides", () => {
@@ -65,7 +65,7 @@ describe("Prompt Renderer (Redesign)", () => {
     // Stats
     expect(svg).toContain("+10");
     expect(svg).toContain("-5");
-    expect(svg).toContain("~2");
+    expect(svg).not.toContain("~2"); // Should not show modified if 0
   });
 
   it("should use text-anchor end for right items", () => {
