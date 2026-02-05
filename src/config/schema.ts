@@ -148,7 +148,7 @@ export const ConfigSchema = z
   .strict();
 
 export type Config = z.infer<typeof ConfigSchema>;
-export type { Owner } from "../domain/value-objects/owner";
+export type Owner = z.infer<typeof OwnerSchema>;
 export type Theme = z.infer<typeof ThemeSchema>;
 export type Dimensions = z.infer<typeof DimensionsSchema>;
 export type Tmux = z.infer<typeof TmuxSchema>;
