@@ -1,7 +1,12 @@
 import type { TechStack } from "../../domain/value-objects/tech-stack";
 import type { Theme } from "../../theme/types";
 
-export const renderTechStack = (stack: TechStack, theme: Theme): string => {
+export const renderTechStack = (
+  stack: TechStack,
+  theme: Theme,
+  x: number = 0,
+  y: number = 0,
+): string => {
   const titleHeight = 24;
   const itemHeight = 20;
   let currentY = 0;
@@ -34,7 +39,7 @@ export const renderTechStack = (stack: TechStack, theme: Theme): string => {
   });
 
   return `
-    <g id="tech-stack" transform="translate(0, 60)">
+    <g id="tech-stack" transform="translate(${x}, ${y})">
       ${elements}
     </g>
   `.trim();
