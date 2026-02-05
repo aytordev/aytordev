@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import type { Ports } from "../../../adapters";
-import { GenerateProfileUseCase } from "../../../application/use-cases/generate-profile";
+import { createGenerateProfileUseCase } from "../../../application/use-cases/generate-profile";
 import { err, ok } from "../../../shared/result";
 import { mockConfig } from "../../mocks/config";
 
@@ -9,41 +9,56 @@ const mockPorts: Ports = {
   github: {
     getUserInfo: vi.fn(),
     getRecentCommits: vi.fn(),
-    getLanguageStats: vi.fn(),
     getContributionStreak: vi.fn(),
-    getContributionStats: vi.fn(),
+    getLanguageStats: vi.fn(),
   },
   clock: {
-    getCurrentTime: vi.fn().mockReturnValue(new Date("2023-01-01T12:00:00Z")),
     getTimeOfDay: vi.fn().mockReturnValue("afternoon"),
-    formatTime: vi.fn().mockReturnValue("12:00"),
+    formatTime: vi.fn().mockReturnValue("14:00"),
   },
   fileSystem: {
-    writeFile: vi.fn(),
     readFile: vi.fn(),
-    exists: vi.fn().mockResolvedValue(true),
+    exists: vi.fn(),
+    writeFile: vi.fn(),
   },
 };
 
 describe("GenerateProfileUseCase", () => {
   it("should generate a valid TerminalState when all ports return success", async () => {
-    // Setup Mocks
     vi.mocked(mockPorts.github.getUserInfo).mockResolvedValue(
-      ok(mockConfig.owner),
+      ok({
+        name: "Test User",
+        username: "testuser",
+        bio: "Test Bio",
+        avatarUrl: "http://avatar.url",
+        location: "Test Location",
+        company: "Test Company",
+      } as any),
     );
-    vi.mocked(mockPorts.github.getRecentCommits).mockResolvedValue(ok([]));
+    vi.mocked(mockPorts.github.getRecentCommits).mockResolvedValue(
+      ok([
+        {
+          message: "feat: test commit",
+          date: new Date(),
+          repo: "test-repo",
+          sha: "abc1234",
+        },
+      ]),
+    );
     vi.mocked(mockPorts.github.getContributionStreak).mockResolvedValue(
       ok({
         currentStreak: 5,
         longestStreak: 10,
-        lastContributionDate: new Date(),
-        isActive: true,
+        totalContributions: 100,
+        todayContributions: 2,
+        start: new Date(),
+        end: new Date(),
       }),
     );
     vi.mocked(mockPorts.github.getLanguageStats).mockResolvedValue(ok([]));
 
-    const useCase = new GenerateProfileUseCase(mockPorts);
-    const result = await useCase.execute(mockConfig);
+    const useCase = createGenerateProfileUseCase(mockPorts);
+    const result = await useCase(mockConfig);
 
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -66,8 +81,8 @@ describe("GenerateProfileUseCase", () => {
     );
     vi.mocked(mockPorts.github.getLanguageStats).mockResolvedValue(ok([]));
 
-    const useCase = new GenerateProfileUseCase(mockPorts);
-    const result = await useCase.execute(mockConfig);
+    const useCase = createGenerateProfileUseCase(mockPorts);
+    const result = await useCase(mockConfig);
 
     expect(result.ok).toBe(false);
     if (!result.ok) {

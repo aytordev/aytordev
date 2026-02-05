@@ -1,22 +1,21 @@
 import type { Ports } from "../../adapters";
 import type { Config } from "../../config/schema";
-import type { TerminalState } from "../../domain/entities/terminal-state"; // Moved to domain, so peer
+import type { TerminalState } from "../../domain/entities/terminal-state";
+import type { GenerateProfileUseCase } from "../../domain/use-cases/generate-profile";
 import { type Result, err, ok } from "../../shared/result";
 
-export class GenerateProfileUseCase {
-  constructor(private readonly ports: Ports) {}
-
-  async execute(config: Config): Promise<Result<TerminalState, Error>> {
+export const createGenerateProfileUseCase = (
+  ports: Ports,
+): GenerateProfileUseCase => {
+  return async (config: Config): Promise<Result<TerminalState, Error>> => {
     try {
-      // Parallel data fetching
-      // Use defaults if config sections are optional (though Schema should enforce defaults, TS might be strict)
       const maxCommits = config.content?.commits?.max_count ?? 5;
 
       const [userInfo, commits, streak, languageStats] = await Promise.all([
-        this.ports.github.getUserInfo(config.owner.username),
-        this.ports.github.getRecentCommits(config.owner.username, maxCommits),
-        this.ports.github.getContributionStreak(config.owner.username),
-        this.ports.github.getLanguageStats(config.owner.username),
+        ports.github.getUserInfo(config.owner.username),
+        ports.github.getRecentCommits(config.owner.username, maxCommits),
+        ports.github.getContributionStreak(config.owner.username),
+        ports.github.getLanguageStats(config.owner.username),
       ]);
 
       if (!userInfo.ok) return err(userInfo.error);
@@ -28,12 +27,29 @@ export class GenerateProfileUseCase {
       const tmuxSessionName = config.tmux?.session_name ?? "dev";
       const tmuxWindows = config.tmux?.windows ?? ["zsh", "nvim"];
 
+      const getGreeting = (name: string, timezone: string): string => {
+        const timeOfDay = ports.clock.getTimeOfDay(timezone);
+        const firstName = name.split(" ")[0];
+        switch (timeOfDay) {
+          case "morning":
+            return `Good morning, ${firstName}`;
+          case "afternoon":
+            return `Good afternoon, ${firstName}`;
+          case "evening":
+            return `Good evening, ${firstName}`;
+          case "night":
+            return `Working late, ${firstName}?`;
+          default:
+            return `Hello, ${firstName}`;
+        }
+      };
+
       const state: TerminalState = {
         themeName: config.theme,
         dimensions: config.dimensions ?? { width: 800, height: 400 },
         timestamp: new Date(),
-        timeOfDay: this.ports.clock.getTimeOfDay(config.owner.timezone),
-        greeting: this.getGreeting(config.owner.name, config.owner.timezone),
+        timeOfDay: ports.clock.getTimeOfDay(config.owner.timezone),
+        greeting: getGreeting(config.owner.name, config.owner.timezone),
         owner: config.owner,
         session: {
           sessionName: tmuxSessionName,
@@ -51,7 +67,7 @@ export class GenerateProfileUseCase {
           gitStatus: "clean",
           nodeVersion: process.version,
           nixIndicator: true,
-          time: this.ports.clock.formatTime(new Date(), config.owner.timezone),
+          time: ports.clock.formatTime(new Date(), config.owner.timezone),
         },
         content: {
           developerInfo: {
@@ -73,7 +89,7 @@ export class GenerateProfileUseCase {
             followers: 50,
             following: 10,
             totalStars: 100,
-          }, // Mock or needs extra fetch
+          },
           streak: streak.value,
           languageStats: languageStats.value,
           careerTimeline: [],
@@ -101,22 +117,5 @@ export class GenerateProfileUseCase {
     } catch (error) {
       return err(error instanceof Error ? error : new Error(String(error)));
     }
-  }
-
-  private getGreeting(name: string, timezone: string): string {
-    const timeOfDay = this.ports.clock.getTimeOfDay(timezone);
-    const firstName = name.split(" ")[0];
-    switch (timeOfDay) {
-      case "morning":
-        return `Good morning, ${firstName}`;
-      case "afternoon":
-        return `Good afternoon, ${firstName}`;
-      case "evening":
-        return `Good evening, ${firstName}`;
-      case "night":
-        return `Working late, ${firstName}?`;
-      default:
-        return `Hello, ${firstName}`;
-    }
-  }
-}
+  };
+};

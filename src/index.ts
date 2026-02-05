@@ -3,7 +3,8 @@ import * as path from "path";
 import { FileConfigAdapter } from "./adapters/infrastructure/config.adapter";
 import { NodeFileSystemAdapter } from "./adapters/infrastructure/file-system.adapter";
 import { TerminalRenderer } from "./adapters/presentation/terminal-renderer";
-import { GenerateProfileUseCase } from "./application/use-cases/generate-profile";
+import { createGenerateProfileUseCase } from "./application/use-cases/generate-profile";
+import type { GenerateProfileUseCase } from "./domain/use-cases/generate-profile";
 
 import { createPorts } from "./adapters";
 
@@ -32,9 +33,10 @@ async function main() {
 
   const ports = createPorts(config);
 
-  // 2. Use Case: Generate Profile State
-  const useCase = new GenerateProfileUseCase(ports);
-  const stateResult = await useCase.execute(config);
+  // 2. Application Layer (Use Cases)
+  const generateProfile: GenerateProfileUseCase =
+    createGenerateProfileUseCase(ports);
+  const stateResult = await generateProfile(config);
 
   if (!stateResult.ok) {
     throw stateResult.error;
