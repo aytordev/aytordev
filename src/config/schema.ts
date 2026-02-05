@@ -28,10 +28,6 @@ export const ThemeSchema = z.enum([
   "kanagawa-wave",
   "kanagawa-dragon",
   "kanagawa-lotus",
-  "catppuccin-mocha",
-  "catppuccin-latte",
-  "tokyo-night",
-  "dracula",
 ]);
 
 export const DimensionsSchema = z.object({
@@ -59,6 +55,8 @@ export const ContentSchema = z.object({
       tagline: z.string().max(80).optional(),
     })
     .optional(),
+
+  ascii_art: z.string().optional(),
 
   tech_stack: z
     .object({

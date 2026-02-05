@@ -1,8 +1,12 @@
 import { KanagawaTheme } from "./kanagawa";
+import { KanagawaDragonTheme } from "./kanagawa-dragon";
+import { KanagawaLotusTheme } from "./kanagawa-lotus";
 import type { Theme } from "./types";
 
 export const themes: Record<string, Theme> = {
   "kanagawa-wave": KanagawaTheme,
+  "kanagawa-dragon": KanagawaDragonTheme,
+  "kanagawa-lotus": KanagawaLotusTheme,
 };
 
 export function registerTheme(theme: Theme): void {
