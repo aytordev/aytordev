@@ -60,4 +60,10 @@ describe("Starship Prompt Renderer", () => {
     expect(svg).not.toContain('class="prompt__nix"');
     expect(svg).toContain("~");
   });
+
+  it("should render blinking cursor", () => {
+    const svg = renderPrompt(prompt, KanagawaTheme, y);
+    expect(svg).toContain('class="cursor"');
+    expect(svg).toContain("<rect");
+  });
 });

@@ -14,7 +14,7 @@ export const renderStreak = (
   return `
     <g id="streak" transform="translate(${x}, ${y})">
       <!-- Fire Emoji -->
-      <text x="0" y="0" class="streak__fire" font-size="24">🔥</text>
+      <text x="0" y="0" class="streak__fire" font-size="24" filter="url(#glow)">🔥</text>
 
       <!-- Streak Count -->
       <text x="35" y="0" class="streak__count" fill="${theme.colors.surimiOrange}" font-family="monospace" font-size="14" font-weight="bold" dominant-baseline="middle">

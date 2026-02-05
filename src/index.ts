@@ -64,7 +64,22 @@ async function main() {
     themeName: config.theme,
     timestamp: new Date(),
     timeOfDay: clockAdapter.getTimeOfDay(config.owner.timezone),
-    greeting: "Hello", // Logic for greeting could be sophisticated
+    greeting: (() => {
+      const timeOfDay = clockAdapter.getTimeOfDay(config.owner.timezone);
+      const name = config.owner.name.split(" ")[0]; // First name
+      switch (timeOfDay) {
+        case "morning":
+          return `Good morning, ${name}`;
+        case "afternoon":
+          return `Good afternoon, ${name}`;
+        case "evening":
+          return `Good evening, ${name}`;
+        case "night":
+          return `Working late, ${name}?`;
+        default:
+          return `Hello, ${name}`;
+      }
+    })(),
     owner: config.owner, // Or userInfo.value if we prefer API data overlay
     session: {
       sessionName: "profile",
@@ -117,6 +132,7 @@ async function main() {
       todayFocus: config.content?.current_focus?.enabled
         ? (config.content.current_focus.text ?? null)
         : null,
+      asciiArt: config.content?.ascii_art,
     },
   };
 

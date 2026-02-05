@@ -60,6 +60,8 @@ export const ContentSchema = z.object({
     })
     .optional(),
 
+  ascii_art: z.string().optional(),
+
   tech_stack: z
     .object({
       enabled: z.boolean().default(true),

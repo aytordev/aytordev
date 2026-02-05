@@ -37,4 +37,5 @@ export interface TerminalContent {
   readonly careerTimeline: readonly CareerMilestone[];
   readonly contactInfo: readonly ContactItem[];
   readonly extraLines: readonly ExtraLine[];
+  readonly asciiArt?: string;
 }

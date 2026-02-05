@@ -68,5 +68,8 @@ describe("Terminal Renderer Orchestrator", () => {
     expect(svg).toContain('id="developer-info"');
     // Streak presence
     expect(svg).toContain('id="streak"');
+    // Greeting presence
+    expect(svg).toContain('id="greeting"');
+    expect(svg).toContain("Hello");
   });
 });

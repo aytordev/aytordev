@@ -43,7 +43,7 @@ export const renderPrompt = (
 
   // Line 2: Indicator
   const line2Y = y + lineHeight;
-  const line2Svg = `<text x="10" y="${line2Y}" class="prompt__indicator" fill="${theme.colors.springGreen}" font-family="monospace" font-size="${fontSize}">❯</text>`;
+  const line2Svg = `<text x="10" y="${line2Y}" class="prompt__indicator" fill="${theme.colors.springGreen}" font-family="monospace" font-size="${fontSize}" filter="url(#glow)">❯</text>`;
 
   return `
     <g id="prompt">
