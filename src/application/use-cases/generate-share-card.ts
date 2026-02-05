@@ -1,6 +1,7 @@
 import type { Ports } from "../../adapters";
 import type { Config } from "../../config/schema";
 import type { TerminalState } from "../../domain/entities/terminal-state";
+import { GenerateShareCardUseCase } from "../../domain/use-cases/generate-share-card";
 import { type Result, map } from "../../shared/result";
 
 import { createGenerateProfileUseCase } from "./generate-profile";
