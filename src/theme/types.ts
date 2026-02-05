@@ -22,6 +22,8 @@ export interface ThemeColors {
   sumiInk2: string;
   sumiInk3: string;
   sumiInk4: string;
+  sumiInk5: string;
+  sumiInk6: string;
   waveBlue1: string;
   waveBlue2: string;
   winterGreen: string;
@@ -30,6 +32,7 @@ export interface ThemeColors {
   winterBlue: string;
   autumnGreen: string;
   autumnRed: string;
+  autumnOrange: string;
   autumnYellow: string;
   samuraiRed: string;
   roninYellow: string;
@@ -37,6 +40,7 @@ export interface ThemeColors {
   springViolet2: string;
   springBlue: string;
   springGreen: string;
+  waveAqua: string;
   carpYellow: string;
   sakuraPink: string;
   waveRed: string;

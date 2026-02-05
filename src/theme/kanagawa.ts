@@ -11,7 +11,7 @@ export const KanagawaTheme: Theme = {
     // Semantic Colors (mapped)
     bg: "#1F1F28", // sumiInk1
     bgTuft: "#2A2A37", // sumiInk2
-    bgDark: "#16161D", // sumiInk0
+    bgDark: "#2A2A37", // sumiInk4 - User's tmux background
 
     text: "#DCD7BA", // fujiWhite
     textMuted: "#727169", // fujiGray
@@ -29,7 +29,9 @@ export const KanagawaTheme: Theme = {
     sumiInk1: "#1F1F28",
     sumiInk2: "#2A2A37",
     sumiInk3: "#363646",
-    sumiInk4: "#54546D",
+    sumiInk4: "#2A2A37", // User specifies #2a2a37 is sumiInk4
+    sumiInk5: "#363646",
+    sumiInk6: "#54546D",
 
     waveBlue1: "#223249",
     waveBlue2: "#2D4F67",
@@ -41,6 +43,7 @@ export const KanagawaTheme: Theme = {
 
     autumnGreen: "#76946A",
     autumnRed: "#C34043",
+    autumnOrange: "#DCA561", // User calls this autumnOrange
     autumnYellow: "#DCA561",
 
     samuraiRed: "#E82424",
@@ -52,6 +55,7 @@ export const KanagawaTheme: Theme = {
     springGreen: "#98BB6C",
     springCyan: "#7AA89F",
 
+    waveAqua: "#6a9589", // Missing color from user report
     carpYellow: "#E6C384",
     sakuraPink: "#D27E99",
     waveRed: "#E46876",
