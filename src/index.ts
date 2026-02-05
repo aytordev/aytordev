@@ -1,9 +1,9 @@
 import * as fs from "fs/promises";
 import * as path from "path";
-import { FileConfigAdapter } from "./adapters/config.adapter";
-import { NodeFileSystemAdapter } from "./adapters/file-system.adapter";
+import { FileConfigAdapter } from "./adapters/infrastructure/config.adapter";
+import { NodeFileSystemAdapter } from "./adapters/infrastructure/file-system.adapter";
+import { TerminalRenderer } from "./adapters/presentation/terminal-renderer";
 import { GenerateProfileUseCase } from "./application/use-cases/generate-profile";
-import { TerminalRenderer } from "./rendering/terminal-renderer";
 
 import { createPorts } from "./adapters";
 

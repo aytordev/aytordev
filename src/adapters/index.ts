@@ -2,10 +2,10 @@ import type { Config } from "../config/schema";
 import type { ClockPort } from "../domain/ports/clock.port";
 import type { FileSystemPort } from "../domain/ports/file-system.port";
 import type { GitHubDataPort } from "../domain/ports/github-data.port";
-import { SystemClockAdapter } from "./clock.adapter";
-import { NodeFileSystemAdapter } from "./file-system.adapter";
-import { GitHubApiAdapter } from "./github-api.adapter";
-import { MockGitHubAdapter } from "./github.adapter";
+import { SystemClockAdapter } from "./infrastructure/clock.adapter";
+import { NodeFileSystemAdapter } from "./infrastructure/file-system.adapter";
+import { GitHubApiAdapter } from "./infrastructure/github-api.adapter";
+import { MockGitHubAdapter } from "./infrastructure/github.adapter";
 
 export interface Ports {
   readonly github: GitHubDataPort;

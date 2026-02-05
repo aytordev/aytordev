@@ -1,6 +1,6 @@
 import type { Ports } from "../../adapters";
 import type { Config } from "../../config/schema";
-import type { TerminalState } from "../../domain/entities/terminal-state";
+import type { TerminalState } from "../../domain/entities/terminal-state"; // Moved to domain, so peer
 import { type Result, err, ok } from "../../shared/result";
 
 export class GenerateProfileUseCase {

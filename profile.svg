@@ -1,0 +1,329 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" width="800" height="400">
+  <title>Terminal Profile</title>
+  <desc>Developer terminal profile generated with terminal-profile</desc>
+  <style>
+    
+    
+    :root {
+      --bg: #1F1F28;
+      --bg-tmux: #2A2A37;
+      --text: #DCD7BA;
+      --text-muted: #727169;
+      --text-secondary: #C8C093;
+      --border: #2A2A37;
+      --selection: #223249;
+
+      /* Palette */
+      --green: #98BB6C;
+      --green-muted: #76946A;
+      --blue: #7E9CD8;
+      --violet: #957FB8;
+      --yellow: #FF9E3B;
+      --orange: #FFA066;
+      --red: #E82424;
+      --crystal: #658594;
+    }
+  
+
+    /* Base Styles */
+    .background {
+      fill: var(--bg);
+      stroke: var(--border);
+      stroke-width: 2px;
+    }
+
+    .terminal-text {
+      font-family: 'Monaspace Neon', 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 14px;
+      dominant-baseline: middle;
+    }
+
+    /* Animations */
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .cursor {
+      fill: var(--green);
+      animation: blink 1s step-end infinite;
+    }
+
+    /* tmux Status Bar */
+    .tmux__bg { fill: var(--bg-tmux); }
+    .tmux__left { fill: var(--text-muted); }
+    .tmux__center { fill: var(--yellow); }
+    .tmux__right { fill: var(--blue); }
+
+    /* Starship Prompt */
+    .prompt__dir { fill: var(--blue); font-weight: bold; }
+    .prompt__arrow { fill: var(--green); }
+    .prompt__git { fill: var(--violet); }
+    .prompt__node { fill: var(--green-muted); }
+    .prompt__nix { fill: var(--crystal); }
+    .prompt__time { fill: var(--text-muted); font-size: 12px; }
+    .prompt__indicator { fill: var(--green); }
+
+    /* Developer Info */
+    .dev__username { fill: var(--text); font-weight: bold; font-size: 16px; }
+    .dev__role { fill: var(--text-secondary); }
+    .dev__bio { fill: var(--text); }
+    .dev__location { fill: var(--text-muted); font-size: 12px; }
+
+    /* Tech Stack */
+    .stack__title { fill: var(--border); }
+    .stack__item { fill: var(--text); }
+
+    /* Recent Commits */
+    .commit__msg { fill: var(--text); }
+    .commit__time { fill: var(--text-muted); font-size: 12px; }
+    .commit__type--feat { fill: var(--green); }
+    .commit__type--fix { fill: var(--red); }
+    .commit__type--docs { fill: var(--blue); }
+    .commit__type--style { fill: var(--violet); }
+    .commit__type--refactor { fill: var(--orange); }
+    .commit__type--test { fill: var(--yellow); }
+    .commit__type--chore { fill: var(--text-muted); }
+
+    /* Streak */
+    .streak__count { fill: var(--orange); font-weight: bold; }
+
+    /* Footer */
+    .footer__text { fill: var(--text-muted); font-size: 10px; }
+  
+  </style>
+
+  <defs>
+<linearGradient id="skill-gradient-0" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7FB4CA" />
+      <stop offset="100%" stop-color="#957FB8" />
+    </linearGradient>
+<filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+</defs>
+
+  <!-- Background with Ghostty-like border -->
+  <rect width="100%" height="100%" class="background" rx="10" ry="10" />
+
+  <!-- Layers -->
+  <g id="tmux-bar" transform="translate(0, 0)">
+      <!-- Base Background -->
+      <rect width="100%" height="24" fill="#2A2A37" class="tmux__bg" />
+
+      <!-- Segments -->
+      
+    <rect x="0" y="0" width="30" height="24" fill="#16161D" />
+    <text x="15" y="13" fill="#727169" font-family="monospace" font-size="12" text-anchor="middle" dominant-baseline="middle" font-weight="bold">
+      0
+    </text>
+  
+
+    <rect x="30" y="0" width="72" height="24" fill="#2A2A37" />
+    <text x="66" y="13" fill="#DCD7BA" font-family="monospace" font-size="12" text-anchor="middle" dominant-baseline="middle" font-weight="bold">
+      1 zsh
+    </text>
+  
+
+    <rect x="672" y="0" width="128" height="24" fill="#6a9589" />
+    <text x="736" y="13" fill="#363646" font-family="monospace" font-size="12" text-anchor="middle" dominant-baseline="middle" font-weight="bold">
+      RAM 17GB/96 GB
+    </text>
+  
+
+    <rect x="600" y="0" width="72" height="24" fill="#DCA561" />
+    <text x="636" y="13" fill="#363646" font-family="monospace" font-size="12" text-anchor="middle" dominant-baseline="middle" font-weight="bold">
+      CPU 12%
+    </text>
+  
+
+    <rect x="512" y="0" width="88" height="24" fill="#938AA9" />
+    <text x="556" y="13" fill="#363646" font-family="monospace" font-size="12" text-anchor="middle" dominant-baseline="middle" font-weight="bold">
+      ! 1M main
+    </text>
+  
+    </g>
+<g id="greeting"><text x="10" y="50" class="terminal-text" fill="#DCD7BA" font-weight="bold">Working late, Aytor?</text></g>
+
+    <g id="prompt">
+      <text x="10" y="80" class="prompt__dir" fill="#7E9CD8" font-family="monospace" font-size="14" font-weight="bold">~/github/profile</text><text x="156" y="80" class="prompt__git" fill="#957FB8" font-family="monospace" font-size="14">on  main [clean]</text><text x="310.5" y="80" class="prompt__node" fill="#76946A" font-family="monospace" font-size="14">via ⬢ v24.13.0</text><text x="439.5" y="80" class="prompt__nix" fill="#658594" font-family="monospace" font-size="14">via ❄️ </text>
+      <text x="10" y="100" class="prompt__indicator" fill="#98BB6C" font-family="monospace" font-size="14" filter="url(#glow)">❯</text>
+
+      <!-- Optional blink cursor at end of line 2 -->
+      <rect x="25" y="90" width="8" height="16" class="cursor" fill="#98BB6C" />
+    </g>
+  
+<g id="streak" transform="translate(600, 80)">
+      <!-- Fire Emoji -->
+      <text x="0" y="0" class="streak__fire" font-size="24" filter="url(#glow)">🔥</text>
+
+      <!-- Streak Count -->
+      <text x="35" y="0" class="streak__count" fill="#FFA066" font-family="monospace" font-size="14" font-weight="bold" dominant-baseline="middle">
+        10 day streak
+      </text>
+    </g>
+<g id="content-area" transform="translate(0, 140)">
+      <g id="developer-info">
+      <!-- Username -->
+      <text x="0" y="0" class="dev__username" fill="#DCD7BA" font-family="monospace" font-size="16" font-weight="bold">@aytordev</text>
+
+      <!-- Role / Tagline -->
+      <text x="0" y="20" class="dev__role" fill="#C8C093" font-family="monospace" font-size="14">AI Engineer &amp; Systems Architect</text>
+
+      <!-- Location -->
+      <text x="0" y="40" class="dev__location" fill="#727169" font-family="monospace" font-size="12">📍 Madrid, Spain</text>
+    </g><g transform="translate(0, 0)"><g id="developer-info">
+      <!-- Username -->
+      <text x="0" y="0" class="dev__username" fill="#DCD7BA" font-family="monospace" font-size="16" font-weight="bold">@aytordev</text>
+
+      <!-- Role / Tagline -->
+      <text x="0" y="20" class="dev__role" fill="#C8C093" font-family="monospace" font-size="14">AI Engineer &amp; Systems Architect</text>
+
+      <!-- Location -->
+      <text x="0" y="40" class="dev__location" fill="#727169" font-family="monospace" font-size="12">📍 Madrid, Spain</text>
+    </g></g><g id="tech-stack" transform="translate(0, 80)">
+      
+      <text x="0" y="0" class="stack__title" fill="#FF9E3B" font-family="monospace" font-size="14" font-weight="bold">
+        Languages
+      </text>
+    <text x="15" y="24" class="stack__item" fill="#DCD7BA" font-family="monospace" font-size="12">- TypeScript</text><text x="15" y="44" class="stack__item" fill="#DCD7BA" font-family="monospace" font-size="12">- Rust</text><text x="15" y="64" class="stack__item" fill="#DCD7BA" font-family="monospace" font-size="12">- Nix</text>
+      <text x="0" y="94" class="stack__title" fill="#FF9E3B" font-family="monospace" font-size="14" font-weight="bold">
+        AI/ML
+      </text>
+    <text x="15" y="118" class="stack__item" fill="#DCD7BA" font-family="monospace" font-size="12">- PyTorch</text><text x="15" y="138" class="stack__item" fill="#DCD7BA" font-family="monospace" font-size="12">- LangChain</text>
+      <text x="0" y="168" class="stack__title" fill="#FF9E3B" font-family="monospace" font-size="14" font-weight="bold">
+        Infra
+      </text>
+    <text x="15" y="192" class="stack__item" fill="#DCD7BA" font-family="monospace" font-size="12">- Docker</text><text x="15" y="212" class="stack__item" fill="#DCD7BA" font-family="monospace" font-size="12">- Kubernetes</text>
+    </g><g transform="translate(0, 0)"><g id="developer-info">
+      <!-- Username -->
+      <text x="0" y="0" class="dev__username" fill="#DCD7BA" font-family="monospace" font-size="16" font-weight="bold">@aytordev</text>
+
+      <!-- Role / Tagline -->
+      <text x="0" y="20" class="dev__role" fill="#C8C093" font-family="monospace" font-size="14">AI Engineer &amp; Systems Architect</text>
+
+      <!-- Location -->
+      <text x="0" y="40" class="dev__location" fill="#727169" font-family="monospace" font-size="12">📍 Madrid, Spain</text>
+    </g></g><g id="tech-stack" transform="translate(0, 60)">
+      
+      <text x="0" y="0" class="stack__title" fill="#FF9E3B" font-family="monospace" font-size="14" font-weight="bold">
+        Languages
+      </text>
+    <text x="15" y="24" class="stack__item" fill="#DCD7BA" font-family="monospace" font-size="12">- TypeScript</text><text x="15" y="44" class="stack__item" fill="#DCD7BA" font-family="monospace" font-size="12">- Rust</text><text x="15" y="64" class="stack__item" fill="#DCD7BA" font-family="monospace" font-size="12">- Nix</text>
+      <text x="0" y="94" class="stack__title" fill="#FF9E3B" font-family="monospace" font-size="14" font-weight="bold">
+        AI/ML
+      </text>
+    <text x="15" y="118" class="stack__item" fill="#DCD7BA" font-family="monospace" font-size="12">- PyTorch</text><text x="15" y="138" class="stack__item" fill="#DCD7BA" font-family="monospace" font-size="12">- LangChain</text>
+      <text x="0" y="168" class="stack__title" fill="#FF9E3B" font-family="monospace" font-size="14" font-weight="bold">
+        Infra
+      </text>
+    <text x="15" y="192" class="stack__item" fill="#DCD7BA" font-family="monospace" font-size="12">- Docker</text><text x="15" y="212" class="stack__item" fill="#DCD7BA" font-family="monospace" font-size="12">- Kubernetes</text>
+    </g>
+    <defs>
+      
+    <linearGradient id="lang-grad-0" x1="0%" x2="100%">
+      <stop offset="0%" stop-color="#7FB4CA"/>
+      <stop offset="100%" stop-color="#3178C6"/>
+    </linearGradient>
+  
+
+    <linearGradient id="lang-grad-1" x1="0%" x2="100%">
+      <stop offset="0%" stop-color="#7FB4CA"/>
+      <stop offset="100%" stop-color="#DEA584"/>
+    </linearGradient>
+  
+    </defs>
+    <g id="language-stats" transform="translate(16, 140)">
+      <text fill="#727169" font-family="monospace" font-size="11">
+        Code distribution (public repos):
+      </text>
+      
+      <g transform="translate(0, 24)">
+        <text fill="#DCD7BA" font-family="monospace" font-size="12" dominant-baseline="middle" y="7">
+          TypeScript
+        </text>
+        <rect x="100" y="0" width="120" height="14" fill="url(#lang-grad-0)" rx="2"/>
+        <text x="266" fill="#727169" font-family="monospace" font-size="11" dominant-baseline="middle" y="7">
+          80%
+        </text>
+      </g>
+    
+
+      <g transform="translate(0, 48)">
+        <text fill="#DCD7BA" font-family="monospace" font-size="12" dominant-baseline="middle" y="7">
+          Rust
+        </text>
+        <rect x="100" y="0" width="30" height="14" fill="url(#lang-grad-1)" rx="2"/>
+        <text x="266" fill="#727169" font-family="monospace" font-size="11" dominant-baseline="middle" y="7">
+          20%
+        </text>
+      </g>
+    
+    </g>
+  <g id="recent-commits" transform="translate(400, 60)">
+      
+    <text x="0" y="0" class="stack__title" fill="#FF9E3B" font-family="monospace" font-size="14" font-weight="bold">
+      Recent Commits
+    </text>
+  
+      <g class="commit">
+        <circle cx="5" cy="20" r="3" class="commit__type--feat" fill="#98BB6C" />
+        <text x="15" y="24" class="commit__msg" fill="#DCD7BA" font-family="monospace" font-size="12">
+          feat: mock commit
+        </text>
+        <text x="300" y="24" class="commit__time" fill="#727169" font-family="monospace" font-size="12" text-anchor="end">
+          (1h ago)
+        </text>
+      </g>
+    
+    </g><g id="engagement" transform="translate(0, 200)">
+      
+      <text x="0" y="0" fill="#DCD7BA" font-size="14" font-family="monospace">
+        📚 Learning Journey
+      </text>
+      <text x="20" y="24" fill="#DCD7BA" font-size="13" font-family="monospace">
+        Advanced Agent Patterns
+      </text>
+    
+      <text x="0" y="58" fill="#DCD7BA" font-size="14" font-family="monospace">
+        🎯 Today's Focus
+      </text>
+      <text x="20" y="82" fill="#DCD7BA" font-size="13" font-family="monospace">
+        Building terminal-profile generator
+      </text>
+    
+      <text x="0" y="116" fill="#DCD7BA" font-size="14" font-family="monospace">
+        💬 Daily Quote
+      </text>
+      <text x="20" y="140" fill="#727169" font-size="13" font-family="monospace" font-style="italic">
+        "Keep building!"
+      </text>
+    
+    </g><g id="contact" transform="translate(0, 280)">
+      
+        <text x="0" y="0" fill="#727169" font-size="12" font-family="monospace">
+          gh GitHub:
+        </text>
+        <text x="100" y="0" fill="#DCD7BA" font-size="12" font-family="monospace">
+          @aytordev
+        </text>
+      
+        <text x="0" y="20" fill="#727169" font-size="12" font-family="monospace">
+          web Web:
+        </text>
+        <text x="100" y="20" fill="#DCD7BA" font-size="12" font-family="monospace">
+          aytor.dev
+        </text>
+      
+    </g>
+    </g>
+<g id="footer">
+      <text x="790" y="390" text-anchor="end" fill="#727169" font-size="10" font-family="monospace">
+        Powered by Terminal Profile
+      </text>
+    </g>
+</svg>
