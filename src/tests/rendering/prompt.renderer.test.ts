@@ -42,7 +42,7 @@ const mockTheme: Theme = {
 
     bgTuft: "#16161D",
   },
-};
+} as unknown as Theme;
 
 describe("Prompt Renderer (Redesign)", () => {
   const prompt = {
