@@ -1,8 +1,8 @@
 import type { Ports } from "../../adapters";
 import type { Config } from "../../config/schema";
 import type { TerminalState } from "../../domain/entities/terminal-state";
-import type { GenerateProfileUseCase } from "../../domain/use-cases/generate-profile";
 import { type Result, map } from "../../shared/result";
+
 import { createGenerateProfileUseCase } from "./generate-profile";
 
 // Share Card Use Case implies generating a profile but with overrides.
@@ -11,7 +11,7 @@ import { createGenerateProfileUseCase } from "./generate-profile";
 
 export const createGenerateShareCardUseCase = (
   ports: Ports,
-): GenerateProfileUseCase => {
+): GenerateShareCardUseCase => {
   const generateBase = createGenerateProfileUseCase(ports);
 
   return async (config: Config): Promise<Result<TerminalState, Error>> => {
