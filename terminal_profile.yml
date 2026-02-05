@@ -1,0 +1,69 @@
+version: 1
+owner:
+  username: "aytordev"
+  name: "Aytor"
+  title: "AI Engineer & Systems Architect"
+  location: "Madrid, Spain"
+  timezone: "Europe/Madrid"
+
+theme: "kanagawa-wave"
+
+dimensions:
+  width: 800
+  height: 400
+
+content:
+  developer_info:
+    enabled: true
+    tagline: "Building autonomous agents"
+
+  tech_stack:
+    enabled: true
+    categories:
+      - name: "Languages"
+        items: ["TypeScript", "Rust", "Nix"]
+      - name: "AI/ML"
+        items: ["PyTorch", "LangChain"]
+      - name: "Infra"
+        items: ["Docker", "Kubernetes"]
+
+  commits:
+    enabled: true
+    max_count: 5
+
+  streak:
+    enabled: true
+
+  learning:
+    enabled: true
+    current: "Advanced Agent Patterns"
+
+  current_focus:
+    enabled: true
+    text: "Building terminal-profile generator"
+
+  contact:
+    enabled: true
+    items:
+      - label: "GitHub"
+        value: "@aytordev"
+        icon: "gh"
+      - label: "Web"
+        value: "aytor.dev"
+        icon: "web"
+
+  extra_lines: []
+
+growth:
+  powered_by:
+    enabled: true
+    text: "Powered by Terminal Profile"
+
+effects:
+  cursor_blink: true
+  gradient_bars: true
+  subtle_glow: true
+
+github:
+  max_repos: 10
+  include_private: false
