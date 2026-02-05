@@ -126,7 +126,8 @@ export const renderPrompt = (
       ${line2Svg}
 
       <!-- Optional blink cursor at end of line 2 -->
-      <rect x="25" y="${line2Y - 10}" width="8" height="16" class="cursor" fill="${theme.colors.springGreen}" />
+      <rect x="10" y="${line2Y - 10}" width="8" height="16" class="cursor" fill="${theme.colors.springGreen}" />
+
     </g>
   `;
 };
