@@ -5,7 +5,7 @@ export const renderPrompt = (
   prompt: StarshipPrompt,
   theme: Theme,
   y: number,
-  width: number = 800, // Default for backward compatibility
+  width: number = 800,
 ): string => {
   const fontSize = 14;
   const lineHeight = 20;
@@ -109,7 +109,8 @@ export const renderPrompt = (
 
   // Line 2: Indicator
   const line2Y = y + lineHeight;
-  const line2Svg = `<text x="10" y="${line2Y}" class="prompt__indicator" fill="${theme.colors.springGreen}" font-family="monospace" font-size="${fontSize}" filter="url(#glow)">❯</text>`;
+  // User requested to remove the symbol (❯)
+  const line2Svg = "";
 
   return `
     <g id="prompt">
