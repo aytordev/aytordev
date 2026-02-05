@@ -56,7 +56,7 @@ describe("Terminal Renderer Orchestrator", () => {
       careerTimeline: [],
 
       contactInfo: [],
-      extraLines: [],
+      extraLines: ["Extra Line 1", "Extra Line 2"],
     },
   };
 
@@ -72,5 +72,8 @@ describe("Terminal Renderer Orchestrator", () => {
     expect(svg).toContain('id="developer-info"');
     // Streak presence
     expect(svg).toContain('id="streak"');
+    // F32 Extra Lines
+    expect(svg).toContain("Extra Line 1");
+    expect(svg).toContain("Extra Line 2");
   });
 });

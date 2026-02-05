@@ -248,6 +248,16 @@ export class TerminalRenderer {
       280 + contentOffset,
     );
 
+    // 4.7 Extra Lines (F32)
+    // Placed below Contact info. Contact (280) + 4 items (~80) = 360.
+    if (state.content.extraLines && state.content.extraLines.length > 0) {
+      const extraY = 360 + contentOffset;
+      const extraLineHeight = 20;
+      state.content.extraLines.forEach((line, i) => {
+        innerContent += `<text x="0" y="${extraY + i * extraLineHeight}" class="terminal-text" fill="${theme.colors.text}" font-family="monospace" font-size="14">${line}</text>`;
+      });
+    }
+
     builder.addLayer(renderContentArea(contentStartY, innerContent));
 
     // 5. Footer
