@@ -44,4 +44,9 @@ describe("Recent Commits Renderer", () => {
     const svg = renderRecentCommits(commits, KanagawaTheme);
     expect(svg).toContain("Recent Commits");
   });
+
+  it("should use dynamic coordinates", () => {
+    const svg = renderRecentCommits(commits, KanagawaTheme, 100, 200);
+    expect(svg).toContain('transform="translate(100, 200)"');
+  });
 });

@@ -5,6 +5,7 @@ import { renderContentArea } from "./layers/content-area.renderer";
 import { renderDeveloperInfo } from "./layers/developer-info.renderer";
 import { renderEngagement } from "./layers/engagement.renderer";
 import { renderFooter } from "./layers/footer.renderer";
+import { renderLanguageStats } from "./layers/language-stats.renderer";
 import { renderPrompt } from "./layers/prompt.renderer";
 import { renderRecentCommits } from "./layers/recent-commits.renderer";
 import { renderStreak } from "./layers/streak.renderer";
@@ -71,15 +72,28 @@ export class TerminalRenderer {
     // 4.1 Developer Info
     innerContent += renderDeveloperInfo(state.content.developerInfo, theme);
 
-    // 4.2 Tech Stack (Offset by prev height approx 80px)
-    // TechStack itself has hardcoded translate(0, 60).
-    // If we want it relative to dev info, we rely on that.
-    innerContent += renderTechStack(state.content.techStack, theme);
+    // 4.2 Tech Stack (Offset by prev height approx 60px)
+    // Previously hardcoded translate(0, 60).
+    innerContent += renderTechStack(state.content.techStack, theme, 0, 60);
 
-    // 4.3 Recent Commits
-    innerContent += renderRecentCommits(state.content.recentCommits, theme);
+    // 4.3 Language Stats (F10 + F41)
+    // Position below Tech Stack (60 + ~80 height = 140)
+    innerContent += renderLanguageStats(
+      state.content.languageStats,
+      theme,
+      140,
+    );
 
-    // 4.4 Engagement (Lower Left)
+    // 4.4 Recent Commits
+    // Previously hardcoded translate(400, 60).
+    innerContent += renderRecentCommits(
+      state.content.recentCommits,
+      theme,
+      400,
+      60,
+    );
+
+    // 4.5 Engagement (Lower Left)
     innerContent += renderEngagement(state.content, theme, 200);
 
     // 4.5 Contact

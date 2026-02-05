@@ -22,4 +22,13 @@ describe("Engagement Renderer", () => {
     expect(svg).toContain("Daily Quote");
     expect(svg).toContain("Hello world");
   });
+
+  it("should render today's focus", () => {
+    const svg = renderEngagement(
+      { todayFocus: "Shipping to prod" },
+      KanagawaTheme,
+    );
+    expect(svg).toContain("Today's Focus");
+    expect(svg).toContain("Shipping to prod");
+  });
 });

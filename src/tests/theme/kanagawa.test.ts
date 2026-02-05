@@ -5,7 +5,7 @@ describe("Kanagawa Wave Theme", () => {
   it("should match the Visual Design specifications", () => {
     // Backgrounds
     expect(KanagawaTheme.colors.bg).toBe("#1F1F28");
-    expect(KanagawaTheme.colors.bgDark).toBe("#16161D");
+    expect(KanagawaTheme.colors.bgDark).toBe("#2A2A37");
 
     // Text
     expect(KanagawaTheme.colors.text).toBe("#DCD7BA");

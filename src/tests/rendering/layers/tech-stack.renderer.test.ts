@@ -37,4 +37,9 @@ describe("Tech Stack Renderer", () => {
     const svg = renderTechStack(emptyStack, KanagawaTheme);
     expect(svg).not.toContain('class="stack__title"');
   });
+
+  it("should use dynamic coordinates", () => {
+    const svg = renderTechStack(techStack, KanagawaTheme, 100, 200);
+    expect(svg).toContain('transform="translate(100, 200)"');
+  });
 });

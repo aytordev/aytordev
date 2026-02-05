@@ -33,6 +33,19 @@ export const renderEngagement = (
     currentY += lineHeight * 2 + 10;
   }
 
+  // Today Focus
+  if (content.todayFocus) {
+    elements += `
+      <text x="0" y="${currentY}" fill="${theme.colors.fujiWhite}" font-size="14" font-family="monospace">
+        🎯 Today's Focus
+      </text>
+      <text x="20" y="${currentY + lineHeight}" fill="${theme.colors.text}" font-size="13" font-family="monospace">
+        ${sanitizeForSvg(content.todayFocus)}
+      </text>
+    `;
+    currentY += lineHeight * 2 + 10;
+  }
+
   // Daily Quote
   if (content.dailyQuote) {
     elements += `
