@@ -49,7 +49,7 @@ export const createGenerateProfileUseCase = (ports: Ports): GenerateProfileUseCa
       const state: TerminalState = {
         themeName: config.theme,
         dimensions: config.dimensions ?? { width: 800, height: 400 },
-        timestamp: new Date(),
+        timestamp: ports.clock.getCurrentTime(config.owner.timezone),
         timeOfDay: ports.clock.getTimeOfDay(config.owner.timezone),
         greeting: getGreeting(config.owner.name, config.owner.timezone),
         owner: config.owner,
@@ -78,7 +78,10 @@ export const createGenerateProfileUseCase = (ports: Ports): GenerateProfileUseCa
           nodeVersion: process.version,
 
           nixIndicator: true,
-          time: ports.clock.formatTime(new Date(), config.owner.timezone),
+          time: ports.clock.formatTime(
+            ports.clock.getCurrentTime(config.owner.timezone),
+            config.owner.timezone,
+          ),
         },
         easterEgg: getEasterEgg(timestamp) || undefined,
         content: {
