@@ -39,6 +39,19 @@ const mockPorts: Ports = {
     exists: vi.fn(),
     writeFile: vi.fn(),
   },
+  environment: {
+    nodeVersion: vi.fn().mockReturnValue("v24.0.0"),
+    get: vi.fn().mockReturnValue(undefined),
+    cwd: vi.fn().mockReturnValue("/test/dir"),
+  },
+  logger: {
+    log: vi.fn(),
+    error: vi.fn(),
+  },
+  process: {
+    exit: vi.fn(),
+    argv: [],
+  },
 };
 
 describe("GenerateShareCardUseCase", () => {
