@@ -10,34 +10,41 @@ export const renderTechStack = (
 ): string => {
   const titleHeight = 24;
   const itemHeight = 20;
-  let currentY = 0;
-  let elements = "";
 
-  // Title for the whole section (optional, or per category?)
-  // Requirement says "Tech Stack" section, often integrated in UI
-  // Let's iterate categories
+  // Immutable transformation using reduce
+  interface CategoryAccumulator {
+    readonly y: number;
+    readonly elements: readonly string[];
+  }
 
-  stack.categories.forEach((category) => {
-    // Category Title
-    elements += `
-      <text x="0" y="${currentY}" class="stack__title" fill="${theme.colors.roninYellow}" font-family="monospace" font-size="14" font-weight="bold">
+  const result = stack.categories.reduce<CategoryAccumulator>(
+    (acc, category) => {
+      // Category Title
+      const titleSvg = `
+      <text x="0" y="${acc.y}" class="stack__title" fill="${theme.colors.roninYellow}" font-family="monospace" font-size="14" font-weight="bold">
         ${sanitizeForSvg(category.name)}
       </text>
     `;
-    currentY += titleHeight;
 
-    // Items (simple list for now, could be grid)
-    const storedItems = category.items
-      .map((item, i) => {
-        // Basic layout: inline or list?
-        // "list" style for clean terminal look
-        return `<text x="15" y="${currentY + i * itemHeight}" class="stack__item" fill="${theme.colors.text}" font-family="monospace" font-size="12">- ${sanitizeForSvg(item)}</text>`;
-      })
-      .join("");
+      const itemsY = acc.y + titleHeight;
 
-    elements += storedItems;
-    currentY += category.items.length * itemHeight + 10; // Extra spacing after category
-  });
+      // Items
+      const itemsSvg = category.items.map((item, i) => {
+        const itemY = itemsY + i * itemHeight;
+        return `<text x="15" y="${itemY}" class="stack__item" fill="${theme.colors.text}" font-family="monospace" font-size="12">- ${sanitizeForSvg(item)}</text>`;
+      });
+
+      const newY = itemsY + category.items.length * itemHeight + 10; // Extra spacing after category
+
+      return {
+        y: newY,
+        elements: [...acc.elements, titleSvg, ...itemsSvg],
+      };
+    },
+    { y: 0, elements: [] },
+  );
+
+  const elements = result.elements.join("\n");
 
   return `
     <g id="tech-stack" transform="translate(${x}, ${y})">

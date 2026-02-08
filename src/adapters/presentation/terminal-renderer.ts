@@ -40,32 +40,52 @@ export const renderTerminal = (state: TerminalState): string => {
   const promptY = 80;
   const contentStartY = 140;
 
-  let contentOffset = 0;
-  let asciiSvg = "";
-  if (state.content.asciiArt) {
-    const artLines = state.content.asciiArt.split("\n");
-    const artLineHeight = 14;
-    artLines.forEach((line, i) => {
-      asciiSvg += `<text x="0" y="${i * artLineHeight}" class="terminal-text" fill="${theme.colors.dragonBlue}" font-family="monospace" font-size="12" xml:space="preserve">${line}</text>`;
-    });
-    contentOffset = artLines.length * artLineHeight + 20;
-  }
+  // ASCII Art rendering - immutable
+  const asciiArtResult = state.content.asciiArt
+    ? (() => {
+        const artLines = state.content.asciiArt.split("\n");
+        const artLineHeight = 14;
+        const svgLines = artLines.map(
+          (line, i) =>
+            `<text x="0" y="${i * artLineHeight}" class="terminal-text" fill="${theme.colors.dragonBlue}" font-family="monospace" font-size="12" xml:space="preserve">${line}</text>`,
+        );
+        return {
+          svg: svgLines.join("\n"),
+          offset: artLines.length * artLineHeight + 20,
+        };
+      })()
+    : { svg: "", offset: 0 };
 
-  let innerContent = asciiSvg;
-  innerContent += `<g transform="translate(0, ${contentOffset})">${renderDeveloperInfo(state.content.developerInfo, theme)}</g>`;
-  innerContent += renderTechStack(state.content.techStack, theme, 0, 60 + contentOffset);
-  innerContent += renderLanguageStats(state.content.languageStats, theme, 140 + contentOffset);
-  innerContent += renderRecentCommits(state.content.recentCommits, theme, 400, 60 + contentOffset);
-  innerContent += renderEngagement(state.content, theme, 200 + contentOffset);
-  innerContent += renderContact(state.content.contactInfo, theme, 280 + contentOffset);
+  const contentOffset = asciiArtResult.offset;
 
-  if (state.content.extraLines && state.content.extraLines.length > 0) {
-    const extraY = 360 + contentOffset;
-    const extraLineHeight = 20;
-    state.content.extraLines.forEach((line, i) => {
-      innerContent += `<text x="0" y="${extraY + i * extraLineHeight}" class="terminal-text" fill="${theme.colors.text}" font-family="monospace" font-size="14">${line}</text>`;
-    });
-  }
+  // Extra lines rendering - immutable
+  const extraLinesSvg =
+    state.content.extraLines && state.content.extraLines.length > 0
+      ? (() => {
+          const extraY = 360 + contentOffset;
+          const extraLineHeight = 20;
+          return state.content.extraLines
+            .map(
+              (line, i) =>
+                `<text x="0" y="${extraY + i * extraLineHeight}" class="terminal-text" fill="${theme.colors.text}" font-family="monospace" font-size="14">${line}</text>`,
+            )
+            .join("\n");
+        })()
+      : "";
+
+  // Build inner content immutably
+  const innerContent = [
+    asciiArtResult.svg,
+    `<g transform="translate(0, ${contentOffset})">${renderDeveloperInfo(state.content.developerInfo, theme)}</g>`,
+    renderTechStack(state.content.techStack, theme, 0, 60 + contentOffset),
+    renderLanguageStats(state.content.languageStats, theme, 140 + contentOffset),
+    renderRecentCommits(state.content.recentCommits, theme, 400, 60 + contentOffset),
+    renderEngagement(state.content, theme, 200 + contentOffset),
+    renderContact(state.content.contactInfo, theme, 280 + contentOffset),
+    extraLinesSvg,
+  ]
+    .filter((content) => content.length > 0)
+    .join("\n");
 
   // Use functional composition with pipe
   const finalState = pipe(
