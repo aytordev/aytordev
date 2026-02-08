@@ -26,8 +26,10 @@ export const createGenerateShareCardUseCase = (ports: Ports): GenerateShareCardU
 
     return map(result, (state) => ({
       ...state,
-      renderOptions: {
-        disableAnimations: true,
+      animation: {
+        enabled: false,
+        speed: 1,
+        initialDelay: 0,
       },
       // Ensure dimensions are enforced if generateBase didn't pick up correctly (it should have)
       dimensions: { width: 1200, height: 630 },

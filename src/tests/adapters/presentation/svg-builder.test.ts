@@ -8,10 +8,11 @@ import {
   sanitize,
 } from "../../../adapters/presentation/svg-builder";
 import { KanagawaTheme } from "../../../theme/kanagawa";
+import { TEST_DIMENSIONS } from "../../__support__/constants";
 
 describe("SvgBuilder", () => {
   it("should create a basic SVG structure", () => {
-    const state = createSvgBuilder(KanagawaTheme, { width: 800, height: 400 });
+    const state = createSvgBuilder(KanagawaTheme, TEST_DIMENSIONS.DEFAULT);
     const svg = build(state);
 
     expect(svg).toContain('<svg xmlns="http://www.w3.org/2000/svg"');
@@ -20,7 +21,7 @@ describe("SvgBuilder", () => {
   });
 
   it("should include styles", () => {
-    const state = createSvgBuilder(KanagawaTheme, { width: 800, height: 400 });
+    const state = createSvgBuilder(KanagawaTheme, TEST_DIMENSIONS.DEFAULT);
     const svg = build(state);
 
     expect(svg).toContain("<style>");
@@ -28,7 +29,7 @@ describe("SvgBuilder", () => {
   });
 
   it("should support accessibility tags", () => {
-    const state = createSvgBuilder(KanagawaTheme, { width: 800, height: 400 });
+    const state = createSvgBuilder(KanagawaTheme, TEST_DIMENSIONS.DEFAULT);
     const svg = build(state);
 
     expect(svg).toContain("<title>Terminal Profile</title>");

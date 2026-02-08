@@ -29,29 +29,11 @@ export const createGenerateProfileUseCase = (ports: Ports): GenerateProfileUseCa
       const tmuxSessionName = config.tmux?.session_name ?? "dev";
       const tmuxWindows = config.tmux?.windows ?? ["zsh", "nvim"];
 
-      const getGreeting = (name: string, timezone: string): string => {
-        const timeOfDay = ports.clock.getTimeOfDay(timezone);
-        const firstName = name.split(" ")[0];
-        switch (timeOfDay) {
-          case "morning":
-            return `Good morning, ${firstName}`;
-          case "afternoon":
-            return `Good afternoon, ${firstName}`;
-          case "evening":
-            return `Good evening, ${firstName}`;
-          case "night":
-            return `Working late, ${firstName}?`;
-          default:
-            return `Hello, ${firstName}`;
-        }
-      };
-
       const state: TerminalState = {
         themeName: config.theme,
         dimensions: config.dimensions ?? { width: 800, height: 400 },
         timestamp: ports.clock.getCurrentTime(config.owner.timezone),
         timeOfDay: ports.clock.getTimeOfDay(config.owner.timezone),
-        greeting: getGreeting(config.owner.name, config.owner.timezone),
         owner: config.owner,
         session: {
           sessionName: tmuxSessionName,
@@ -126,6 +108,7 @@ export const createGenerateProfileUseCase = (ports: Ports): GenerateProfileUseCa
             : null,
           asciiArt: config.content?.ascii_art,
         },
+        animation: config.animation,
       };
 
       return ok(state);

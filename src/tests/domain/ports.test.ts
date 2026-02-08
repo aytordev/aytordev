@@ -49,6 +49,7 @@ describe("Domain Ports", () => {
     const mockFs: FileSystemPort = {
       exists: vi.fn().mockResolvedValue(true),
       readFile: vi.fn().mockResolvedValue("content"),
+      writeFile: vi.fn().mockResolvedValue(undefined),
     };
 
     expect(await mockFs.exists("file.txt")).toBe(true);

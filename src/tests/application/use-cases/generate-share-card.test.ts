@@ -39,6 +39,19 @@ const mockPorts: Ports = {
     exists: vi.fn(),
     writeFile: vi.fn(),
   },
+  environment: {
+    nodeVersion: vi.fn().mockReturnValue("v24.0.0"),
+    get: vi.fn().mockReturnValue(undefined),
+    cwd: vi.fn().mockReturnValue("/test/dir"),
+  },
+  logger: {
+    log: vi.fn(),
+    error: vi.fn(),
+  },
+  process: {
+    exit: vi.fn(),
+    argv: [],
+  },
 };
 
 describe("GenerateShareCardUseCase", () => {
@@ -49,7 +62,7 @@ describe("GenerateShareCardUseCase", () => {
     expect(result.ok).toBe(true);
     if (result.ok) {
       expect(result.value.dimensions).toEqual({ width: 1200, height: 630 });
-      expect(result.value.renderOptions?.disableAnimations).toBe(true);
+      expect(result.value.animation?.enabled).toBe(false);
     }
   });
 });

@@ -5,7 +5,6 @@ export const mockTerminalState: TerminalState = {
   dimensions: { width: 800, height: 600 },
   timestamp: new Date("2024-02-01T12:00:00Z"),
   timeOfDay: "afternoon",
-  greeting: "Hello, Developer",
   owner: {
     name: "Test User",
     username: "testuser",

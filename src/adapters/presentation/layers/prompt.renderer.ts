@@ -2,19 +2,45 @@ import { sanitizeForSvg } from "../../../shared/sanitize";
 import type { StarshipPrompt } from "../../../domain/entities/starship-prompt";
 import type { Theme } from "../../../theme/types";
 
-export const renderPrompt = (
+/**
+ * Configuration for prompt rendering
+ */
+interface PromptRenderConfig {
+  readonly fontSize: number;
+  readonly initialLeftX: number;
+  readonly rightX: number;
+  readonly y: number;
+}
+
+/**
+ * Result of rendering left side of prompt
+ */
+interface LeftSideResult {
+  readonly svg: string;
+}
+
+/**
+ * Result of rendering right side of prompt
+ */
+interface RightSideResult {
+  readonly svg: string;
+}
+
+/**
+ * Renders the left side of the prompt (directory, arrow, git info).
+ * Pure function - no side effects.
+ *
+ * @param prompt - Starship prompt data
+ * @param theme - Theme configuration
+ * @param config - Rendering configuration
+ * @returns SVG string for left side elements
+ */
+export const renderPromptLeftSide = (
   prompt: StarshipPrompt,
   theme: Theme,
-  y: number,
-  width: number = 800,
-): string => {
-  const fontSize = 14;
-  const lineHeight = 20;
-
-  const initialLeftX = 10;
-  const rightX = width - 20; // Padding right
-
-  // --- LEFT SIDE ---
+  config: PromptRenderConfig,
+): LeftSideResult => {
+  const { fontSize, initialLeftX, y } = config;
 
   // 1. Directory (.../aytordev)
   const dirText = prompt.directory;
@@ -37,7 +63,27 @@ export const renderPrompt = (
       })()
     : "";
 
-  // --- RIGHT SIDE ---
+  return {
+    svg: `${dirSvg}\n${arrowSvg}\n${gitSvg}`,
+  };
+};
+
+/**
+ * Renders the right side of the prompt (time, nix, node, git stats).
+ * Pure function - no side effects.
+ *
+ * @param prompt - Starship prompt data
+ * @param theme - Theme configuration
+ * @param config - Rendering configuration
+ * @returns SVG string for right side elements
+ */
+export const renderPromptRightSide = (
+  prompt: StarshipPrompt,
+  theme: Theme,
+  config: PromptRenderConfig,
+): RightSideResult => {
+  const { fontSize, rightX, y } = config;
+
   // Pure function to render right item with explicit x position
   const renderRightItem = (
     x: number,
@@ -114,7 +160,43 @@ export const renderPrompt = (
     { x: rightX, items: [] },
   );
 
-  const rightSvg = rightResult.items.join("\n");
+  return {
+    svg: rightResult.items.join("\n"),
+  };
+};
+
+/**
+ * Renders a complete Starship-style prompt with both left and right sides.
+ * Pure function - composes smaller pure functions.
+ *
+ * @param prompt - Starship prompt data
+ * @param theme - Theme configuration
+ * @param y - Y position for prompt baseline
+ * @param width - Total width for prompt (default 800)
+ * @returns Complete SVG string with prompt elements
+ */
+export const renderPrompt = (
+  prompt: StarshipPrompt,
+  theme: Theme,
+  y: number,
+  width: number = 800,
+): string => {
+  const fontSize = 14;
+  const lineHeight = 20;
+
+  const initialLeftX = 10;
+  const rightX = width - 20; // Padding right
+
+  const config: PromptRenderConfig = {
+    fontSize,
+    initialLeftX,
+    rightX,
+    y,
+  };
+
+  // Compose left and right sides using pure functions
+  const leftSide = renderPromptLeftSide(prompt, theme, config);
+  const rightSide = renderPromptRightSide(prompt, theme, config);
 
   // Line 2: Indicator
   const line2Y = y + lineHeight;
@@ -124,12 +206,10 @@ export const renderPrompt = (
   return `
     <g id="prompt">
       <!-- Left -->
-      ${dirSvg}
-      ${arrowSvg}
-      ${gitSvg}
+      ${leftSide.svg}
 
       <!-- Right -->
-      ${rightSvg}
+      ${rightSide.svg}
 
       <!-- Line 2 -->
       ${line2Svg}
