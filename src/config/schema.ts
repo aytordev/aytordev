@@ -126,6 +126,14 @@ export const GitHubSchema = z.object({
   include_private: z.boolean().default(false),
 });
 
+export const AnimationSchema = z
+  .object({
+    enabled: z.boolean().default(false),
+    speed: z.number().min(0.1).max(5).default(1),
+    initialDelay: z.number().min(0).max(10).default(0.5),
+  })
+  .optional();
+
 export const ConfigSchema = z
   .object({
     version: z.literal(1),
@@ -138,6 +146,7 @@ export const ConfigSchema = z
     growth: GrowthSchema.optional(),
     effects: EffectsSchema.optional(),
     github: GitHubSchema.optional(),
+    animation: AnimationSchema,
   })
   .strict();
 
@@ -151,3 +160,4 @@ export type Content = z.infer<typeof ContentSchema>;
 export type Growth = z.infer<typeof GrowthSchema>;
 export type Effects = z.infer<typeof EffectsSchema>;
 export type GitHub = z.infer<typeof GitHubSchema>;
+export type Animation = z.infer<typeof AnimationSchema>;
