@@ -25,8 +25,68 @@ export const generateVariables = (theme: Theme): string => {
   `;
 };
 
-export const generateCss = (theme: Theme): string => {
+/**
+ * Generates CSS animation styles for terminal session animations.
+ * Pure function - calculates timing based on speed multiplier.
+ *
+ * @param speed - Animation speed multiplier (0.5 = slow, 1 = normal, 2 = fast)
+ * @returns CSS string with animation keyframes and classes
+ */
+export const generateAnimationCss = (speed: number): string => {
+  // Round to avoid floating point precision issues (e.g., 0.3 / 0.1 = 2.9999999999999996)
+  const typingDuration = Math.round((2 / speed) * 100) / 100;
+  const fadeDuration = Math.round((0.3 / speed) * 100) / 100;
+
+  return `
+    /* Animation Variables */
+    :root {
+      --animation-speed: ${speed};
+      --typing-duration: ${typingDuration}s;
+      --fade-duration: ${fadeDuration}s;
+    }
+
+    /* Typewriter Effect */
+    @keyframes typewriter {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    /* Fade In Effect */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Command Line Styling */
+    .command-line {
+      overflow: hidden;
+      white-space: nowrap;
+      width: 0;
+      display: inline-block;
+      font-family: 'Monaspace Neon', 'JetBrains Mono', monospace;
+      font-size: 14px;
+    }
+
+    .command-line.animate {
+      animation: typewriter var(--typing-duration) steps(40) forwards;
+    }
+
+    /* Output Styling */
+    .command-output {
+      opacity: 0;
+    }
+
+    .command-output.animate {
+      animation: fadeIn var(--fade-duration) ease-out forwards;
+    }
+  `;
+};
+
+export const generateCss = (theme: Theme, animationSpeed?: number): string => {
   const variables = generateVariables(theme);
+  const animationStyles = animationSpeed
+    ? generateAnimationCss(animationSpeed)
+    : "";
 
   return `
     ${variables}
@@ -96,5 +156,7 @@ export const generateCss = (theme: Theme): string => {
 
     /* Footer */
     .footer__text { fill: var(--text-muted); font-size: 10px; }
+
+    ${animationStyles}
   `;
 };
