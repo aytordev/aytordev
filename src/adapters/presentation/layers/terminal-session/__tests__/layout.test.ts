@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
+import { createMockTheme } from "../../../../../tests/mocks/theme";
 import { calculateLayout } from "../layout";
 import type { AnimatedCommand, AnimationTiming } from "../types";
-import { createMockTheme } from "../../../../../tests/mocks/theme";
 
 const mockTiming: AnimationTiming = {
   typingDuration: 2,
@@ -35,10 +35,7 @@ describe("calculateLayout", () => {
   });
 
   it("should calculate timings for all commands", () => {
-    const commands: ReadonlyArray<AnimatedCommand> = [
-      createMockCommand(50),
-      createMockCommand(60),
-    ];
+    const commands: ReadonlyArray<AnimatedCommand> = [createMockCommand(50), createMockCommand(60)];
 
     const layout = calculateLayout(commands, 300, mockTiming);
 
@@ -49,10 +46,7 @@ describe("calculateLayout", () => {
   });
 
   it("should not create scroll points when content fits viewport", () => {
-    const commands: ReadonlyArray<AnimatedCommand> = [
-      createMockCommand(50),
-      createMockCommand(50),
-    ];
+    const commands: ReadonlyArray<AnimatedCommand> = [createMockCommand(50), createMockCommand(50)];
 
     const layout = calculateLayout(commands, 500, mockTiming);
 
@@ -112,9 +106,7 @@ describe("calculateLayout", () => {
   });
 
   it("should handle single command", () => {
-    const commands: ReadonlyArray<AnimatedCommand> = [
-      createMockCommand(80),
-    ];
+    const commands: ReadonlyArray<AnimatedCommand> = [createMockCommand(80)];
 
     const layout = calculateLayout(commands, 300, mockTiming);
 
@@ -124,24 +116,24 @@ describe("calculateLayout", () => {
   });
 
   it("should space commands with correct timing cycle", () => {
-    const commands: ReadonlyArray<AnimatedCommand> = [
-      createMockCommand(50),
-      createMockCommand(50),
-    ];
+    const commands: ReadonlyArray<AnimatedCommand> = [createMockCommand(50), createMockCommand(50)];
 
     const layout = calculateLayout(commands, 500, mockTiming);
 
-    const cycleDuration = mockTiming.typingDuration + mockTiming.fadeDuration + mockTiming.commandDelay;
+    // Cycle now includes prompt fade duration (0.2s) + typing + fade + delay
+    const promptFadeDuration = 0.2;
+    const cycleDuration =
+      promptFadeDuration +
+      mockTiming.typingDuration +
+      mockTiming.fadeDuration +
+      mockTiming.commandDelay;
     const timeDiff = layout.timings[1].commandStart - layout.timings[0].commandStart;
 
     expect(timeDiff).toBeCloseTo(cycleDuration, 2);
   });
 
   it("should be a pure function (same input = same output)", () => {
-    const commands: ReadonlyArray<AnimatedCommand> = [
-      createMockCommand(50),
-      createMockCommand(60),
-    ];
+    const commands: ReadonlyArray<AnimatedCommand> = [createMockCommand(50), createMockCommand(60)];
 
     const layout1 = calculateLayout(commands, 300, mockTiming);
     const layout2 = calculateLayout(commands, 300, mockTiming);
@@ -153,10 +145,7 @@ describe("calculateLayout", () => {
   });
 
   it("should not mutate input commands", () => {
-    const commands: ReadonlyArray<AnimatedCommand> = [
-      createMockCommand(50),
-      createMockCommand(60),
-    ];
+    const commands: ReadonlyArray<AnimatedCommand> = [createMockCommand(50), createMockCommand(60)];
     const originalCommands = [...commands];
 
     calculateLayout(commands, 300, mockTiming);
@@ -165,9 +154,7 @@ describe("calculateLayout", () => {
   });
 
   it("should not mutate input timing", () => {
-    const commands: ReadonlyArray<AnimatedCommand> = [
-      createMockCommand(50),
-    ];
+    const commands: ReadonlyArray<AnimatedCommand> = [createMockCommand(50)];
     const originalTiming = { ...mockTiming };
 
     calculateLayout(commands, 300, mockTiming);
@@ -193,14 +180,12 @@ describe("calculateLayout", () => {
 
     const layout = calculateLayout(commands, 300, mockTiming);
 
-    // Even with zero height, there should be line height for the command line itself
-    expect(layout.positions[0]).toBeGreaterThanOrEqual(20);
+    // First command starts at y=0 (prompt is now part of each command block)
+    expect(layout.positions[0]).toBe(0);
   });
 
   it("should calculate output start time after typing finishes", () => {
-    const commands: ReadonlyArray<AnimatedCommand> = [
-      createMockCommand(50),
-    ];
+    const commands: ReadonlyArray<AnimatedCommand> = [createMockCommand(50)];
 
     const layout = calculateLayout(commands, 300, mockTiming);
 
@@ -222,7 +207,8 @@ describe("calculateLayout", () => {
       const scrollPoint = layout.scrollPoints[0];
       expect(scrollPoint.time).toBeGreaterThan(0);
       // Scroll should happen after command cycle completes
-      const cycleDuration = mockTiming.typingDuration + mockTiming.fadeDuration + mockTiming.commandDelay;
+      const cycleDuration =
+        mockTiming.typingDuration + mockTiming.fadeDuration + mockTiming.commandDelay;
       expect(scrollPoint.time).toBeGreaterThanOrEqual(cycleDuration);
     }
   });
@@ -238,7 +224,7 @@ describe("calculateLayout", () => {
 
     // Each command adds its height plus line height for command text
     const lineHeight = 20;
-    const minExpectedHeight = 50 + 60 + 70 + (lineHeight * 3);
+    const minExpectedHeight = 50 + 60 + 70 + lineHeight * 3;
 
     expect(layout.totalHeight).toBeGreaterThanOrEqual(minExpectedHeight);
   });

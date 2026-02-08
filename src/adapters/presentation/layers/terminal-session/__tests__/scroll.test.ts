@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  generateAllScrollKeyframes,
-  generateScrollKeyframe,
-} from "../scroll";
+import { generateAllScrollKeyframes, generateScrollKeyframe } from "../scroll";
 import type { ScrollPoint } from "../types";
 
 describe("generateScrollKeyframe", () => {
@@ -108,9 +105,7 @@ describe("generateAllScrollKeyframes", () => {
   });
 
   it("should handle single scroll point", () => {
-    const scrollPoints: ReadonlyArray<ScrollPoint> = [
-      { time: 5.0, distance: -200 },
-    ];
+    const scrollPoints: ReadonlyArray<ScrollPoint> = [{ time: 5.0, distance: -200 }];
 
     const keyframes = generateAllScrollKeyframes(scrollPoints);
 

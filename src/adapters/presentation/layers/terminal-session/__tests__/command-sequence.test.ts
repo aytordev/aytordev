@@ -97,45 +97,35 @@ describe("buildCommandSequence", () => {
   it("should include developer info command when present", () => {
     const commands = buildCommandSequence(mockConfig);
 
-    const infoCommand = commands.find((cmd) =>
-      cmd.command.includes("--info"),
-    );
+    const infoCommand = commands.find((cmd) => cmd.command.includes("--info"));
     expect(infoCommand).toBeDefined();
   });
 
   it("should include tech stack command when present", () => {
     const commands = buildCommandSequence(mockConfig);
 
-    const stackCommand = commands.find((cmd) =>
-      cmd.command.includes("--stack"),
-    );
+    const stackCommand = commands.find((cmd) => cmd.command.includes("--stack"));
     expect(stackCommand).toBeDefined();
   });
 
   it("should include language stats command when present", () => {
     const commands = buildCommandSequence(mockConfig);
 
-    const langCommand = commands.find((cmd) =>
-      cmd.command.includes("--languages"),
-    );
+    const langCommand = commands.find((cmd) => cmd.command.includes("--languages"));
     expect(langCommand).toBeDefined();
   });
 
   it("should include commits command when present", () => {
     const commands = buildCommandSequence(mockConfig);
 
-    const commitsCommand = commands.find((cmd) =>
-      cmd.command.includes("--commits"),
-    );
+    const commitsCommand = commands.find((cmd) => cmd.command.includes("--commits"));
     expect(commitsCommand).toBeDefined();
   });
 
   it("should include engagement command when present", () => {
     const commands = buildCommandSequence(mockConfig);
 
-    const engagementCommand = commands.find((cmd) =>
-      cmd.command.includes("--engagement"),
-    );
+    const engagementCommand = commands.find((cmd) => cmd.command.includes("--engagement"));
     expect(engagementCommand).toBeDefined();
   });
 

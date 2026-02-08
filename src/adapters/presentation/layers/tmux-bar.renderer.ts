@@ -27,15 +27,16 @@ export const renderTmuxBar = (
   const sessionIndex = "0"; // Mock or from session? sessionName usually string, let's assume index 0 based on screenshot style
 
   // F28: Easter Egg Logic - pure expression
-  const sessionIcon = easterEgg === "halloween"
-    ? "🎃"
-    : easterEgg === "christmas"
-      ? "🎄"
-      : easterEgg === "may-the-4th"
-        ? "🪐"
-        : easterEgg === "friday-13th"
-          ? "🔪"
-          : "👻"; // Default ghostty icon
+  const sessionIcon =
+    easterEgg === "halloween"
+      ? "🎃"
+      : easterEgg === "christmas"
+        ? "🎄"
+        : easterEgg === "may-the-4th"
+          ? "🪐"
+          : easterEgg === "friday-13th"
+            ? "🔪"
+            : "👻"; // Default ghostty icon
 
   const sessionName = ` ${sessionIcon} ${session.sessionName} `;
 

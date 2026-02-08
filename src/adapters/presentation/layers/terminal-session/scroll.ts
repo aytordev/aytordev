@@ -8,10 +8,7 @@ import type { ScrollPoint } from "./types";
  * @param index - Index for unique keyframe name
  * @returns CSS @keyframes rule as string
  */
-export const generateScrollKeyframe = (
-  scrollPoint: ScrollPoint,
-  index: number,
-): string => `
+export const generateScrollKeyframe = (scrollPoint: ScrollPoint, index: number): string => `
 @keyframes scroll-${index} {
   from { transform: translateY(0); }
   to { transform: translateY(${scrollPoint.distance}px); }
@@ -24,9 +21,5 @@ export const generateScrollKeyframe = (
  * @param scrollPoints - Array of scroll points
  * @returns Combined CSS keyframes as string
  */
-export const generateAllScrollKeyframes = (
-  scrollPoints: ReadonlyArray<ScrollPoint>,
-): string =>
-  scrollPoints
-    .map((point, i) => generateScrollKeyframe(point, i))
-    .join("\n");
+export const generateAllScrollKeyframes = (scrollPoints: ReadonlyArray<ScrollPoint>): string =>
+  scrollPoints.map((point, i) => generateScrollKeyframe(point, i)).join("\n");

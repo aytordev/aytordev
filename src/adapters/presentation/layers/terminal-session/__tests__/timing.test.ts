@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  calculateCommandCycleDuration,
-  createAnimationTiming,
-} from "../timing";
+import { calculateCommandCycleDuration, createAnimationTiming } from "../timing";
 
 describe("createAnimationTiming", () => {
   it("should create timing configuration with speed 1 (normal)", () => {

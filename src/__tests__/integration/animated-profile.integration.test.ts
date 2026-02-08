@@ -241,9 +241,18 @@ describe("Animated Profile Integration", () => {
   });
 
   it("should respect animation speed configuration", () => {
-    const slowState = { ...createFullState(), animation: { enabled: true, speed: 0.5, initialDelay: 0.5 } };
-    const normalState = { ...createFullState(), animation: { enabled: true, speed: 1, initialDelay: 0.5 } };
-    const fastState = { ...createFullState(), animation: { enabled: true, speed: 2, initialDelay: 0.5 } };
+    const slowState = {
+      ...createFullState(),
+      animation: { enabled: true, speed: 0.5, initialDelay: 0.5 },
+    };
+    const normalState = {
+      ...createFullState(),
+      animation: { enabled: true, speed: 1, initialDelay: 0.5 },
+    };
+    const fastState = {
+      ...createFullState(),
+      animation: { enabled: true, speed: 2, initialDelay: 0.5 },
+    };
 
     const slowSvg = renderTerminal(slowState);
     const normalSvg = renderTerminal(normalState);

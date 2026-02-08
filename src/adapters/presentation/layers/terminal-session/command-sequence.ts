@@ -15,9 +15,7 @@ import type { AnimatedCommand, SectionRenderer } from "./types";
  * @param state - Terminal state with content sections
  * @returns Immutable array of commands
  */
-export const buildCommandSequence = (
-  state: TerminalState,
-): ReadonlyArray<AnimatedCommand> => {
+export const buildCommandSequence = (state: TerminalState): ReadonlyArray<AnimatedCommand> => {
   const commands: AnimatedCommand[] = [];
 
   // Developer Info
@@ -33,10 +31,7 @@ export const buildCommandSequence = (
   // Tech Stack
   if (state.content.techStack) {
     commands.push(
-      createCommand(
-        "terminal-profile --stack",
-        wrapTechStackRenderer(state.content.techStack),
-      ),
+      createCommand("terminal-profile --stack", wrapTechStackRenderer(state.content.techStack)),
     );
   }
 
@@ -61,11 +56,7 @@ export const buildCommandSequence = (
   }
 
   // Engagement sections
-  if (
-    state.content.learningJourney ||
-    state.content.todayFocus ||
-    state.content.dailyQuote
-  ) {
+  if (state.content.learningJourney || state.content.todayFocus || state.content.dailyQuote) {
     const engagementContent = {
       learningJourney: state.content.learningJourney,
       todayFocus: state.content.todayFocus,
@@ -73,30 +64,21 @@ export const buildCommandSequence = (
     };
 
     commands.push(
-      createCommand(
-        "terminal-profile --engagement",
-        wrapEngagementRenderer(engagementContent),
-      ),
+      createCommand("terminal-profile --engagement", wrapEngagementRenderer(engagementContent)),
     );
   }
 
   // Contact
   if (state.content.contactInfo.length > 0) {
     commands.push(
-      createCommand(
-        "terminal-profile --contact",
-        wrapContactRenderer(state.content.contactInfo),
-      ),
+      createCommand("terminal-profile --contact", wrapContactRenderer(state.content.contactInfo)),
     );
   }
 
   // Streak
   if (state.content.streak) {
     commands.push(
-      createCommand(
-        "terminal-profile --streak",
-        wrapStreakRenderer(state.content.streak),
-      ),
+      createCommand("terminal-profile --streak", wrapStreakRenderer(state.content.streak)),
     );
   }
 
@@ -107,10 +89,7 @@ export const buildCommandSequence = (
  * Factory function for creating commands.
  * Pure function.
  */
-const createCommand = (
-  command: string,
-  renderer: SectionRenderer,
-): AnimatedCommand => ({
+const createCommand = (command: string, renderer: SectionRenderer): AnimatedCommand => ({
   command,
   outputRenderer: renderer,
 });
@@ -120,9 +99,7 @@ const createCommand = (
  */
 
 const wrapDeveloperInfoRenderer =
-  (
-    content: NonNullable<TerminalState["content"]["developerInfo"]>,
-  ): SectionRenderer =>
+  (content: NonNullable<TerminalState["content"]["developerInfo"]>): SectionRenderer =>
   (theme, y) => {
     const svg = renderDeveloperInfo(content, theme, y);
     const height = estimateRenderHeight(svg);
@@ -130,9 +107,7 @@ const wrapDeveloperInfoRenderer =
   };
 
 const wrapTechStackRenderer =
-  (
-    content: NonNullable<TerminalState["content"]["techStack"]>,
-  ): SectionRenderer =>
+  (content: NonNullable<TerminalState["content"]["techStack"]>): SectionRenderer =>
   (theme, y) => {
     const svg = renderTechStack(content, theme, 0, y);
     const height = estimateRenderHeight(svg);
@@ -140,9 +115,7 @@ const wrapTechStackRenderer =
   };
 
 const wrapLanguageStatsRenderer =
-  (
-    content: NonNullable<TerminalState["content"]["languageStats"]>,
-  ): SectionRenderer =>
+  (content: NonNullable<TerminalState["content"]["languageStats"]>): SectionRenderer =>
   (theme, y) => {
     const svg = renderLanguageStats(content, theme, y);
     const height = estimateRenderHeight(svg);
@@ -150,9 +123,7 @@ const wrapLanguageStatsRenderer =
   };
 
 const wrapRecentCommitsRenderer =
-  (
-    content: NonNullable<TerminalState["content"]["recentCommits"]>,
-  ): SectionRenderer =>
+  (content: NonNullable<TerminalState["content"]["recentCommits"]>): SectionRenderer =>
   (theme, y) => {
     const svg = renderRecentCommits(content, theme, 400, y);
     const height = estimateRenderHeight(svg);

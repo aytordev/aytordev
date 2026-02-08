@@ -1,11 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { renderTerminalSession } from "../terminal-session.renderer";
-import { createMockTheme } from "../../../../tests/mocks/theme";
 import type { TerminalState } from "../../../../domain/entities/terminal-state";
+import { createMockTheme } from "../../../../tests/mocks/theme";
+import { renderTerminalSession } from "../terminal-session.renderer";
 
-const createMockState = (
-  overrides: Partial<TerminalState> = {},
-): TerminalState => ({
+const createMockState = (overrides: Partial<TerminalState> = {}): TerminalState => ({
   themeName: "kanagawa-wave",
   dimensions: { width: 800, height: 400 },
   greeting: "Hello",
@@ -135,9 +133,16 @@ describe("renderTerminalSession", () => {
           tagline: "Software Engineer",
           location: "Earth",
         },
-        techStack: { categories: [{ name: "Languages", items: ["TypeScript"] }] },
+        techStack: {
+          categories: [{ name: "Languages", items: ["TypeScript"] }],
+        },
         languageStats: [
-          { name: "TypeScript", percentage: 80, color: "#3178C6", bytes: 10000 },
+          {
+            name: "TypeScript",
+            percentage: 80,
+            color: "#3178C6",
+            bytes: 10000,
+          },
           { name: "Rust", percentage: 20, color: "#CE422B", bytes: 2500 },
         ],
         recentCommits: [
@@ -149,12 +154,23 @@ describe("renderTerminalSession", () => {
             relativeTime: "2 hours ago",
           },
         ],
-        stats: { publicRepos: 10, followers: 50, following: 30, totalStars: 100 },
+        stats: {
+          publicRepos: 10,
+          followers: 50,
+          following: 30,
+          totalStars: 100,
+        },
         careerTimeline: [],
         learningJourney: { current: "Learning Rust" },
         todayFocus: null,
         dailyQuote: null,
-        contactInfo: [{ label: "GitHub", value: "https://github.com/aytordev", icon: "github" }],
+        contactInfo: [
+          {
+            label: "GitHub",
+            value: "https://github.com/aytordev",
+            icon: "github",
+          },
+        ],
         streak: {
           currentStreak: 10,
           longestStreak: 20,
@@ -176,7 +192,7 @@ describe("renderTerminalSession", () => {
       state,
       theme,
       viewportY,
-      1000, // Very large viewport to ensure content fits
+      2000, // Very large viewport to ensure content fits with new spacing
     );
 
     expect(svg).not.toContain("@keyframes scroll-");
@@ -216,9 +232,16 @@ describe("renderTerminalSession", () => {
           tagline: "Software Engineer",
           location: "Earth",
         },
-        techStack: { categories: [{ name: "Languages", items: ["TypeScript"] }] },
+        techStack: {
+          categories: [{ name: "Languages", items: ["TypeScript"] }],
+        },
         languageStats: [
-          { name: "TypeScript", percentage: 100, color: "#3178C6", bytes: 10000 },
+          {
+            name: "TypeScript",
+            percentage: 100,
+            color: "#3178C6",
+            bytes: 10000,
+          },
         ],
         recentCommits: [
           {
