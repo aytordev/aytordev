@@ -1,7 +1,7 @@
 import * as path from "path";
 import { createPorts } from "./adapters";
-import { FileConfigAdapter } from "./adapters/infrastructure/config.adapter";
-import { NodeFileSystemAdapter } from "./adapters/infrastructure/file-system.adapter";
+import { createFileConfigAdapter } from "./adapters/infrastructure/config.adapter";
+import { createNodeFileSystemAdapter } from "./adapters/infrastructure/file-system.adapter";
 import { TerminalRenderer } from "./adapters/presentation/terminal-renderer";
 import { createGenerateProfileUseCase } from "./application/use-cases/generate-profile";
 import { createGenerateShareCardUseCase } from "./application/use-cases/generate-share-card";
@@ -9,8 +9,8 @@ import { createGenerateShareCardUseCase } from "./application/use-cases/generate
 async function main() {
   console.log("🚀 Starting Terminal Profile Generator...");
 
-  const fsAdapter = new NodeFileSystemAdapter();
-  const configAdapter = new FileConfigAdapter();
+  const fsAdapter = createNodeFileSystemAdapter();
+  const configAdapter = createFileConfigAdapter(fsAdapter);
 
   // 1. Load Config
   const configPath = path.resolve(process.cwd(), "terminal_profile.yml");
