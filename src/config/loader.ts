@@ -1,6 +1,6 @@
 import { parse } from "yaml";
 import { err, ok, type Result } from "../shared/result";
-import { ConfigSchema, type Config } from "./schema";
+import { type Config, ConfigSchema } from "./schema";
 
 export type ConfigError = {
   readonly type: "parse" | "validation";
@@ -8,9 +8,7 @@ export type ConfigError = {
   readonly details?: unknown;
 };
 
-export function loadConfigFromString(
-  yaml: string,
-): Result<Config, ConfigError> {
+export function loadConfigFromString(yaml: string): Result<Config, ConfigError> {
   let raw: unknown;
   try {
     raw = parse(yaml);

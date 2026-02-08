@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { StreakInfo } from "../../../../domain/value-objects/streak-info";
 import { renderStreak } from "../../../../adapters/presentation/layers/streak.renderer";
+import type { StreakInfo } from "../../../../domain/value-objects/streak-info";
 import { KanagawaTheme } from "../../../../theme/kanagawa";
 
 describe("Streak Renderer", () => {

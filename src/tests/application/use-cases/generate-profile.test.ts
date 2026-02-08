@@ -71,15 +71,11 @@ describe("GenerateProfileUseCase", () => {
   });
 
   it("should return error if a port fails", async () => {
-    vi.mocked(mockPorts.github.getUserInfo).mockResolvedValue(
-      err(new Error("GitHub Error")),
-    );
+    vi.mocked(mockPorts.github.getUserInfo).mockResolvedValue(err(new Error("GitHub Error")));
 
     // We need to mock others too because Promise.all might run them
     vi.mocked(mockPorts.github.getRecentCommits).mockResolvedValue(ok([]));
-    vi.mocked(mockPorts.github.getContributionStreak).mockResolvedValue(
-      ok({} as any),
-    );
+    vi.mocked(mockPorts.github.getContributionStreak).mockResolvedValue(ok({} as any));
     vi.mocked(mockPorts.github.getLanguageStats).mockResolvedValue(ok([]));
 
     const useCase = createGenerateProfileUseCase(mockPorts);

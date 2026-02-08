@@ -11,7 +11,7 @@ export const renderPrompt = (
   const lineHeight = 20;
 
   let leftX = 10;
-  let rightX = width - 20; // Padding right
+  const rightX = width - 20; // Padding right
 
   // --- LEFT SIDE ---
 
@@ -46,11 +46,7 @@ export const renderPrompt = (
   let rightSvg = "";
   let currentRightX = rightX;
 
-  const renderRightItem = (
-    text: string,
-    color: string,
-    isSymbol: boolean = false,
-  ) => {
+  const renderRightItem = (text: string, color: string, isSymbol: boolean = false) => {
     // Estimate width
     const w = text.length * 8.5; // Monospace approx
     // Render with anchor end?
@@ -88,22 +84,13 @@ export const renderPrompt = (
   // "A la izquierda de node aparecen los cambios" -> So next in Right-to-Left chain.
   if (prompt.gitStats) {
     if (prompt.gitStats.deleted > 0) {
-      rightSvg += renderRightItem(
-        `-${prompt.gitStats.deleted}`,
-        theme.colors.samuraiRed,
-      );
+      rightSvg += renderRightItem(`-${prompt.gitStats.deleted}`, theme.colors.samuraiRed);
     }
     if (prompt.gitStats.modified > 0) {
-      rightSvg += renderRightItem(
-        `~${prompt.gitStats.modified}`,
-        theme.colors.roninYellow,
-      );
+      rightSvg += renderRightItem(`~${prompt.gitStats.modified}`, theme.colors.roninYellow);
     }
     if (prompt.gitStats.added > 0) {
-      rightSvg += renderRightItem(
-        `+${prompt.gitStats.added}`,
-        theme.colors.autumnGreen,
-      );
+      rightSvg += renderRightItem(`+${prompt.gitStats.added}`, theme.colors.autumnGreen);
     }
   }
 

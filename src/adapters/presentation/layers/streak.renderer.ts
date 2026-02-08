@@ -1,12 +1,7 @@
 import type { StreakInfo } from "../../../domain/value-objects/streak-info";
 import type { Theme } from "../../../theme/types";
 
-export const renderStreak = (
-  streak: StreakInfo,
-  theme: Theme,
-  x: number,
-  y: number,
-): string => {
+export const renderStreak = (streak: StreakInfo, theme: Theme, x: number, y: number): string => {
   if (streak.currentStreak === 0) {
     return "<g></g>";
   }

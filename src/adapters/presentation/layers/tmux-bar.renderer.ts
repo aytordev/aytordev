@@ -6,13 +6,7 @@ const CHAR_WIDTH = 8; // Estimate for Monospace 12px
 const PADDING = 16;
 const BAR_HEIGHT = 24;
 
-const renderSegment = (
-  x: number,
-  width: number,
-  bg: string,
-  fg: string,
-  text: string,
-): string => {
+const renderSegment = (x: number, width: number, bg: string, fg: string, text: string): string => {
   const yText = BAR_HEIGHT / 2 + 1; // Center vertical
   return `
     <rect x="${x}" y="0" width="${width}" height="${BAR_HEIGHT}" fill="${bg}" />
@@ -41,12 +35,8 @@ export const renderTmuxBar = (
 
   const sessionName = ` ${sessionIcon} ${session.sessionName} `;
 
-  const activeWindow = session.windows.find(
-    (w) => w.index === session.activeWindowIndex,
-  );
-  const activeWindowStr = activeWindow
-    ? `${activeWindow.index} ${activeWindow.name}`
-    : "";
+  const activeWindow = session.windows.find((w) => w.index === session.activeWindowIndex);
+  const activeWindowStr = activeWindow ? `${activeWindow.index} ${activeWindow.name}` : "";
 
   let currentX = 0;
   const segments: string[] = [];
@@ -90,13 +80,7 @@ export const renderTmuxBar = (
   const ramWidth = ramText.length * CHAR_WIDTH + PADDING;
   rightX -= ramWidth;
   segments.push(
-    renderSegment(
-      rightX,
-      ramWidth,
-      theme.colors.waveAqua,
-      theme.colors.sumiInk3,
-      ramText,
-    ),
+    renderSegment(rightX, ramWidth, theme.colors.waveAqua, theme.colors.sumiInk3, ramText),
   );
 
   // 4. CPU [CPU 6%]
@@ -105,13 +89,7 @@ export const renderTmuxBar = (
   const cpuWidth = cpuText.length * CHAR_WIDTH + PADDING;
   rightX -= cpuWidth;
   segments.push(
-    renderSegment(
-      rightX,
-      cpuWidth,
-      theme.colors.autumnOrange,
-      theme.colors.sumiInk3,
-      cpuText,
-    ),
+    renderSegment(rightX, cpuWidth, theme.colors.autumnOrange, theme.colors.sumiInk3, cpuText),
   );
 
   // 3. Git Info [! 1M chore/setup-project]

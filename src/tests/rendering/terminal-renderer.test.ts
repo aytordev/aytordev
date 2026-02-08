@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { TerminalRenderer } from "../../adapters/presentation/terminal-renderer";
+import { renderTerminal } from "../../adapters/presentation/terminal-renderer";
 import type { TerminalState } from "../../domain/entities/terminal-state";
 
 describe("Terminal Renderer Orchestrator", () => {
@@ -61,8 +61,7 @@ describe("Terminal Renderer Orchestrator", () => {
   };
 
   it("should generate complete SVG", () => {
-    const renderer = new TerminalRenderer();
-    const svg = renderer.render(mockState);
+    const svg = renderTerminal(mockState);
 
     expect(svg).toContain("<svg");
     expect(svg).toContain("#1F1F28"); // Kanagawa Wave BG

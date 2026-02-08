@@ -9,10 +9,7 @@ describe("Engagement Renderer", () => {
   });
 
   it("should render learning journey", () => {
-    const svg = renderEngagement(
-      { learningJourney: { current: "Rust" } },
-      KanagawaTheme,
-    );
+    const svg = renderEngagement({ learningJourney: { current: "Rust" } }, KanagawaTheme);
     expect(svg).toContain("Learning Journey");
     expect(svg).toContain("Rust");
   });
@@ -24,10 +21,7 @@ describe("Engagement Renderer", () => {
   });
 
   it("should render today's focus", () => {
-    const svg = renderEngagement(
-      { todayFocus: "Shipping to prod" },
-      KanagawaTheme,
-    );
+    const svg = renderEngagement({ todayFocus: "Shipping to prod" }, KanagawaTheme);
     expect(svg).toContain("Today's Focus");
     expect(svg).toContain("Shipping to prod");
   });

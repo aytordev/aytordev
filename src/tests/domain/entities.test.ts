@@ -19,23 +19,20 @@ describe("Terminal Entities", () => {
   });
 
   it("should structure StarshipPrompt correctly", () => {
-    const prompt: import("../../domain/entities/starship-prompt").StarshipPrompt =
-      {
-        directory: "~/project",
-        gitBranch: "feat/test",
-        gitStatus: "dirty",
-        nodeVersion: "v18",
-        nixIndicator: true,
-        time: "12:00",
-      };
+    const prompt: import("../../domain/entities/starship-prompt").StarshipPrompt = {
+      directory: "~/project",
+      gitBranch: "feat/test",
+      gitStatus: "dirty",
+      nodeVersion: "v18",
+      nixIndicator: true,
+      time: "12:00",
+    };
     expect(prompt.nixIndicator).toBe(true);
     expect(prompt.gitStatus).toBe("dirty");
   });
 
   it("should structure TerminalContent correctly", () => {
-    const content: Partial<
-      import("../../domain/entities/terminal-content").TerminalContent
-    > = {
+    const content: Partial<import("../../domain/entities/terminal-content").TerminalContent> = {
       developerInfo: {
         name: "Dev",
         username: "dev",

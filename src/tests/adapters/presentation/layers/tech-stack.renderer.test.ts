@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { TechStack } from "../../../../domain/value-objects/tech-stack";
 import { renderTechStack } from "../../../../adapters/presentation/layers/tech-stack.renderer";
+import type { TechStack } from "../../../../domain/value-objects/tech-stack";
 import { KanagawaTheme } from "../../../../theme/kanagawa";
 
 describe("Tech Stack Renderer", () => {

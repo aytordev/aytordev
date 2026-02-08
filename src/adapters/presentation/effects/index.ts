@@ -27,11 +27,7 @@ export const buildDefs = (theme: Theme, effects: EffectsConfig): string => {
     // Spec 6.1 example had id="skill-gradient-0"
     // Let's create a default one or a few
     defs.push(
-      createSkillGradient(
-        "skill-gradient-0",
-        theme.colors.springBlue,
-        theme.colors.oniViolet,
-      ),
+      createSkillGradient("skill-gradient-0", theme.colors.springBlue, theme.colors.oniViolet),
     );
   }
 

@@ -24,11 +24,7 @@ export const OwnerSchema = z.object({
   timezone: z.string(),
 });
 
-export const ThemeSchema = z.enum([
-  "kanagawa-wave",
-  "kanagawa-dragon",
-  "kanagawa-lotus",
-]);
+export const ThemeSchema = z.enum(["kanagawa-wave", "kanagawa-dragon", "kanagawa-lotus"]);
 
 export const DimensionsSchema = z.object({
   width: z.number().min(400).max(1200).default(800),

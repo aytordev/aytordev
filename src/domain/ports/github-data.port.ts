@@ -10,13 +10,8 @@ export interface ContributionStats {
 
 export interface GitHubDataPort {
   getUserInfo(username: string): Promise<Result<Owner, Error>>;
-  getRecentCommits(
-    username: string,
-    limit: number,
-  ): Promise<Result<Commit[], Error>>;
+  getRecentCommits(username: string, limit: number): Promise<Result<Commit[], Error>>;
   getLanguageStats(username: string): Promise<Result<LanguageStat[], Error>>;
-  getContributionStats(
-    username: string,
-  ): Promise<Result<ContributionStats, Error>>;
+  getContributionStats(username: string): Promise<Result<ContributionStats, Error>>;
   getContributionStreak(username: string): Promise<Result<StreakInfo, Error>>;
 }
