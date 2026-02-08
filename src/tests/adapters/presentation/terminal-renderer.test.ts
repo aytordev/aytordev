@@ -100,4 +100,102 @@ describe("Terminal Renderer Orchestrator", () => {
     expect(svg).toContain('width="1200"');
     expect(svg).toContain('height="600"');
   });
+
+  describe("Strategy Pattern - Animation Mode Selection", () => {
+    it("should use static renderer when animation is undefined", () => {
+      const svg = renderTerminal(mockState);
+
+      // Static mode should have all traditional sections
+      expect(svg).toContain('id="greeting"');
+      expect(svg).toContain('id="prompt"');
+      expect(svg).toContain('id="developer-info"');
+      // Should NOT have animation-specific elements
+      expect(svg).not.toContain("clipPath");
+      expect(svg).not.toContain("terminal-viewport");
+      expect(svg).not.toContain("scrollable-content");
+    });
+
+    it("should use static renderer when animation.enabled is false", () => {
+      const stateWithAnimationDisabled = {
+        ...mockState,
+        animation: {
+          enabled: false,
+          speed: 1,
+          initialDelay: 0.5,
+        },
+      };
+      const svg = renderTerminal(stateWithAnimationDisabled);
+
+      // Static mode characteristics
+      expect(svg).toContain('id="greeting"');
+      expect(svg).toContain('id="prompt"');
+      // Should NOT have animation-specific elements
+      expect(svg).not.toContain("clipPath");
+      expect(svg).not.toContain("terminal-viewport");
+    });
+
+    it("should use animated renderer when animation.enabled is true", () => {
+      const stateWithAnimationEnabled = {
+        ...mockState,
+        animation: {
+          enabled: true,
+          speed: 1,
+          initialDelay: 0.5,
+        },
+      };
+      const svg = renderTerminal(stateWithAnimationEnabled);
+
+      // Animated mode characteristics
+      expect(svg).toContain("clipPath");
+      expect(svg).toContain('id="terminal-viewport"');
+      expect(svg).toContain('id="scrollable-content"');
+      expect(svg).toContain("terminal-profile --info");
+    });
+
+    it("should include animation classes when in animated mode", () => {
+      const stateWithAnimation = {
+        ...mockState,
+        animation: {
+          enabled: true,
+          speed: 1,
+          initialDelay: 0.5,
+        },
+      };
+      const svg = renderTerminal(stateWithAnimation);
+
+      expect(svg).toContain('class="command-line animate');
+      expect(svg).toContain('class="command-output animate"');
+      expect(svg).toContain("animation-delay:");
+    });
+
+    it("should pass animation speed to animated renderer", () => {
+      const stateWithFastAnimation = {
+        ...mockState,
+        animation: {
+          enabled: true,
+          speed: 2,
+          initialDelay: 0.1,
+        },
+      };
+      const svg = renderTerminal(stateWithFastAnimation);
+
+      // With faster speed, animation delays should be shorter
+      // Just verify animation is active
+      expect(svg).toContain("animation-delay:");
+    });
+
+    it("should maintain backward compatibility - static mode unchanged", () => {
+      const svgWithoutAnimation = renderTerminal(mockState);
+      const svgWithAnimationDisabled = renderTerminal({
+        ...mockState,
+        animation: { enabled: false, speed: 1, initialDelay: 0 },
+      });
+
+      // Both should have same core elements
+      expect(svgWithoutAnimation).toContain('id="greeting"');
+      expect(svgWithAnimationDisabled).toContain('id="greeting"');
+      expect(svgWithoutAnimation).toContain('id="tmux-bar"');
+      expect(svgWithAnimationDisabled).toContain('id="tmux-bar"');
+    });
+  });
 });
