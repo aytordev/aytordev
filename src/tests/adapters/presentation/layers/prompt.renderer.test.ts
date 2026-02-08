@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { renderPrompt } from "../../../../adapters/presentation/layers/prompt.renderer";
 import type { StarshipPrompt } from "../../../../domain/entities/starship-prompt";
 import { KanagawaTheme } from "../../../../theme/kanagawa";
+import { svgAssertions } from "../../../__support__/helpers";
 
 describe("Starship Prompt Renderer", () => {
   const prompt: StarshipPrompt = {
@@ -21,30 +22,30 @@ describe("Starship Prompt Renderer", () => {
   it("should render left side items (Directory, Git)", () => {
     const svg = renderPrompt(prompt, KanagawaTheme, y, width);
     // Directory
-    expect(svg).toContain(prompt.directory);
+    svgAssertions.hasText(svg, prompt.directory);
     // Git
-    expect(svg).toContain("git:feat/rendering");
-    expect(svg).toContain("?"); // Dirty indicator
+    svgAssertions.hasText(svg, "git:feat/rendering");
+    svgAssertions.hasText(svg, "?"); // Dirty indicator
   });
 
   it("should render right side items (Time, Nix, Node, GitStats)", () => {
     const svg = renderPrompt(prompt, KanagawaTheme, y, width);
 
     // Time
-    expect(svg).toContain("20:30");
+    svgAssertions.hasText(svg, "20:30");
 
     // Nix
-    expect(svg).toContain("nix");
-    expect(svg).toContain("❄️");
+    svgAssertions.hasText(svg, "nix");
+    svgAssertions.hasText(svg, "❄️");
 
     // Node
-    expect(svg).toContain("node");
-    expect(svg).toContain("v18.19.0");
-    expect(svg).toContain("⬢");
+    svgAssertions.hasText(svg, "node");
+    svgAssertions.hasText(svg, "v18.19.0");
+    svgAssertions.hasText(svg, "⬢");
 
     // Git Stats
-    expect(svg).toContain("+12");
-    expect(svg).toContain("-3");
+    svgAssertions.hasText(svg, "+12");
+    svgAssertions.hasText(svg, "-3");
     // Modified is 0, so should NOT be present (based on my recent change)
     expect(svg).not.toContain("~");
   });
@@ -61,7 +62,7 @@ describe("Starship Prompt Renderer", () => {
 
   it("should render blinking cursor at x=10", () => {
     const svg = renderPrompt(prompt, KanagawaTheme, y, width);
-    expect(svg).toContain('class="cursor"');
+    svgAssertions.hasClass(svg, "cursor");
     expect(svg).toContain('x="10"');
   });
 
@@ -76,7 +77,7 @@ describe("Starship Prompt Renderer", () => {
     };
     const svg = renderPrompt(minimalPrompt, KanagawaTheme, y, width);
 
-    expect(svg).toContain("~");
+    svgAssertions.hasText(svg, "~");
     expect(svg).not.toContain("git:");
     expect(svg).not.toContain("node");
     expect(svg).not.toContain("nix");

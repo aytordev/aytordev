@@ -1,88 +1,33 @@
 import { describe, expect, it } from "vitest";
-import type { TerminalState } from "../../../../domain/entities/terminal-state";
 import { createMockTheme } from "../../../mocks/theme";
 import { renderTerminalSession } from "../../../../adapters/presentation/layers/terminal-session.renderer";
-
-const createMockState = (overrides: Partial<TerminalState> = {}): TerminalState => ({
-  themeName: "kanagawa-wave",
-  dimensions: { width: 800, height: 400 },
-  greeting: "Hello",
-  timestamp: new Date(),
-  timeOfDay: "evening",
-  owner: {
-    name: "Test User",
-    username: "testuser",
-    title: "Software Engineer",
-    location: "Earth",
-    timezone: "UTC",
-  },
-  session: {
-    sessionName: "main",
-    windows: [],
-    activeWindowIndex: 0,
-    currentBranch: "main",
-    stats: { cpuLoad: 0, memoryUsage: 0, uptime: "1h" },
-  },
-  prompt: {
-    directory: "~/dev",
-    gitBranch: "main",
-    gitStatus: null,
-    nodeVersion: "v20.0.0",
-    nixIndicator: true,
-    time: "12:00",
-  },
-  content: {
-    developerInfo: {
-      name: "Aytor Dev",
-      username: "aytordev",
-      tagline: "Software Engineer",
-      location: "Earth",
-    },
-    techStack: { categories: [] },
-    languageStats: [],
-    recentCommits: [],
-    stats: { publicRepos: 0, followers: 0, following: 0, totalStars: 0 },
-    careerTimeline: [],
-    learningJourney: null,
-    todayFocus: null,
-    dailyQuote: null,
-    contactInfo: [],
-    streak: {
-      currentStreak: 5,
-      longestStreak: 10,
-      lastContributionDate: new Date(),
-      isActive: true,
-    },
-    extraLines: [],
-  },
-  ...overrides,
-});
+import { terminalStateBuilder } from "../../../__support__/builders";
+import { svgAssertions } from "../../../__support__/helpers";
+import { TEST_VIEWPORT } from "../../../__support__/constants";
 
 describe("renderTerminalSession", () => {
   const theme = createMockTheme();
-  const viewportY = 24;
-  const viewportHeight = 352;
+  const viewportY = TEST_VIEWPORT.Y_OFFSET;
+  const viewportHeight = TEST_VIEWPORT.HEIGHT;
 
   it("should return valid SVG string", () => {
-    const state = createMockState();
+    const state = terminalStateBuilder().build();
     const svg = renderTerminalSession(state, theme, viewportY, viewportHeight);
 
-    expect(svg).toContain("<g");
-    expect(svg).toContain("</g>");
+    svgAssertions.isValidGroup(svg);
   });
 
   it("should create clipPath for viewport simulation", () => {
-    const state = createMockState();
+    const state = terminalStateBuilder().build();
     const svg = renderTerminalSession(state, theme, viewportY, viewportHeight);
 
-    expect(svg).toContain("clipPath");
-    expect(svg).toContain('id="terminal-viewport"');
+    svgAssertions.hasClipPath(svg, "terminal-viewport");
     expect(svg).toContain(`y="${viewportY}"`);
     expect(svg).toContain(`height="${viewportHeight}"`);
   });
 
   it("should use clipPath on scrollable content group", () => {
-    const state = createMockState();
+    const state = terminalStateBuilder().build();
     const svg = renderTerminalSession(state, theme, viewportY, viewportHeight);
 
     expect(svg).toContain('clip-path="url(#terminal-viewport)"');
@@ -90,43 +35,43 @@ describe("renderTerminalSession", () => {
   });
 
   it("should render initial prompt", () => {
-    const state = createMockState();
+    const state = terminalStateBuilder().build();
     const svg = renderTerminalSession(state, theme, viewportY, viewportHeight);
 
     expect(svg).toContain(state.prompt.directory);
   });
 
   it("should render commands based on content sections", () => {
-    const state = createMockState();
+    const state = terminalStateBuilder().build();
     const svg = renderTerminalSession(state, theme, viewportY, viewportHeight);
 
     expect(svg).toContain("terminal-profile --info");
   });
 
   it("should include animation delays in command elements", () => {
-    const state = createMockState();
+    const state = terminalStateBuilder().build();
     const svg = renderTerminalSession(state, theme, viewportY, viewportHeight);
 
     expect(svg).toContain("animation-delay:");
   });
 
   it("should include command-line class for typewriter effect", () => {
-    const state = createMockState();
+    const state = terminalStateBuilder().build();
     const svg = renderTerminalSession(state, theme, viewportY, viewportHeight);
 
     expect(svg).toContain('class="command-line animate');
   });
 
   it("should include command-output class for fade-in effect", () => {
-    const state = createMockState();
+    const state = terminalStateBuilder().build();
     const svg = renderTerminalSession(state, theme, viewportY, viewportHeight);
 
     expect(svg).toContain('class="command-output animate"');
   });
 
   it("should generate scroll keyframes when content exceeds viewport", () => {
-    const state = createMockState({
-      content: {
+    const state = terminalStateBuilder()
+      .withContent({
         developerInfo: {
           name: "Aytor Dev",
           username: "aytordev",
@@ -178,8 +123,8 @@ describe("renderTerminalSession", () => {
           isActive: true,
         },
         extraLines: [],
-      },
-    });
+      })
+      .build();
     const svg = renderTerminalSession(state, theme, viewportY, viewportHeight);
 
     // With many sections, should generate scroll animations
@@ -187,7 +132,7 @@ describe("renderTerminalSession", () => {
   });
 
   it("should not generate scroll keyframes when content fits viewport", () => {
-    const state = createMockState();
+    const state = terminalStateBuilder().build();
     const svg = renderTerminalSession(
       state,
       theme,
@@ -199,7 +144,7 @@ describe("renderTerminalSession", () => {
   });
 
   it("should be a pure function (same input = same output)", () => {
-    const state = createMockState();
+    const state = terminalStateBuilder().build();
     const svg1 = renderTerminalSession(state, theme, viewportY, viewportHeight);
     const svg2 = renderTerminalSession(state, theme, viewportY, viewportHeight);
 
@@ -207,7 +152,7 @@ describe("renderTerminalSession", () => {
   });
 
   it("should not mutate input state", () => {
-    const state = createMockState();
+    const state = terminalStateBuilder().build();
     const originalThemeName = state.themeName;
     const originalGreeting = state.greeting;
     const originalDirectory = state.prompt.directory;
@@ -224,8 +169,8 @@ describe("renderTerminalSession", () => {
   });
 
   it("should include style tag for scroll keyframes", () => {
-    const state = createMockState({
-      content: {
+    const state = terminalStateBuilder()
+      .withContent({
         developerInfo: {
           name: "Aytor Dev",
           username: "aytordev",
@@ -265,8 +210,8 @@ describe("renderTerminalSession", () => {
           isActive: true,
         },
         extraLines: [],
-      },
-    });
+      })
+      .build();
     const svg = renderTerminalSession(state, theme, viewportY, viewportHeight);
 
     expect(svg).toContain("<style>");
@@ -274,7 +219,7 @@ describe("renderTerminalSession", () => {
   });
 
   it("should handle minimal content gracefully", () => {
-    const state = createMockState();
+    const state = terminalStateBuilder().build();
     const svg = renderTerminalSession(state, theme, viewportY, viewportHeight);
 
     // Should still render initial prompt
@@ -283,13 +228,13 @@ describe("renderTerminalSession", () => {
   });
 
   it("should use animation timing from state if provided", () => {
-    const state = createMockState({
-      animation: {
+    const state = terminalStateBuilder()
+      .withAnimation({
         enabled: true,
         speed: 2,
         initialDelay: 0.5,
-      },
-    });
+      })
+      .build();
     const svg = renderTerminalSession(state, theme, viewportY, viewportHeight);
 
     // With speed=2, timing should be adjusted
