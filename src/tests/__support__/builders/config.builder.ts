@@ -10,7 +10,7 @@
  * ```
  */
 
-import type { Config } from "../../../config/schema";
+import type { Config, Theme } from "../../../config/schema";
 import { mockConfig } from "../../mocks/config";
 
 export class ConfigBuilder {
@@ -35,7 +35,7 @@ export class ConfigBuilder {
   /**
    * Set theme
    */
-  withTheme(theme: string): this {
+  withTheme(theme: Theme): this {
     this.config = {
       ...this.config,
       theme,

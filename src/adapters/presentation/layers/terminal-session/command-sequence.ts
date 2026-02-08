@@ -171,19 +171,19 @@ export const estimateRenderHeight = (svg: string): number => {
   const heights: number[] = [];
 
   // Match y="number" or y="{number}"
-  const yMatches = svg.matchAll(/y="?(\d+)"?/g);
+  const yMatches = Array.from(svg.matchAll(/y="?(\d+)"?/g));
   for (const match of yMatches) {
     yCoordinates.push(Number.parseInt(match[1], 10));
   }
 
   // Match height="number" or height="{number}"
-  const heightMatches = svg.matchAll(/height="?(\d+)"?/g);
+  const heightMatches = Array.from(svg.matchAll(/height="?(\d+)"?/g));
   for (const match of heightMatches) {
     heights.push(Number.parseInt(match[1], 10));
   }
 
   // Match transform="translate(x, y)"
-  const translateMatches = svg.matchAll(/translate\([^,]+,\s*(\d+)\)/g);
+  const translateMatches = Array.from(svg.matchAll(/translate\([^,]+,\s*(\d+)\)/g));
   for (const match of translateMatches) {
     yCoordinates.push(Number.parseInt(match[1], 10));
   }

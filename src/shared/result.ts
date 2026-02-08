@@ -18,12 +18,12 @@ export const err = <E>(error: E): Result<never, E> => ({
 });
 
 export const map = <T, U, E>(result: Result<T, E>, fn: (value: T) => U): Result<U, E> =>
-  result.ok ? ok(fn(result.value)) : result;
+  result.ok ? ok(fn(result.value)) : (result as Result<U, E>);
 
 export const flatMap = <T, U, E>(
   result: Result<T, E>,
   fn: (value: T) => Result<U, E>,
-): Result<U, E> => (result.ok ? fn(result.value) : result);
+): Result<U, E> => (result.ok ? fn(result.value) : (result as Result<U, E>));
 
 export const unwrapOr = <T, E>(result: Result<T, E>, defaultValue: T): T =>
   result.ok ? result.value : defaultValue;
