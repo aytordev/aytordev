@@ -2,35 +2,11 @@ import { describe, expect, it } from "vitest";
 import { buildCommandSequence, estimateRenderHeight } from "../../../../../adapters/presentation/layers/terminal-session/command-sequence";
 import type { TerminalState } from "../../../../../domain/entities/terminal-state";
 import { createMockTheme } from "../../../../mocks/theme";
+import { terminalStateBuilder } from "../../../../__support__/builders";
+import { TEST_ANIMATION } from "../../../../__support__/constants";
 
-const mockConfig: TerminalState = {
-  timestamp: new Date("2024-01-15T12:00:00Z"),
-  owner: {
-    name: "Test User",
-    username: "testuser",
-    title: "Developer",
-    location: "Remote",
-    timezone: "UTC",
-  },
-  themeName: "kanagawa",
-  timeOfDay: "afternoon",
-  greeting: "Good morning, testuser!",
-  prompt: {
-    directory: "~/projects",
-    gitBranch: "main",
-    gitStatus: "clean",
-    nodeVersion: "v20.0.0",
-    nixIndicator: true,
-    time: "12:00",
-  },
-  session: {
-    sessionName: "main",
-    activeWindowIndex: 1,
-    currentBranch: "main",
-    windows: [{ index: 1, name: "zsh" }],
-    stats: { cpuLoad: 10, memoryUsage: 40, uptime: "1h" },
-  },
-  content: {
+const mockConfig = terminalStateBuilder()
+  .withContent({
     developerInfo: {
       name: "Test User",
       username: "testuser",
@@ -76,14 +52,13 @@ const mockConfig: TerminalState = {
     careerTimeline: [],
     contactInfo: [],
     extraLines: [],
-  },
-  dimensions: { width: 800, height: 400 },
-  animation: {
+  })
+  .withAnimation({
     enabled: true,
-    speed: 1,
+    speed: TEST_ANIMATION.SPEED_NORMAL,
     initialDelay: 0.5,
-  },
-};
+  })
+  .build();
 
 describe("buildCommandSequence", () => {
   it("should create command for each enabled section", () => {

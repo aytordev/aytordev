@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { calculateCommandCycleDuration, createAnimationTiming } from "../../../../../adapters/presentation/layers/terminal-session/timing";
+import { TEST_ANIMATION } from "../../../../__support__/constants";
 
 describe("createAnimationTiming", () => {
   it("should create timing configuration with speed 1 (normal)", () => {
-    const timing = createAnimationTiming(1);
+    const timing = createAnimationTiming(TEST_ANIMATION.SPEED_NORMAL);
 
     expect(timing.typingDuration).toBe(2);
     expect(timing.fadeDuration).toBe(0.3);
@@ -12,7 +13,7 @@ describe("createAnimationTiming", () => {
   });
 
   it("should create timing configuration with speed 2 (fast)", () => {
-    const timing = createAnimationTiming(2);
+    const timing = createAnimationTiming(TEST_ANIMATION.SPEED_FAST);
 
     expect(timing.typingDuration).toBe(1); // 2 / 2
     expect(timing.fadeDuration).toBe(0.15); // 0.3 / 2
@@ -21,7 +22,7 @@ describe("createAnimationTiming", () => {
   });
 
   it("should create timing configuration with speed 0.5 (slow)", () => {
-    const timing = createAnimationTiming(0.5);
+    const timing = createAnimationTiming(TEST_ANIMATION.SPEED_SLOW);
 
     expect(timing.typingDuration).toBe(4); // 2 / 0.5
     expect(timing.fadeDuration).toBe(0.6); // 0.3 / 0.5
@@ -30,7 +31,7 @@ describe("createAnimationTiming", () => {
   });
 
   it("should return object with readonly properties (compile-time)", () => {
-    const timing = createAnimationTiming(1);
+    const timing = createAnimationTiming(TEST_ANIMATION.SPEED_NORMAL);
 
     // TypeScript ensures readonly at compile time
     // Verify all properties are present
@@ -66,7 +67,7 @@ describe("createAnimationTiming", () => {
 
 describe("calculateCommandCycleDuration", () => {
   it("should calculate total duration for a single command cycle", () => {
-    const timing = createAnimationTiming(1);
+    const timing = createAnimationTiming(TEST_ANIMATION.SPEED_NORMAL);
     const cycleDuration = calculateCommandCycleDuration(timing);
 
     // typingDuration (2) + fadeDuration (0.3) + commandDelay (0.5) = 2.8
@@ -74,7 +75,7 @@ describe("calculateCommandCycleDuration", () => {
   });
 
   it("should calculate correctly for speed 2 (fast)", () => {
-    const timing = createAnimationTiming(2);
+    const timing = createAnimationTiming(TEST_ANIMATION.SPEED_FAST);
     const cycleDuration = calculateCommandCycleDuration(timing);
 
     // 1 + 0.15 + 0.25 = 1.4
@@ -82,7 +83,7 @@ describe("calculateCommandCycleDuration", () => {
   });
 
   it("should calculate correctly for speed 0.5 (slow)", () => {
-    const timing = createAnimationTiming(0.5);
+    const timing = createAnimationTiming(TEST_ANIMATION.SPEED_SLOW);
     const cycleDuration = calculateCommandCycleDuration(timing);
 
     // 4 + 0.6 + 1 = 5.6
@@ -90,7 +91,7 @@ describe("calculateCommandCycleDuration", () => {
   });
 
   it("should be a pure function", () => {
-    const timing = createAnimationTiming(1);
+    const timing = createAnimationTiming(TEST_ANIMATION.SPEED_NORMAL);
     const duration1 = calculateCommandCycleDuration(timing);
     const duration2 = calculateCommandCycleDuration(timing);
 
@@ -98,7 +99,7 @@ describe("calculateCommandCycleDuration", () => {
   });
 
   it("should not mutate input timing object", () => {
-    const timing = createAnimationTiming(1);
+    const timing = createAnimationTiming(TEST_ANIMATION.SPEED_NORMAL);
     const originalTiming = { ...timing };
 
     calculateCommandCycleDuration(timing);
