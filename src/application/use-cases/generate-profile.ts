@@ -67,10 +67,11 @@ export const createGenerateProfileUseCase = (ports: Ports): GenerateProfileUseCa
           directory: "~/github/profile",
           gitBranch: "main",
           gitStatus: "clean",
-          // TODO: Implement real Git stats fetching
+          // Note: Local git stats require filesystem access and are not available via GitHub API
+          // These would need to be fetched separately if local repository access is available
           gitStats: {
-            added: 12,
-            deleted: 3,
+            added: 0,
+            deleted: 0,
             modified: 0,
           },
 
@@ -95,11 +96,13 @@ export const createGenerateProfileUseCase = (ports: Ports): GenerateProfileUseCa
               })) ?? [],
           },
           recentCommits: commits.value,
+          // Note: GitHub API v3 has rate limits; fetching detailed stats requires additional API calls
+          // Consider implementing if needed, or leave as 0 for minimal API usage
           stats: {
-            publicRepos: 10,
-            followers: 50,
-            following: 10,
-            totalStars: 100,
+            publicRepos: 0,
+            followers: 0,
+            following: 0,
+            totalStars: 0,
           },
           streak: streak.value,
           languageStats: languageStats.value,
