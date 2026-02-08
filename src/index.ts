@@ -1,11 +1,10 @@
 import * as path from "path";
+import { createPorts } from "./adapters";
 import { FileConfigAdapter } from "./adapters/infrastructure/config.adapter";
 import { NodeFileSystemAdapter } from "./adapters/infrastructure/file-system.adapter";
 import { TerminalRenderer } from "./adapters/presentation/terminal-renderer";
 import { createGenerateProfileUseCase } from "./application/use-cases/generate-profile";
 import { createGenerateShareCardUseCase } from "./application/use-cases/generate-share-card";
-
-import { createPorts } from "./adapters";
 
 async function main() {
   console.log("🚀 Starting Terminal Profile Generator...");
@@ -27,10 +26,11 @@ async function main() {
     process.exit(1);
   }
 
-  let config = configResult.value;
+  const config = configResult.value;
   console.log(`✅ Loaded configuration for @${config.owner.username}`);
 
-  const ports = createPorts(config);
+  const githubToken = process.env.GITHUB_TOKEN;
+  const ports = createPorts(githubToken);
 
   const isShareCard = process.argv.includes("--share-card");
 
