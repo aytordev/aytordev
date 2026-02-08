@@ -2,6 +2,7 @@ import type { StarshipPrompt } from "../../../domain/entities/starship-prompt";
 import type { TerminalState } from "../../../domain/entities/terminal-state";
 import { sanitizeForSvg } from "../../../shared/sanitize";
 import type { Theme } from "../../../theme/types";
+import { renderPromptLeftSide, renderPromptRightSide } from "./prompt.renderer";
 import {
   buildCommandSequence,
   calculateLayout,
@@ -10,7 +11,6 @@ import {
   type CommandTiming,
 } from "./terminal-session";
 import { COMMAND_LINE_HEIGHT, PROMPT_HEIGHT } from "./terminal-session/types";
-import { renderPromptLeftSide, renderPromptRightSide } from "./prompt.renderer";
 
 /**
  * Renders an animated terminal session with scroll simulation.
@@ -50,7 +50,12 @@ export const renderTerminalSession = (
     .join("\n");
 
   // 6. Compose final SVG structure (pure template)
-  return composeTerminalSessionSvg(viewportY, viewportHeight, scrollKeyframes, commandsSvg);
+  return composeTerminalSessionSvg(
+    viewportY,
+    viewportHeight,
+    scrollKeyframes,
+    commandsSvg,
+  );
 };
 
 /**
@@ -72,7 +77,10 @@ export const renderTerminalSession = (
 const renderCommand = (
   cmd: {
     command: string;
-    outputRenderer: (theme: Theme, y: number) => { svg: string; height: number };
+    outputRenderer: (
+      theme: Theme,
+      y: number,
+    ) => { svg: string; height: number };
   },
   layout: {
     positions: ReadonlyArray<number>;
@@ -87,7 +95,12 @@ const renderCommand = (
 
   // 1. Render prompt with fade-in animation
   const promptY = y + PROMPT_HEIGHT; // Text baseline
-  const promptSvg = renderPromptForCommand(prompt, theme, promptY, cmdTiming.promptStart);
+  const promptSvg = renderPromptForCommand(
+    prompt,
+    theme,
+    promptY,
+    cmdTiming.promptStart,
+  );
 
   // 2. Render command line with typewriter animation
   const commandY = y + PROMPT_HEIGHT + COMMAND_LINE_HEIGHT;
@@ -103,7 +116,7 @@ const renderCommand = (
 
   // 3. Render output with fade-in animation
   // Output renderers handle their own positioning via internal transforms
-  // Add left padding (10px) to align with command
+  // Indent output slightly from command line for visual hierarchy
   const outputY = commandY + 25; // Gap after command (matches layout.ts OUTPUT_GAP)
   const output = cmd.outputRenderer(theme, outputY);
   const outputWrapped = `<g

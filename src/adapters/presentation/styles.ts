@@ -57,6 +57,12 @@ export const generateAnimationCss = (speed: number): string => {
       to { opacity: 1; transform: translateY(0); }
     }
 
+    /* Fade In for Output (opacity only to preserve SVG transforms) */
+    @keyframes fadeInOutput {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
     /* Command Line Styling */
     .command-line {
       overflow: hidden;
@@ -77,7 +83,7 @@ export const generateAnimationCss = (speed: number): string => {
     }
 
     .command-output.animate {
-      animation: fadeIn var(--fade-duration) ease-out forwards;
+      animation: fadeInOutput var(--fade-duration) ease-out forwards;
     }
 
     /* Prompt Animation (before each command) */
