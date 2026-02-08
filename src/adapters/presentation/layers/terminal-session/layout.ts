@@ -6,6 +6,7 @@ import type {
   LayoutResult,
   ScrollPoint,
 } from "./types";
+import { COMMAND_LINE_HEIGHT, OUTPUT_GAP, PROMPT_FADE_DURATION, PROMPT_HEIGHT } from "./types";
 
 /**
  * Internal accumulator type for reduce operation.
@@ -23,6 +24,11 @@ interface LayoutAccumulator {
  * Calculates layout (positions, timings) for all commands.
  * Pure function - uses fold/reduce pattern for immutable state accumulation.
  *
+ * Each command block consists of:
+ * - Prompt line 1 (directory/git info) - fades in first
+ * - Command line 2 ($ command) - types after prompt appears
+ * - Output section - fades in after command completes
+ *
  * @param commands - Sequence of commands to layout
  * @param viewportHeight - Height of visible viewport
  * @param timing - Animation timing configuration
@@ -33,8 +39,8 @@ export const calculateLayout = (
   viewportHeight: number,
   timing: AnimationTiming,
 ): LayoutResult => {
-  const cycleDuration = timing.typingDuration + timing.fadeDuration + timing.commandDelay;
-  const lineHeight = 20;
+  const cycleDuration =
+    PROMPT_FADE_DURATION + timing.typingDuration + timing.fadeDuration + timing.commandDelay;
   const theme = createMockTheme();
 
   // Use reduce for immutable accumulation (functional approach)
@@ -43,16 +49,24 @@ export const calculateLayout = (
       const commandY = acc.currentY;
       const commandTime = acc.currentTime;
 
-      // Timing for this command
+      // Timing for this command block:
+      // 1. Prompt fades in
+      // 2. Command types after prompt appears
+      // 3. Output fades in after typing completes
       const cmdTiming: CommandTiming = {
-        commandStart: commandTime,
-        outputStart: commandTime + timing.typingDuration + timing.initialDelay,
+        promptStart: commandTime,
+        commandStart: commandTime + PROMPT_FADE_DURATION,
+        outputStart:
+          commandTime + PROMPT_FADE_DURATION + timing.typingDuration + timing.initialDelay,
       };
 
       // Calculate output height (this calls the renderer in pure way)
-      const output = cmd.outputRenderer(theme, commandY + lineHeight);
-      const nextY = commandY + lineHeight + output.height;
-      const nextHeight = acc.totalHeight + lineHeight + output.height;
+      // Output starts after prompt line + command line + gap
+      const outputY = commandY + PROMPT_HEIGHT + COMMAND_LINE_HEIGHT + OUTPUT_GAP;
+      const output = cmd.outputRenderer(theme, outputY);
+      const blockHeight = PROMPT_HEIGHT + COMMAND_LINE_HEIGHT + OUTPUT_GAP + output.height;
+      const nextY = commandY + blockHeight;
+      const nextHeight = acc.totalHeight + blockHeight;
 
       // Check if scroll is needed
       const scrollPoint: ScrollPoint | null =
@@ -66,9 +80,7 @@ export const calculateLayout = (
       return {
         positions: [...acc.positions, commandY],
         timings: [...acc.timings, cmdTiming],
-        scrollPoints: scrollPoint
-          ? [...acc.scrollPoints, scrollPoint]
-          : acc.scrollPoints,
+        scrollPoints: scrollPoint ? [...acc.scrollPoints, scrollPoint] : acc.scrollPoints,
         currentY: nextY,
         currentTime: commandTime + cycleDuration,
         totalHeight: nextHeight,
@@ -78,9 +90,9 @@ export const calculateLayout = (
       positions: [],
       timings: [],
       scrollPoints: [],
-      currentY: lineHeight, // Start after initial prompt
+      currentY: 0, // First prompt starts at top of scrollable content
       currentTime: timing.initialDelay,
-      totalHeight: lineHeight,
+      totalHeight: 0,
     },
   );
 

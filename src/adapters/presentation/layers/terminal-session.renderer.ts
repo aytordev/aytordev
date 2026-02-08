@@ -1,13 +1,15 @@
+import type { StarshipPrompt } from "../../../domain/entities/starship-prompt";
 import type { TerminalState } from "../../../domain/entities/terminal-state";
-import type { Theme } from "../../../theme/types";
 import { sanitizeForSvg } from "../../../shared/sanitize";
+import type { Theme } from "../../../theme/types";
 import {
   buildCommandSequence,
   calculateLayout,
   createAnimationTiming,
   generateAllScrollKeyframes,
+  type CommandTiming,
 } from "./terminal-session";
-import { renderPrompt } from "./prompt.renderer";
+import { COMMAND_LINE_HEIGHT, PROMPT_HEIGHT } from "./terminal-session/types";
 
 /**
  * Renders an animated terminal session with scroll simulation.
@@ -35,64 +37,127 @@ export const renderTerminalSession = (
   const timing = createAnimationTiming(speed);
 
   // 3. Calculate layout (pure)
-  const layout = calculateLayout(commands, viewportHeight, timing, theme);
+  const layout = calculateLayout(commands, viewportHeight, timing);
 
   // 4. Generate scroll keyframes (pure)
   const scrollKeyframes = generateAllScrollKeyframes(layout.scrollPoints);
 
   // 5. Render commands to SVG (pure, functional composition)
+  // Each command includes: prompt (fade-in) + command line (typing) + output (fade-in)
   const commandsSvg = commands
-    .map((cmd, i) => renderCommand(cmd, layout, i, theme, timing))
+    .map((cmd, i) => renderCommand(cmd, layout, i, theme, state.prompt))
     .join("\n");
 
   // 6. Compose final SVG structure (pure template)
-  return composeTerminalSessionSvg(
-    viewportY,
-    viewportHeight,
-    scrollKeyframes,
-    commandsSvg,
-    state.prompt,
-    theme,
-    timing,
-  );
+  return composeTerminalSessionSvg(viewportY, viewportHeight, scrollKeyframes, commandsSvg);
 };
 
 /**
- * Renders a single animated command with its output.
+ * Renders a single animated command block with prompt, command line, and output.
  * Pure function.
+ *
+ * Block structure:
+ * - Prompt line 1 (fade-in): directory → git:branch
+ * - Command line 2 (typewriter): $ command
+ * - Output section (fade-in): command output
  *
  * @param cmd - Command to render
  * @param layout - Layout calculation result
  * @param index - Command index in sequence
  * @param theme - Theme configuration
- * @param timing - Animation timing configuration
- * @returns SVG string for command and output
+ * @param prompt - Starship prompt configuration
+ * @returns SVG string for complete command block
  */
 const renderCommand = (
-  cmd: { command: string; outputRenderer: (theme: Theme, y: number) => { svg: string; height: number } },
-  layout: { positions: ReadonlyArray<number>; timings: ReadonlyArray<{ commandStart: number; outputStart: number }> },
+  cmd: {
+    command: string;
+    outputRenderer: (theme: Theme, y: number) => { svg: string; height: number };
+  },
+  layout: {
+    positions: ReadonlyArray<number>;
+    timings: ReadonlyArray<CommandTiming>;
+  },
   index: number,
   theme: Theme,
-  timing: { typingDuration: number; fadeDuration: number; commandDelay: number; initialDelay: number },
+  prompt: StarshipPrompt,
 ): string => {
   const y = layout.positions[index];
   const cmdTiming = layout.timings[index];
 
+  // 1. Render prompt with fade-in animation
+  const promptY = y + PROMPT_HEIGHT; // Text baseline
+  const promptSvg = renderPromptForCommand(prompt, theme, promptY, cmdTiming.promptStart);
+
+  // 2. Render command line with typewriter animation
+  const commandY = y + PROMPT_HEIGHT + COMMAND_LINE_HEIGHT;
   const commandLine = `<text
     x="10"
-    y="${y}"
+    y="${commandY}"
     class="command-line animate terminal-text"
     fill="${theme.colors.text}"
+    font-family="monospace"
+    font-size="14"
     style="animation-delay: ${cmdTiming.commandStart}s"
   >$ ${sanitizeForSvg(cmd.command)}</text>`;
 
-  const output = cmd.outputRenderer(theme, y + 20);
+  // 3. Render output with fade-in animation
+  // Output renderers handle their own positioning via internal transforms
+  // Add left padding (10px) to align with command
+  const outputY = commandY + 25; // Gap after command (matches layout.ts OUTPUT_GAP)
+  const output = cmd.outputRenderer(theme, outputY);
   const outputWrapped = `<g
     class="command-output animate"
     style="animation-delay: ${cmdTiming.outputStart}s"
+    transform="translate(10, 0)"
   >${output.svg}</g>`;
 
-  return `${commandLine}\n${outputWrapped}`;
+  return `${promptSvg}\n${commandLine}\n${outputWrapped}`;
+};
+
+/**
+ * Renders a simplified prompt for use before a command.
+ * Only renders line 1 (directory/git info) without line 2 cursor area.
+ * Pure function.
+ *
+ * @param prompt - Starship prompt configuration
+ * @param theme - Theme configuration
+ * @param y - Y position for prompt text
+ * @param animationDelay - Delay before fade-in starts
+ * @returns SVG string for prompt with animation
+ */
+const renderPromptForCommand = (
+  prompt: StarshipPrompt,
+  theme: Theme,
+  y: number,
+  animationDelay: number,
+): string => {
+  const fontSize = 14;
+  const initialLeftX = 10;
+
+  // Directory (.../aytordev)
+  const dirText = prompt.directory;
+  const dirWidth = dirText.length * 8.5;
+  const dirSvg = `<text x="${initialLeftX}" y="${y}" fill="${theme.colors.dragonBlue}" font-family="monospace" font-size="${fontSize}" font-weight="bold">${sanitizeForSvg(dirText)}</text>`;
+
+  // Arrow →
+  const arrowX = initialLeftX + dirWidth + 10;
+  const arrowSvg = `<text x="${arrowX}" y="${y}" fill="${theme.colors.textMuted}" font-family="monospace" font-size="${fontSize}" font-weight="bold">→</text>`;
+
+  // Git branch
+  const gitX = arrowX + 20;
+  const gitSvg = prompt.gitBranch
+    ? (() => {
+        const statusChar = prompt.gitStatus === "dirty" ? "?" : "";
+        const branchText = `git:${sanitizeForSvg(prompt.gitBranch)} ${statusChar}`;
+        return `<text x="${gitX}" y="${y}" fill="${theme.colors.oniViolet}" font-family="monospace" font-size="${fontSize}">${branchText}</text>`;
+      })()
+    : "";
+
+  return `<g class="command-prompt animate" style="animation-delay: ${animationDelay}s">
+    ${dirSvg}
+    ${arrowSvg}
+    ${gitSvg}
+  </g>`;
 };
 
 /**
@@ -103,9 +168,6 @@ const renderCommand = (
  * @param viewportHeight - Height of visible viewport
  * @param scrollKeyframes - CSS keyframes for scroll animations
  * @param commandsSvg - Rendered commands SVG
- * @param prompt - Starship prompt configuration
- * @param theme - Theme configuration
- * @param timing - Animation timing configuration
  * @returns Complete SVG structure
  */
 const composeTerminalSessionSvg = (
@@ -113,12 +175,7 @@ const composeTerminalSessionSvg = (
   viewportHeight: number,
   scrollKeyframes: string,
   commandsSvg: string,
-  prompt: TerminalState["prompt"],
-  theme: Theme,
-  timing: { typingDuration: number; fadeDuration: number; commandDelay: number; initialDelay: number },
 ): string => {
-  const initialPrompt = renderInitialPrompt(prompt, theme);
-
   return `
   <defs>
     <clipPath id="terminal-viewport">
@@ -128,28 +185,9 @@ const composeTerminalSessionSvg = (
   </defs>
 
   <g clip-path="url(#terminal-viewport)">
-    <g id="scrollable-content" class="terminal-scroll">
-      ${initialPrompt}
+    <g id="scrollable-content" class="terminal-scroll" transform="translate(0, ${viewportY})">
       ${commandsSvg}
     </g>
   </g>
 `.trim();
-};
-
-/**
- * Renders the initial prompt (before commands).
- * Pure function.
- *
- * @param prompt - Starship prompt configuration
- * @param theme - Theme configuration
- * @returns SVG string for initial prompt
- */
-const renderInitialPrompt = (
-  prompt: TerminalState["prompt"],
-  theme: Theme,
-): string => {
-  // Render just the prompt without command text
-  const promptSvg = renderPrompt(prompt, theme, 0, 20);
-
-  return `<g class="initial-prompt">${promptSvg}</g>`;
 };
