@@ -2,7 +2,7 @@ import * as path from "path";
 import { createPorts } from "./adapters";
 import { createFileConfigAdapter } from "./adapters/infrastructure/config.adapter";
 import { createNodeFileSystemAdapter } from "./adapters/infrastructure/file-system.adapter";
-import { TerminalRenderer } from "./adapters/presentation/terminal-renderer";
+import { renderTerminal } from "./adapters/presentation/terminal-renderer";
 import { createGenerateProfileUseCase } from "./application/use-cases/generate-profile";
 import { createGenerateShareCardUseCase } from "./application/use-cases/generate-share-card";
 
@@ -48,8 +48,7 @@ async function main() {
   }
 
   // 3. Render
-  const renderer = new TerminalRenderer();
-  const svg = renderer.render(result.value);
+  const svg = renderTerminal(result.value);
 
   // 4. Save
   const outputPath = isShareCard ? "share-card.svg" : "profile.svg";
