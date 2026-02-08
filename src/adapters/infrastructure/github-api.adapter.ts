@@ -1,14 +1,14 @@
 import { graphql } from "@octokit/graphql";
 import { Octokit } from "@octokit/rest";
-import type {
-  ContributionStats,
-  GitHubDataPort,
-} from "../../domain/ports/github-data.port";
-import type { Commit, CommitType } from "../../domain/value-objects/commit";
+import { parseCommitEmoji, parseCommitType } from "../../domain/services/commit-parser";
+import { calculateStreak } from "../../domain/services/streak-calculator";
+import type { ContributionStats, GitHubDataPort } from "../../domain/ports/github-data.port";
+import type { Commit } from "../../domain/value-objects/commit";
 import type { LanguageStat } from "../../domain/value-objects/language-stat";
 import type { Owner } from "../../domain/value-objects/owner";
 import type { StreakInfo } from "../../domain/value-objects/streak-info";
-import { type Result, err, ok } from "../../shared/result";
+import { err, ok, type Result } from "../../shared/result";
+import { formatRelativeTime } from "../../shared/time-formatter";
 
 interface ContributionDay {
   contributionCount: number;
@@ -42,273 +42,168 @@ interface GitHubEvent {
   payload: PushEventPayload;
 }
 
-function parseCommitType(message: string): CommitType {
-  const match = message.match(/^(feat|fix|docs|style|refactor|test|chore)/i);
-  if (match) {
-    return match[1].toLowerCase() as CommitType;
-  }
-  return "chore";
-}
+export const createGitHubApiAdapter = (token: string): GitHubDataPort => {
+  // Capture dependencies in closures
+  const octokit = new Octokit({ auth: token });
+  const graphqlClient = graphql.defaults({
+    headers: { authorization: token ? `token ${token}` : "" },
+  });
 
-function parseCommitEmoji(message: string): string {
-  const emojiMatch = message.match(
-    /^(:\w+:|[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}])/u,
-  );
-  if (emojiMatch) return emojiMatch[1];
-
-  const type = parseCommitType(message);
-  const emojiMap: Record<CommitType, string> = {
-    feat: "✨",
-    fix: "🐛",
-    docs: "📝",
-    style: "💄",
-    refactor: "♻️",
-    test: "✅",
-    chore: "🔧",
-  };
-  return emojiMap[type];
-}
-
-function formatRelativeTime(date: Date): string {
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMins / 60);
-  const diffDays = Math.floor(diffHours / 24);
-
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays < 7) return `${diffDays}d ago`;
-  return `${Math.floor(diffDays / 7)}w ago`;
-}
-
-function calculateStreak(days: ContributionDay[]): StreakInfo {
-  let currentStreak = 0;
-  let longestStreak = 0;
-  let tempStreak = 0;
-  let isActive = false;
-
-  // Sort by date descending (most recent first)
-  const sortedDays = [...days].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-  );
-
-  // Check if today or yesterday has contributions (active streak)
-  const today = new Date().toISOString().split("T")[0];
-  const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
-
-  for (let i = 0; i < sortedDays.length; i++) {
-    const day = sortedDays[i];
-    if (day.contributionCount > 0) {
-      tempStreak++;
-      if (i === 0 && (day.date === today || day.date === yesterday)) {
-        isActive = true;
-      }
-    } else {
-      if (tempStreak > 0) {
-        if (currentStreak === 0) currentStreak = tempStreak;
-        longestStreak = Math.max(longestStreak, tempStreak);
-        tempStreak = 0;
-      }
-    }
-  }
-
-  // Handle case where streak continues to end
-  if (tempStreak > 0) {
-    if (currentStreak === 0) currentStreak = tempStreak;
-    longestStreak = Math.max(longestStreak, tempStreak);
-  }
-
+  // Return object with methods
   return {
-    currentStreak: isActive ? currentStreak : 0,
-    longestStreak,
-    lastContributionDate: new Date(sortedDays[0]?.date ?? Date.now()),
-    isActive,
-  };
-}
+    getUserInfo: async (username: string): Promise<Result<Owner, Error>> => {
+      try {
+        const { data } = await octokit.users.getByUsername({ username });
+        return ok({
+          name: data.name ?? username,
+          username: data.login,
+          title: data.bio ?? "Developer",
+          location: data.location ?? "Earth",
+          timezone: "UTC",
+        });
+      } catch (error) {
+        return err(error instanceof Error ? error : new Error(String(error)));
+      }
+    },
 
-export class GitHubApiAdapter implements GitHubDataPort {
-  private readonly octokit: Octokit;
-  private readonly graphqlClient: typeof graphql;
-
-  constructor(token?: string) {
-    this.octokit = new Octokit({ auth: token });
-    this.graphqlClient = graphql.defaults({
-      headers: { authorization: token ? `token ${token}` : "" },
-    });
-  }
-
-  async getUserInfo(username: string): Promise<Result<Owner, Error>> {
-    try {
-      const { data } = await this.octokit.users.getByUsername({ username });
-      return ok({
-        name: data.name ?? username,
-        username: data.login,
-        title: data.bio ?? "Developer",
-        location: data.location ?? "Earth",
-        timezone: "UTC", // GitHub API doesn't expose timezone
-      });
-    } catch (error) {
-      return err(error instanceof Error ? error : new Error(String(error)));
-    }
-  }
-
-  async getRecentCommits(
-    username: string,
-    limit: number,
-  ): Promise<Result<Commit[], Error>> {
-    try {
-      const { data: events } =
-        await this.octokit.activity.listPublicEventsForUser({
+    getRecentCommits: async (username: string, limit: number): Promise<Result<Commit[], Error>> => {
+      try {
+        const { data: events } = await octokit.activity.listPublicEventsForUser({
           username,
-          per_page: limit * 5, // Fetch more to filter PushEvents
+          per_page: limit * 5,
         });
 
-      const commits: Commit[] = [];
+        // Use reduce instead of for loop with mutations
+        const commits = (events as GitHubEvent[]).reduce((acc, event) => {
+          if (acc.length >= limit) return acc;
+          if (event.type !== "PushEvent" || !event.payload.commits) return acc;
 
-      for (const event of events as GitHubEvent[]) {
-        if (event.type === "PushEvent" && event.payload.commits) {
-          for (const commit of event.payload.commits) {
-            commits.push({
-              hash: commit.sha.substring(0, 7),
-              message: commit.message.split("\n")[0].substring(0, 50),
-              emoji: parseCommitEmoji(commit.message),
-              type: parseCommitType(commit.message),
-              relativeTime: formatRelativeTime(
-                new Date(event.created_at ?? Date.now()),
-              ),
+          const newCommits = event.payload.commits.map((commit) => ({
+            hash: commit.sha.substring(0, 7),
+            message: commit.message.split("\n")[0].substring(0, 50),
+            emoji: parseCommitEmoji(commit.message),
+            type: parseCommitType(commit.message),
+            relativeTime: formatRelativeTime(new Date(event.created_at ?? Date.now())),
+          }));
+
+          return [...acc, ...newCommits].slice(0, limit);
+        }, [] as Commit[]);
+
+        return ok(commits);
+      } catch (error) {
+        return err(error instanceof Error ? error : new Error(String(error)));
+      }
+    },
+
+    getLanguageStats: async (username: string): Promise<Result<LanguageStat[], Error>> => {
+      try {
+        const { data: repos } = await octokit.repos.listForUser({
+          username,
+          per_page: 100,
+          sort: "updated",
+        });
+
+        const languageBytes: Record<string, number> = {};
+
+        // Aggregate language bytes from top repos
+        for (const repo of repos.slice(0, 20)) {
+          if (repo.fork) continue;
+          try {
+            const { data: languages } = await octokit.repos.listLanguages({
+              owner: username,
+              repo: repo.name,
             });
-            if (commits.length >= limit) break;
+            for (const [lang, bytes] of Object.entries(languages)) {
+              languageBytes[lang] = (languageBytes[lang] ?? 0) + bytes;
+            }
+          } catch {
+            // Skip repos we can't access
           }
         }
-        if (commits.length >= limit) break;
+
+        const total = Object.values(languageBytes).reduce((a, b) => a + b, 0);
+        const stats: LanguageStat[] = Object.entries(languageBytes)
+          .sort(([, a], [, b]) => b - a)
+          .slice(0, 5)
+          .map(([name, bytes]) => ({
+            name,
+            percentage: Math.round((bytes / total) * 100),
+            bytes,
+            color: getLanguageColor(name),
+          }));
+
+        return ok(stats);
+      } catch (error) {
+        return err(error instanceof Error ? error : new Error(String(error)));
       }
+    },
 
-      return ok(commits);
-    } catch (error) {
-      return err(error instanceof Error ? error : new Error(String(error)));
-    }
-  }
-
-  async getLanguageStats(
-    username: string,
-  ): Promise<Result<LanguageStat[], Error>> {
-    try {
-      const { data: repos } = await this.octokit.repos.listForUser({
-        username,
-        per_page: 100,
-        sort: "updated",
-      });
-
-      const languageBytes: Record<string, number> = {};
-
-      // Aggregate language bytes from top repos
-      for (const repo of repos.slice(0, 20)) {
-        if (repo.fork) continue;
-        try {
-          const { data: languages } = await this.octokit.repos.listLanguages({
-            owner: username,
-            repo: repo.name,
-          });
-          for (const [lang, bytes] of Object.entries(languages)) {
-            languageBytes[lang] = (languageBytes[lang] ?? 0) + bytes;
-          }
-        } catch {
-          // Skip repos we can't access
-        }
-      }
-
-      const total = Object.values(languageBytes).reduce((a, b) => a + b, 0);
-      const stats: LanguageStat[] = Object.entries(languageBytes)
-        .sort(([, a], [, b]) => b - a)
-        .slice(0, 5)
-        .map(([name, bytes]) => ({
-          name,
-          percentage: Math.round((bytes / total) * 100),
-          bytes,
-          color: getLanguageColor(name),
-        }));
-
-      return ok(stats);
-    } catch (error) {
-      return err(error instanceof Error ? error : new Error(String(error)));
-    }
-  }
-
-  async getContributionStats(
-    username: string,
-  ): Promise<Result<ContributionStats, Error>> {
-    try {
-      const { user } = await this.graphqlClient<ContributionResponse>(
-        `
-        query($username: String!) {
-          user(login: $username) {
-            contributionsCollection {
-              contributionCalendar {
-                weeks {
-                  contributionDays {
-                    contributionCount
-                    date
+    getContributionStats: async (username: string): Promise<Result<ContributionStats, Error>> => {
+      try {
+        const { user } = await graphqlClient<ContributionResponse>(
+          `
+          query($username: String!) {
+            user(login: $username) {
+              contributionsCollection {
+                contributionCalendar {
+                  weeks {
+                    contributionDays {
+                      contributionCount
+                      date
+                    }
                   }
                 }
               }
             }
           }
-        }
-      `,
-        { username },
-      );
+        `,
+          { username },
+        );
 
-      const days =
-        user.contributionsCollection.contributionCalendar.weeks.flatMap(
+        const days = user.contributionsCollection.contributionCalendar.weeks.flatMap(
           (w) => w.contributionDays,
         );
 
-      const totalContributions = days.reduce(
-        (sum, day) => sum + day.contributionCount,
-        0,
-      );
+        const totalContributions = days.reduce((sum, day) => sum + day.contributionCount, 0);
 
-      return ok({ totalContributions });
-    } catch (error) {
-      return err(error instanceof Error ? error : new Error(String(error)));
-    }
-  }
+        return ok({ totalContributions });
+      } catch (error) {
+        return err(error instanceof Error ? error : new Error(String(error)));
+      }
+    },
 
-  async getContributionStreak(
-    username: string,
-  ): Promise<Result<StreakInfo, Error>> {
-    try {
-      const { user } = await this.graphqlClient<ContributionResponse>(
-        `
-        query($username: String!) {
-          user(login: $username) {
-            contributionsCollection {
-              contributionCalendar {
-                weeks {
-                  contributionDays {
-                    contributionCount
-                    date
+    getContributionStreak: async (username: string): Promise<Result<StreakInfo, Error>> => {
+      try {
+        const { user } = await graphqlClient<ContributionResponse>(
+          `
+          query($username: String!) {
+            user(login: $username) {
+              contributionsCollection {
+                contributionCalendar {
+                  weeks {
+                    contributionDays {
+                      contributionCount
+                      date
+                    }
                   }
                 }
               }
             }
           }
-        }
-      `,
-        { username },
-      );
+        `,
+          { username },
+        );
 
-      const days =
-        user.contributionsCollection.contributionCalendar.weeks.flatMap(
+        const days = user.contributionsCollection.contributionCalendar.weeks.flatMap(
           (w) => w.contributionDays,
         );
 
-      return ok(calculateStreak(days));
-    } catch (error) {
-      return err(error instanceof Error ? error : new Error(String(error)));
-    }
-  }
+        return ok(calculateStreak(days));
+      } catch (error) {
+        return err(error instanceof Error ? error : new Error(String(error)));
+      }
+    },
+  };
 }
 
 // GitHub language colors (subset)
