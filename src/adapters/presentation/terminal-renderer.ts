@@ -1,6 +1,7 @@
 import type { TerminalState } from "../../domain/entities/terminal-state";
 import { getTheme } from "../../theme";
 import { buildDefs } from "./effects";
+import { renderAsciiArt } from "./layers/ascii-art.renderer";
 import { renderContact } from "./layers/contact.renderer";
 import { renderContentArea } from "./layers/content-area.renderer";
 import { renderDeveloperInfo } from "./layers/developer-info.renderer";
@@ -40,20 +41,9 @@ export const renderTerminal = (state: TerminalState): string => {
   const promptY = 80;
   const contentStartY = 140;
 
-  // ASCII Art rendering - immutable
+  // ASCII Art rendering - using extracted renderer
   const asciiArtResult = state.content.asciiArt
-    ? (() => {
-        const artLines = state.content.asciiArt.split("\n");
-        const artLineHeight = 14;
-        const svgLines = artLines.map(
-          (line, i) =>
-            `<text x="0" y="${i * artLineHeight}" class="terminal-text" fill="${theme.colors.dragonBlue}" font-family="monospace" font-size="12" xml:space="preserve">${line}</text>`,
-        );
-        return {
-          svg: svgLines.join("\n"),
-          offset: artLines.length * artLineHeight + 20,
-        };
-      })()
+    ? renderAsciiArt(state.content.asciiArt, theme, 0)
     : { svg: "", offset: 0 };
 
   const contentOffset = asciiArtResult.offset;
