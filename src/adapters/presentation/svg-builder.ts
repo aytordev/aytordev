@@ -1,4 +1,5 @@
 import { sanitizeForSvg } from "../../shared/sanitize";
+import { pipe } from "../../shared/fp-utils";
 import type { Theme } from "../../theme/types";
 import { generateCss } from "./styles";
 
@@ -60,6 +61,5 @@ export const build = (state: SvgBuilderState): string => {
   `.trim();
 };
 
-// Helper for functional composition (pipe)
-export const pipe = <T>(initial: T, ...fns: Array<(x: T) => T>): T =>
-  fns.reduce((acc, fn) => fn(acc), initial);
+// Re-export pipe for convenience
+export { pipe };
