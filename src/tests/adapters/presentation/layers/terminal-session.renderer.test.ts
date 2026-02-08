@@ -34,11 +34,33 @@ describe("renderTerminalSession", () => {
     expect(svg).toContain('id="scrollable-content"');
   });
 
-  it("should render initial prompt", () => {
+  it("should render initial prompt with left side", () => {
     const state = terminalStateBuilder().build();
     const svg = renderTerminalSession(state, theme, viewportY, viewportHeight);
 
     expect(svg).toContain(state.prompt.directory);
+  });
+
+  it("should render prompt with right side elements (time, node, nix)", () => {
+    const state = terminalStateBuilder()
+      .with({
+        prompt: {
+          directory: "~/dev",
+          gitBranch: "main",
+          gitStatus: "clean",
+          nodeVersion: "v18.19.0",
+          nixIndicator: true,
+          time: "23:50",
+        },
+      })
+      .build();
+    const svg = renderTerminalSession(state, theme, viewportY, viewportHeight);
+
+    // Right side should include all elements
+    expect(svg).toContain("23:50"); // Time
+    expect(svg).toContain("nix"); // Nix indicator
+    expect(svg).toContain("v18.19.0"); // Node version
+    expect(svg).toContain("node"); // Node label
   });
 
   it("should render commands based on content sections", () => {

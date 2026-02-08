@@ -10,6 +10,7 @@ import {
   type CommandTiming,
 } from "./terminal-session";
 import { COMMAND_LINE_HEIGHT, PROMPT_HEIGHT } from "./terminal-session/types";
+import { renderPromptLeftSide, renderPromptRightSide } from "./prompt.renderer";
 
 /**
  * Renders an animated terminal session with scroll simulation.
@@ -115,14 +116,15 @@ const renderCommand = (
 };
 
 /**
- * Renders a simplified prompt for use before a command.
- * Only renders line 1 (directory/git info) without line 2 cursor area.
- * Pure function.
+ * Renders a complete prompt for use before a command.
+ * Renders both left side (directory/git info) and right side (time/node/nix).
+ * Pure function - composes smaller pure functions.
  *
  * @param prompt - Starship prompt configuration
  * @param theme - Theme configuration
  * @param y - Y position for prompt text
  * @param animationDelay - Delay before fade-in starts
+ * @param width - Total width for prompt (default 800)
  * @returns SVG string for prompt with animation
  */
 const renderPromptForCommand = (
@@ -130,33 +132,26 @@ const renderPromptForCommand = (
   theme: Theme,
   y: number,
   animationDelay: number,
+  width: number = 800,
 ): string => {
   const fontSize = 14;
   const initialLeftX = 10;
+  const rightX = width - 20; // Padding right
 
-  // Directory (.../aytordev)
-  const dirText = prompt.directory;
-  const dirWidth = dirText.length * 8.5;
-  const dirSvg = `<text x="${initialLeftX}" y="${y}" fill="${theme.colors.dragonBlue}" font-family="monospace" font-size="${fontSize}" font-weight="bold">${sanitizeForSvg(dirText)}</text>`;
+  const config = {
+    fontSize,
+    initialLeftX,
+    rightX,
+    y,
+  };
 
-  // Arrow →
-  const arrowX = initialLeftX + dirWidth + 10;
-  const arrowSvg = `<text x="${arrowX}" y="${y}" fill="${theme.colors.textMuted}" font-family="monospace" font-size="${fontSize}" font-weight="bold">→</text>`;
-
-  // Git branch
-  const gitX = arrowX + 20;
-  const gitSvg = prompt.gitBranch
-    ? (() => {
-        const statusChar = prompt.gitStatus === "dirty" ? "?" : "";
-        const branchText = `git:${sanitizeForSvg(prompt.gitBranch)} ${statusChar}`;
-        return `<text x="${gitX}" y="${y}" fill="${theme.colors.oniViolet}" font-family="monospace" font-size="${fontSize}">${branchText}</text>`;
-      })()
-    : "";
+  // Use pure functions to render both sides
+  const leftSide = renderPromptLeftSide(prompt, theme, config);
+  const rightSide = renderPromptRightSide(prompt, theme, config);
 
   return `<g class="command-prompt animate" style="animation-delay: ${animationDelay}s">
-    ${dirSvg}
-    ${arrowSvg}
-    ${gitSvg}
+    ${leftSide.svg}
+    ${rightSide.svg}
   </g>`;
 };
 
