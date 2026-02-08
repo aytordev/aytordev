@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { TerminalState } from "../../../../domain/entities/terminal-state";
-import { TerminalRenderer } from "../../../adapters/presentation/terminal-renderer";
+import type { TerminalState } from "../../../domain/entities/terminal-state";
+import { renderTerminal } from "../../../adapters/presentation/terminal-renderer";
 
 describe("Terminal Renderer Orchestrator", () => {
   const mockState: TerminalState = {
@@ -58,8 +58,7 @@ describe("Terminal Renderer Orchestrator", () => {
   };
 
   it("should generate complete SVG", () => {
-    const renderer = new TerminalRenderer();
-    const svg = renderer.render(mockState);
+    const svg = renderTerminal(mockState);
 
     expect(svg).toContain("<svg");
     expect(svg).toContain("#1F1F28"); // Kanagawa Wave BG
@@ -82,8 +81,7 @@ describe("Terminal Renderer Orchestrator", () => {
         asciiArt: "  /\\_/\\  \n ( o.o ) ",
       },
     };
-    const renderer = new TerminalRenderer();
-    const svg = renderer.render(stateWithAscii);
+    const svg = renderTerminal(stateWithAscii);
 
     expect(svg).toContain(" /\\_/\\ ");
     expect(svg).toContain("( o.o )");
@@ -96,8 +94,7 @@ describe("Terminal Renderer Orchestrator", () => {
       ...mockState,
       dimensions: { width: 1200, height: 600 },
     };
-    const renderer = new TerminalRenderer();
-    const svg = renderer.render(customState);
+    const svg = renderTerminal(customState);
 
     expect(svg).toContain('viewBox="0 0 1200 600"');
     expect(svg).toContain('width="1200"');

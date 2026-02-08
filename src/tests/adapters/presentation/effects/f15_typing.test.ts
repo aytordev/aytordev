@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { wrapWithTyping } from "../../../../adapters/presentation/effects/typing";
-import { TerminalRenderer } from "../../../../adapters/presentation/terminal-renderer";
+import { renderTerminal } from "../../../../adapters/presentation/terminal-renderer";
 import { mockTerminalState } from "../../../mocks/terminal-state";
 
 describe("F15 Typing Animation", () => {
@@ -14,12 +14,12 @@ describe("F15 Typing Animation", () => {
     expect(wrapped).toContain("border-right");
   });
 
-  it("TerminalRenderer includes foreignObject for greeting", () => {
-    const renderer = new TerminalRenderer();
-    const svg = renderer.render(mockTerminalState);
+  it("TerminalRenderer includes greeting text", () => {
+    const svg = renderTerminal(mockTerminalState);
 
-    expect(svg).toContain("<foreignObject");
-    expect(svg).toContain("animation: typing");
+    // Note: foreignObject removed for GitHub compatibility (Commit 14)
+    // Now uses native SVG text element
+    expect(svg).toContain('id="greeting"');
     expect(svg).toContain(mockTerminalState.greeting);
   });
 });
