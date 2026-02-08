@@ -42,171 +42,168 @@ interface GitHubEvent {
   payload: PushEventPayload;
 }
 
-export class GitHubApiAdapter implements GitHubDataPort {
-  private readonly octokit: Octokit;
-  private readonly graphqlClient: typeof graphql;
+export const createGitHubApiAdapter = (token: string): GitHubDataPort => {
+  // Capture dependencies in closures
+  const octokit = new Octokit({ auth: token });
+  const graphqlClient = graphql.defaults({
+    headers: { authorization: token ? `token ${token}` : "" },
+  });
 
-  constructor(token?: string) {
-    this.octokit = new Octokit({ auth: token });
-    this.graphqlClient = graphql.defaults({
-      headers: { authorization: token ? `token ${token}` : "" },
-    });
-  }
+  // Return object with methods
+  return {
+    getUserInfo: async (username: string): Promise<Result<Owner, Error>> => {
+      try {
+        const { data } = await octokit.users.getByUsername({ username });
+        return ok({
+          name: data.name ?? username,
+          username: data.login,
+          title: data.bio ?? "Developer",
+          location: data.location ?? "Earth",
+          timezone: "UTC",
+        });
+      } catch (error) {
+        return err(error instanceof Error ? error : new Error(String(error)));
+      }
+    },
 
-  async getUserInfo(username: string): Promise<Result<Owner, Error>> {
-    try {
-      const { data } = await this.octokit.users.getByUsername({ username });
-      return ok({
-        name: data.name ?? username,
-        username: data.login,
-        title: data.bio ?? "Developer",
-        location: data.location ?? "Earth",
-        timezone: "UTC", // GitHub API doesn't expose timezone
-      });
-    } catch (error) {
-      return err(error instanceof Error ? error : new Error(String(error)));
-    }
-  }
+    getRecentCommits: async (username: string, limit: number): Promise<Result<Commit[], Error>> => {
+      try {
+        const { data: events } = await octokit.activity.listPublicEventsForUser({
+          username,
+          per_page: limit * 5,
+        });
 
-  async getRecentCommits(username: string, limit: number): Promise<Result<Commit[], Error>> {
-    try {
-      const { data: events } = await this.octokit.activity.listPublicEventsForUser({
-        username,
-        per_page: limit * 5, // Fetch more to filter PushEvents
-      });
+        // Use reduce instead of for loop with mutations
+        const commits = (events as GitHubEvent[]).reduce((acc, event) => {
+          if (acc.length >= limit) return acc;
+          if (event.type !== "PushEvent" || !event.payload.commits) return acc;
 
-      const commits: Commit[] = [];
+          const newCommits = event.payload.commits.map((commit) => ({
+            hash: commit.sha.substring(0, 7),
+            message: commit.message.split("\n")[0].substring(0, 50),
+            emoji: parseCommitEmoji(commit.message),
+            type: parseCommitType(commit.message),
+            relativeTime: formatRelativeTime(new Date(event.created_at ?? Date.now())),
+          }));
 
-      for (const event of events as GitHubEvent[]) {
-        if (event.type === "PushEvent" && event.payload.commits) {
-          for (const commit of event.payload.commits) {
-            commits.push({
-              hash: commit.sha.substring(0, 7),
-              message: commit.message.split("\n")[0].substring(0, 50),
-              emoji: parseCommitEmoji(commit.message),
-              type: parseCommitType(commit.message),
-              relativeTime: formatRelativeTime(new Date(event.created_at ?? Date.now())),
+          return [...acc, ...newCommits].slice(0, limit);
+        }, [] as Commit[]);
+
+        return ok(commits);
+      } catch (error) {
+        return err(error instanceof Error ? error : new Error(String(error)));
+      }
+    },
+
+    getLanguageStats: async (username: string): Promise<Result<LanguageStat[], Error>> => {
+      try {
+        const { data: repos } = await octokit.repos.listForUser({
+          username,
+          per_page: 100,
+          sort: "updated",
+        });
+
+        const languageBytes: Record<string, number> = {};
+
+        // Aggregate language bytes from top repos
+        for (const repo of repos.slice(0, 20)) {
+          if (repo.fork) continue;
+          try {
+            const { data: languages } = await octokit.repos.listLanguages({
+              owner: username,
+              repo: repo.name,
             });
-            if (commits.length >= limit) break;
+            for (const [lang, bytes] of Object.entries(languages)) {
+              languageBytes[lang] = (languageBytes[lang] ?? 0) + bytes;
+            }
+          } catch {
+            // Skip repos we can't access
           }
         }
-        if (commits.length >= limit) break;
+
+        const total = Object.values(languageBytes).reduce((a, b) => a + b, 0);
+        const stats: LanguageStat[] = Object.entries(languageBytes)
+          .sort(([, a], [, b]) => b - a)
+          .slice(0, 5)
+          .map(([name, bytes]) => ({
+            name,
+            percentage: Math.round((bytes / total) * 100),
+            bytes,
+            color: getLanguageColor(name),
+          }));
+
+        return ok(stats);
+      } catch (error) {
+        return err(error instanceof Error ? error : new Error(String(error)));
       }
+    },
 
-      return ok(commits);
-    } catch (error) {
-      return err(error instanceof Error ? error : new Error(String(error)));
-    }
-  }
-
-  async getLanguageStats(username: string): Promise<Result<LanguageStat[], Error>> {
-    try {
-      const { data: repos } = await this.octokit.repos.listForUser({
-        username,
-        per_page: 100,
-        sort: "updated",
-      });
-
-      const languageBytes: Record<string, number> = {};
-
-      // Aggregate language bytes from top repos
-      for (const repo of repos.slice(0, 20)) {
-        if (repo.fork) continue;
-        try {
-          const { data: languages } = await this.octokit.repos.listLanguages({
-            owner: username,
-            repo: repo.name,
-          });
-          for (const [lang, bytes] of Object.entries(languages)) {
-            languageBytes[lang] = (languageBytes[lang] ?? 0) + bytes;
-          }
-        } catch {
-          // Skip repos we can't access
-        }
-      }
-
-      const total = Object.values(languageBytes).reduce((a, b) => a + b, 0);
-      const stats: LanguageStat[] = Object.entries(languageBytes)
-        .sort(([, a], [, b]) => b - a)
-        .slice(0, 5)
-        .map(([name, bytes]) => ({
-          name,
-          percentage: Math.round((bytes / total) * 100),
-          bytes,
-          color: getLanguageColor(name),
-        }));
-
-      return ok(stats);
-    } catch (error) {
-      return err(error instanceof Error ? error : new Error(String(error)));
-    }
-  }
-
-  async getContributionStats(username: string): Promise<Result<ContributionStats, Error>> {
-    try {
-      const { user } = await this.graphqlClient<ContributionResponse>(
-        `
-        query($username: String!) {
-          user(login: $username) {
-            contributionsCollection {
-              contributionCalendar {
-                weeks {
-                  contributionDays {
-                    contributionCount
-                    date
+    getContributionStats: async (username: string): Promise<Result<ContributionStats, Error>> => {
+      try {
+        const { user } = await graphqlClient<ContributionResponse>(
+          `
+          query($username: String!) {
+            user(login: $username) {
+              contributionsCollection {
+                contributionCalendar {
+                  weeks {
+                    contributionDays {
+                      contributionCount
+                      date
+                    }
                   }
                 }
               }
             }
           }
-        }
-      `,
-        { username },
-      );
+        `,
+          { username },
+        );
 
-      const days = user.contributionsCollection.contributionCalendar.weeks.flatMap(
-        (w) => w.contributionDays,
-      );
+        const days = user.contributionsCollection.contributionCalendar.weeks.flatMap(
+          (w) => w.contributionDays,
+        );
 
-      const totalContributions = days.reduce((sum, day) => sum + day.contributionCount, 0);
+        const totalContributions = days.reduce((sum, day) => sum + day.contributionCount, 0);
 
-      return ok({ totalContributions });
-    } catch (error) {
-      return err(error instanceof Error ? error : new Error(String(error)));
-    }
-  }
+        return ok({ totalContributions });
+      } catch (error) {
+        return err(error instanceof Error ? error : new Error(String(error)));
+      }
+    },
 
-  async getContributionStreak(username: string): Promise<Result<StreakInfo, Error>> {
-    try {
-      const { user } = await this.graphqlClient<ContributionResponse>(
-        `
-        query($username: String!) {
-          user(login: $username) {
-            contributionsCollection {
-              contributionCalendar {
-                weeks {
-                  contributionDays {
-                    contributionCount
-                    date
+    getContributionStreak: async (username: string): Promise<Result<StreakInfo, Error>> => {
+      try {
+        const { user } = await graphqlClient<ContributionResponse>(
+          `
+          query($username: String!) {
+            user(login: $username) {
+              contributionsCollection {
+                contributionCalendar {
+                  weeks {
+                    contributionDays {
+                      contributionCount
+                      date
+                    }
                   }
                 }
               }
             }
           }
-        }
-      `,
-        { username },
-      );
+        `,
+          { username },
+        );
 
-      const days = user.contributionsCollection.contributionCalendar.weeks.flatMap(
-        (w) => w.contributionDays,
-      );
+        const days = user.contributionsCollection.contributionCalendar.weeks.flatMap(
+          (w) => w.contributionDays,
+        );
 
-      return ok(calculateStreak(days));
-    } catch (error) {
-      return err(error instanceof Error ? error : new Error(String(error)));
-    }
-  }
+        return ok(calculateStreak(days));
+      } catch (error) {
+        return err(error instanceof Error ? error : new Error(String(error)));
+      }
+    },
+  };
 }
 
 // GitHub language colors (subset)
