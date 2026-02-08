@@ -1,7 +1,6 @@
 import type { TerminalState } from "../../domain/entities/terminal-state";
 import { getTheme } from "../../theme";
 import { buildDefs } from "./effects";
-import { wrapWithTyping } from "./effects/typing";
 import { renderContact } from "./layers/contact.renderer";
 import { renderContentArea } from "./layers/content-area.renderer";
 import { renderDeveloperInfo } from "./layers/developer-info.renderer";
@@ -29,17 +28,10 @@ export class TerminalRenderer {
     const defs = buildDefs(theme, effectsConfig);
 
     // Greeting preparation
+    // Note: foreignObject is not supported by GitHub's SVG renderer
+    // Using native SVG text element for maximum compatibility
     const greetingY = 50;
-    const disableAnimations = state.renderOptions?.disableAnimations ?? false;
-    const animatedGreeting = !disableAnimations ? wrapWithTyping(state.greeting) : state.greeting;
-
-    const foreignObj = `
-      <foreignObject x="10" y="${greetingY - 15}" width="600" height="40">
-        <div xmlns="http://www.w3.org/1999/xhtml" style="font-family: monospace; color: ${theme.colors.fujiWhite}; font-weight: bold; font-size: 14px;">
-          ${animatedGreeting}
-        </div>
-      </foreignObject>
-    `;
+    const greetingSvg = `<text x="10" y="${greetingY}" fill="${theme.colors.fujiWhite}" font-size="16" font-family="monospace" font-weight="bold" class="greeting">${state.greeting}</text>`;
 
     // Content preparation
     const promptY = 80;
@@ -82,7 +74,7 @@ export class TerminalRenderer {
       createSvgBuilder(theme, { width, height }),
       (s) => (defs ? addDefs(s, defs) : s),
       (s) => addLayer(s, renderTmuxBar(state.session, theme, 0)),
-      (s) => addLayer(s, `<g id="greeting">${foreignObj}</g>`),
+      (s) => addLayer(s, `<g id="greeting">${greetingSvg}</g>`),
       (s) => addLayer(s, renderPrompt(state.prompt, theme, promptY, width)),
       (s) => addLayer(s, renderStreak(state.content.streak, theme, 600, promptY)),
       (s) => addLayer(s, renderContentArea(contentStartY, innerContent)),
