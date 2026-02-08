@@ -40,7 +40,6 @@ describe("GenerateProfileUseCase", () => {
       expect(result.value.owner.username).toBe(mockConfig.owner.username);
       expect(result.value.themeName).toBe(mockConfig.theme);
       expect(result.value.timeOfDay).toBe("afternoon");
-      expect(result.value.greeting).toContain("Good afternoon");
     }
   });
 

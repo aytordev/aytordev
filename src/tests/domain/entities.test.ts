@@ -52,7 +52,6 @@ describe("Terminal Entities", () => {
   it("should structure TerminalState correctly", () => {
     // Top-level aggregate test
     const state: Partial<TerminalState> = {
-      greeting: "Hello",
       themeName: "kanagawa-wave",
       timestamp: new Date(),
     };

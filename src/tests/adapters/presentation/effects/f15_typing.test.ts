@@ -13,13 +13,4 @@ describe("F15 Typing Animation", () => {
     expect(wrapped).toContain("Hello World");
     expect(wrapped).toContain("border-right");
   });
-
-  it("TerminalRenderer includes greeting text", () => {
-    const svg = renderTerminal(mockTerminalState);
-
-    // Note: foreignObject removed for GitHub compatibility (Commit 14)
-    // Now uses native SVG text element
-    expect(svg).toContain('id="greeting"');
-    expect(svg).toContain(mockTerminalState.greeting);
-  });
 });

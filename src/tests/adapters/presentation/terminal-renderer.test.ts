@@ -17,9 +17,6 @@ describe("Terminal Renderer Orchestrator", () => {
     expect(svg).toContain('id="developer-info"');
     // Streak presence
     expect(svg).toContain('id="streak"');
-    // Greeting presence
-    expect(svg).toContain('id="greeting"');
-    expect(svg).toContain("Hello");
   });
 
   it("should render ASCII Art when present", () => {
@@ -55,7 +52,6 @@ describe("Terminal Renderer Orchestrator", () => {
       const svg = renderTerminal(mockState);
 
       // Static mode should have all traditional sections
-      expect(svg).toContain('id="greeting"');
       expect(svg).toContain('id="prompt"');
       expect(svg).toContain('id="developer-info"');
       // Should NOT have animation-specific elements
@@ -76,7 +72,6 @@ describe("Terminal Renderer Orchestrator", () => {
       const svg = renderTerminal(stateWithAnimationDisabled);
 
       // Static mode characteristics
-      expect(svg).toContain('id="greeting"');
       expect(svg).toContain('id="prompt"');
       // Should NOT have animation-specific elements
       expect(svg).not.toContain("clipPath");
@@ -141,10 +136,10 @@ describe("Terminal Renderer Orchestrator", () => {
       });
 
       // Both should have same core elements
-      expect(svgWithoutAnimation).toContain('id="greeting"');
-      expect(svgWithAnimationDisabled).toContain('id="greeting"');
       expect(svgWithoutAnimation).toContain('id="tmux-bar"');
       expect(svgWithAnimationDisabled).toContain('id="tmux-bar"');
+      expect(svgWithoutAnimation).toContain('id="prompt"');
+      expect(svgWithAnimationDisabled).toContain('id="prompt"');
     });
   });
 });

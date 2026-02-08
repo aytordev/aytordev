@@ -54,17 +54,6 @@ export class TerminalStateBuilder {
   }
 
   /**
-   * Set greeting message
-   */
-  withGreeting(greeting: string): this {
-    this.state = {
-      ...this.state,
-      greeting,
-    };
-    return this;
-  }
-
-  /**
    * Set time of day
    */
   withTimeOfDay(timeOfDay: TimeOfDay): this {

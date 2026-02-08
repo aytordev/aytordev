@@ -9,7 +9,6 @@ import type { TmuxSession } from "./tmux-session";
 export interface TerminalState {
   readonly timestamp: Date;
   readonly timeOfDay: TimeOfDay;
-  readonly greeting: string;
   readonly owner: Owner;
   readonly session: TmuxSession;
   readonly prompt: StarshipPrompt;

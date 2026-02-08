@@ -176,14 +176,12 @@ describe("renderTerminalSession", () => {
   it("should not mutate input state", () => {
     const state = terminalStateBuilder().build();
     const originalThemeName = state.themeName;
-    const originalGreeting = state.greeting;
     const originalDirectory = state.prompt.directory;
 
     renderTerminalSession(state, theme, viewportY, viewportHeight);
 
     // Check key properties remain unchanged
     expect(state.themeName).toBe(originalThemeName);
-    expect(state.greeting).toBe(originalGreeting);
     expect(state.prompt.directory).toBe(originalDirectory);
     // Check that content object is not mutated
     expect(state.content).toBeDefined();

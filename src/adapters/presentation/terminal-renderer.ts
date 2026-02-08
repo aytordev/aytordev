@@ -109,15 +109,9 @@ const renderStaticTerminal = (state: TerminalState): string => {
 
   const defs = buildDefs(theme, effectsConfig);
 
-  // Greeting preparation
-  // Note: foreignObject is not supported by GitHub's SVG renderer
-  // Using native SVG text element for maximum compatibility
-  const greetingY = 50;
-  const greetingSvg = `<text x="10" y="${greetingY}" fill="${theme.colors.fujiWhite}" font-size="16" font-family="monospace" font-weight="bold" class="greeting">${state.greeting}</text>`;
-
   // Content preparation
-  const promptY = 80;
-  const contentStartY = 140;
+  const promptY = 50;
+  const contentStartY = 110;
 
   // ASCII Art rendering - using extracted renderer
   const asciiArtResult = state.content.asciiArt
@@ -160,7 +154,6 @@ const renderStaticTerminal = (state: TerminalState): string => {
     createSvgBuilder(theme, { width, height }),
     (s) => (defs ? addDefs(s, defs) : s),
     (s) => addLayer(s, renderTmuxBar(state.session, theme, 0)),
-    (s) => addLayer(s, `<g id="greeting">${greetingSvg}</g>`),
     (s) => addLayer(s, renderPrompt(state.prompt, theme, promptY, width)),
     (s) => addLayer(s, renderStreak(state.content.streak, theme, 600, promptY)),
     (s) => addLayer(s, renderContentArea(contentStartY, innerContent)),
