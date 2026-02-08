@@ -75,7 +75,7 @@ export const createGenerateProfileUseCase = (ports: Ports): GenerateProfileUseCa
             modified: 0,
           },
 
-          nodeVersion: process.version,
+          nodeVersion: ports.environment.nodeVersion(),
 
           nixIndicator: true,
           time: ports.clock.formatTime(
