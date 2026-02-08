@@ -1,103 +1,78 @@
 import { describe, expect, it } from "vitest";
 import { renderTerminal } from "../../adapters/presentation/terminal-renderer";
-import type { TerminalState } from "../../domain/entities/terminal-state";
+import { terminalStateBuilder } from "../__support__/builders";
+import { TEST_ANIMATION } from "../__support__/constants";
 
 describe("Animated Profile Integration", () => {
-  const createFullState = (): TerminalState => ({
-    themeName: "kanagawa-wave",
-    dimensions: { width: 800, height: 400 },
-    greeting: "Welcome to my terminal profile!",
-    timestamp: new Date("2024-01-01T12:00:00Z"),
-    timeOfDay: "afternoon",
-    owner: {
-      name: "Aytor Developer",
-      username: "aytordev",
-      title: "Software Engineer",
-      location: "Madrid, Spain",
-      timezone: "Europe/Madrid",
-    },
-    session: {
-      sessionName: "main",
-      windows: [],
-      activeWindowIndex: 0,
-      currentBranch: "feat/animated-terminal",
-      stats: { cpuLoad: 25, memoryUsage: 60, uptime: "2h 30m" },
-    },
-    prompt: {
-      directory: "~/projects/aytordev",
-      gitBranch: "feat/animated-terminal",
-      gitStatus: "clean",
-      nodeVersion: "v20.11.0",
-      nixIndicator: true,
-      time: "14:30",
-    },
-    content: {
-      developerInfo: {
-        name: "Aytor Developer",
-        username: "aytordev",
-        tagline: "Full-Stack Developer | NixOS Enthusiast",
-        location: "Madrid, Spain",
-      },
-      techStack: {
-        categories: [
-          { name: "Languages", items: ["TypeScript", "Rust", "Python", "Nix"] },
-          { name: "AI/ML", items: ["PyTorch", "TensorFlow", "LangChain"] },
-          { name: "Infrastructure", items: ["Docker", "Kubernetes", "NixOS"] },
+  const createFullState = () =>
+    terminalStateBuilder()
+      .withContent({
+        developerInfo: {
+          name: "Aytor Developer",
+          username: "aytordev",
+          tagline: "Full-Stack Developer | NixOS Enthusiast",
+          location: "Madrid, Spain",
+        },
+        techStack: {
+          categories: [
+            { name: "Languages", items: ["TypeScript", "Rust", "Python", "Nix"] },
+            { name: "AI/ML", items: ["PyTorch", "TensorFlow", "LangChain"] },
+            { name: "Infrastructure", items: ["Docker", "Kubernetes", "NixOS"] },
+          ],
+        },
+        languageStats: [
+          { name: "TypeScript", percentage: 45, color: "#3178C6", bytes: 125000 },
+          { name: "Rust", percentage: 25, color: "#CE422B", bytes: 75000 },
+          { name: "Python", percentage: 20, color: "#3776AB", bytes: 60000 },
+          { name: "Nix", percentage: 10, color: "#5277C3", bytes: 30000 },
         ],
-      },
-      languageStats: [
-        { name: "TypeScript", percentage: 45, color: "#3178C6", bytes: 125000 },
-        { name: "Rust", percentage: 25, color: "#CE422B", bytes: 75000 },
-        { name: "Python", percentage: 20, color: "#3776AB", bytes: 60000 },
-        { name: "Nix", percentage: 10, color: "#5277C3", bytes: 30000 },
-      ],
-      recentCommits: [
-        {
-          hash: "a1b2c3d",
-          message: "feat: add animation support",
-          emoji: "✨",
-          type: "feat",
-          relativeTime: "2 hours ago",
+        recentCommits: [
+          {
+            hash: "a1b2c3d",
+            message: "feat: add animation support",
+            emoji: "✨",
+            type: "feat",
+            relativeTime: "2 hours ago",
+          },
+          {
+            hash: "e4f5g6h",
+            message: "fix: correct scroll behavior",
+            emoji: "🐛",
+            type: "fix",
+            relativeTime: "1 day ago",
+          },
+          {
+            hash: "i7j8k9l",
+            message: "docs: update README",
+            emoji: "📝",
+            type: "docs",
+            relativeTime: "3 days ago",
+          },
+        ],
+        stats: { publicRepos: 42, followers: 150, following: 75, totalStars: 500 },
+        careerTimeline: [],
+        learningJourney: { current: "Diving deep into Rust async programming" },
+        todayFocus: null,
+        dailyQuote: null,
+        contactInfo: [
+          { label: "GitHub", value: "https://github.com/aytordev", icon: "github" },
+          { label: "Website", value: "https://aytor.dev", icon: "globe" },
+          { label: "Email", value: "hello@aytor.dev", icon: "mail" },
+        ],
+        streak: {
+          currentStreak: 42,
+          longestStreak: 60,
+          lastContributionDate: new Date("2024-01-01T00:00:00Z"),
+          isActive: true,
         },
-        {
-          hash: "e4f5g6h",
-          message: "fix: correct scroll behavior",
-          emoji: "🐛",
-          type: "fix",
-          relativeTime: "1 day ago",
-        },
-        {
-          hash: "i7j8k9l",
-          message: "docs: update README",
-          emoji: "📝",
-          type: "docs",
-          relativeTime: "3 days ago",
-        },
-      ],
-      stats: { publicRepos: 42, followers: 150, following: 75, totalStars: 500 },
-      careerTimeline: [],
-      learningJourney: { current: "Diving deep into Rust async programming" },
-      todayFocus: null,
-      dailyQuote: null,
-      contactInfo: [
-        { label: "GitHub", value: "https://github.com/aytordev", icon: "github" },
-        { label: "Website", value: "https://aytor.dev", icon: "globe" },
-        { label: "Email", value: "hello@aytor.dev", icon: "mail" },
-      ],
-      streak: {
-        currentStreak: 42,
-        longestStreak: 60,
-        lastContributionDate: new Date("2024-01-01T00:00:00Z"),
-        isActive: true,
-      },
-      extraLines: [],
-    },
-    animation: {
-      enabled: true,
-      speed: 1,
-      initialDelay: 0.5,
-    },
-  });
+        extraLines: [],
+      })
+      .withAnimation({
+        enabled: true,
+        speed: TEST_ANIMATION.SPEED_NORMAL,
+        initialDelay: 0.5,
+      })
+      .build();
 
   it("should generate complete animated SVG profile", () => {
     const state = createFullState();
@@ -243,15 +218,15 @@ describe("Animated Profile Integration", () => {
   it("should respect animation speed configuration", () => {
     const slowState = {
       ...createFullState(),
-      animation: { enabled: true, speed: 0.5, initialDelay: 0.5 },
+      animation: { enabled: true, speed: TEST_ANIMATION.SPEED_SLOW, initialDelay: 0.5 },
     };
     const normalState = {
       ...createFullState(),
-      animation: { enabled: true, speed: 1, initialDelay: 0.5 },
+      animation: { enabled: true, speed: TEST_ANIMATION.SPEED_NORMAL, initialDelay: 0.5 },
     };
     const fastState = {
       ...createFullState(),
-      animation: { enabled: true, speed: 2, initialDelay: 0.5 },
+      animation: { enabled: true, speed: TEST_ANIMATION.SPEED_FAST, initialDelay: 0.5 },
     };
 
     const slowSvg = renderTerminal(slowState);
