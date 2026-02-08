@@ -1,12 +1,11 @@
 import type { TerminalState } from "../../../../domain/entities/terminal-state";
-import type { Theme } from "../../../../theme/types";
+import { renderContact } from "../contact.renderer";
 import { renderDeveloperInfo } from "../developer-info.renderer";
-import { renderTechStack } from "../tech-stack.renderer";
+import { renderEngagement } from "../engagement.renderer";
 import { renderLanguageStats } from "../language-stats.renderer";
 import { renderRecentCommits } from "../recent-commits.renderer";
-import { renderEngagement } from "../engagement.renderer";
-import { renderContact } from "../contact.renderer";
 import { renderStreak } from "../streak.renderer";
+import { renderTechStack } from "../tech-stack.renderer";
 import type { AnimatedCommand, SectionRenderer } from "./types";
 
 /**
@@ -62,28 +61,23 @@ export const buildCommandSequence = (
   }
 
   // Engagement sections
-  if (state.content.learningJourney || state.content.todayFocus || state.content.dailyQuote) {
+  if (
+    state.content.learningJourney ||
+    state.content.todayFocus ||
+    state.content.dailyQuote
+  ) {
     const engagementContent = {
       learningJourney: state.content.learningJourney,
       todayFocus: state.content.todayFocus,
       dailyQuote: state.content.dailyQuote,
     };
 
-    if (state.content.learningJourney) {
-      commands.push(
-        createCommand(
-          "terminal-profile --learning",
-          wrapEngagementRenderer(engagementContent),
-        ),
-      );
-    } else if (state.content.todayFocus) {
-      commands.push(
-        createCommand(
-          "terminal-profile --focus",
-          wrapEngagementRenderer(engagementContent),
-        ),
-      );
-    }
+    commands.push(
+      createCommand(
+        "terminal-profile --engagement",
+        wrapEngagementRenderer(engagementContent),
+      ),
+    );
   }
 
   // Contact
@@ -91,7 +85,7 @@ export const buildCommandSequence = (
     commands.push(
       createCommand(
         "terminal-profile --contact",
-        wrapContactInfoRenderer(state.content.contactInfo),
+        wrapContactRenderer(state.content.contactInfo),
       ),
     );
   }
@@ -126,7 +120,9 @@ const createCommand = (
  */
 
 const wrapDeveloperInfoRenderer =
-  (content: NonNullable<TerminalState["content"]["developerInfo"]>): SectionRenderer =>
+  (
+    content: NonNullable<TerminalState["content"]["developerInfo"]>,
+  ): SectionRenderer =>
   (theme, y) => {
     const svg = renderDeveloperInfo(content, theme, y);
     const height = estimateRenderHeight(svg);
@@ -134,7 +130,9 @@ const wrapDeveloperInfoRenderer =
   };
 
 const wrapTechStackRenderer =
-  (content: NonNullable<TerminalState["content"]["techStack"]>): SectionRenderer =>
+  (
+    content: NonNullable<TerminalState["content"]["techStack"]>,
+  ): SectionRenderer =>
   (theme, y) => {
     const svg = renderTechStack(content, theme, 0, y);
     const height = estimateRenderHeight(svg);
@@ -142,7 +140,9 @@ const wrapTechStackRenderer =
   };
 
 const wrapLanguageStatsRenderer =
-  (content: NonNullable<TerminalState["content"]["languageStats"]>): SectionRenderer =>
+  (
+    content: NonNullable<TerminalState["content"]["languageStats"]>,
+  ): SectionRenderer =>
   (theme, y) => {
     const svg = renderLanguageStats(content, theme, y);
     const height = estimateRenderHeight(svg);
@@ -150,7 +150,9 @@ const wrapLanguageStatsRenderer =
   };
 
 const wrapRecentCommitsRenderer =
-  (content: NonNullable<TerminalState["content"]["recentCommits"]>): SectionRenderer =>
+  (
+    content: NonNullable<TerminalState["content"]["recentCommits"]>,
+  ): SectionRenderer =>
   (theme, y) => {
     const svg = renderRecentCommits(content, theme, 400, y);
     const height = estimateRenderHeight(svg);
@@ -180,7 +182,7 @@ const wrapContactRenderer =
 const wrapStreakRenderer =
   (content: NonNullable<TerminalState["content"]["streak"]>): SectionRenderer =>
   (theme, y) => {
-    const svg = renderStreak(content, theme, y);
+    const svg = renderStreak(content, theme, 0, y);
     const height = estimateRenderHeight(svg);
     return { svg, height };
   };

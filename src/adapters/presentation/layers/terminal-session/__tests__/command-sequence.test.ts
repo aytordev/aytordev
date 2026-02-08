@@ -134,7 +134,7 @@ describe("buildCommandSequence", () => {
     const commands = buildCommandSequence(mockConfig);
 
     const engagementCommand = commands.find((cmd) =>
-      cmd.command.includes("--learning") || cmd.command.includes("--focus"),
+      cmd.command.includes("--engagement"),
     );
     expect(engagementCommand).toBeDefined();
   });
