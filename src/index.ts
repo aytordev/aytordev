@@ -1,41 +1,51 @@
 import * as path from "path";
 import { createPorts } from "./adapters";
 import { createFileConfigAdapter } from "./adapters/infrastructure/config.adapter";
+import { createConsoleLoggerAdapter } from "./adapters/infrastructure/console-logger.adapter";
+import { createNodeEnvironmentAdapter } from "./adapters/infrastructure/node-environment.adapter";
 import { createNodeFileSystemAdapter } from "./adapters/infrastructure/file-system.adapter";
+import { createNodeProcessAdapter } from "./adapters/infrastructure/node-process.adapter";
 import { renderTerminal } from "./adapters/presentation/terminal-renderer";
 import { createGenerateProfileUseCase } from "./application/use-cases/generate-profile";
 import { createGenerateShareCardUseCase } from "./application/use-cases/generate-share-card";
 
 async function main() {
-  console.log("🚀 Starting Terminal Profile Generator...");
-
+  // 1. Create infrastructure adapters (single place with side effects)
+  const logger = createConsoleLoggerAdapter();
+  const environment = createNodeEnvironmentAdapter();
+  const processAdapter = createNodeProcessAdapter();
   const fsAdapter = createNodeFileSystemAdapter();
   const configAdapter = createFileConfigAdapter(fsAdapter);
 
-  // 1. Load Config
-  const configPath = path.resolve(process.cwd(), "terminal_profile.yml");
+  logger.log("🚀 Starting Terminal Profile Generator...");
+
+  // 2. Load configuration
+  const configPath = path.resolve(environment.cwd(), "terminal_profile.yml");
   if (!(await fsAdapter.exists(configPath))) {
-    console.error(`❌ Config file not found at: ${configPath}`);
-    process.exit(1);
+    logger.error(`❌ Config file not found at: ${configPath}`);
+    processAdapter.exit(1);
+    return;
   }
 
   const configResult = await configAdapter.load(configPath);
 
   if (!configResult.ok) {
-    console.error("❌ Invalid configuration:", configResult.error);
-    process.exit(1);
+    logger.error(`❌ Invalid configuration: ${configResult.error}`);
+    processAdapter.exit(1);
+    return;
   }
 
   const config = configResult.value;
-  console.log(`✅ Loaded configuration for @${config.owner.username}`);
+  logger.log(`✅ Loaded configuration for @${config.owner.username}`);
 
-  const githubToken = process.env.GITHUB_TOKEN;
+  // 3. Create remaining ports with dependency injection
+  const githubToken = environment.get("GITHUB_TOKEN");
   const ports = createPorts(githubToken);
 
-  const isShareCard = process.argv.includes("--share-card");
+  // 4. Determine generation type
+  const isShareCard = processAdapter.argv.includes("--share-card");
 
-  // 2. Generate Profile
-  // F18: Use Share Card Use Case if requested
+  // 5. Execute use case
   const useCase = isShareCard
     ? createGenerateShareCardUseCase(ports)
     : createGenerateProfileUseCase(ports);
@@ -43,17 +53,18 @@ async function main() {
   const result = await useCase(config);
 
   if (!result.ok) {
-    console.error("❌ Failed to generate profile:", result.error);
-    process.exit(1);
+    logger.error(`❌ Failed to generate profile: ${result.error}`);
+    processAdapter.exit(1);
+    return;
   }
 
-  // 3. Render
+  // 6. Render (pure function)
   const svg = renderTerminal(result.value);
 
-  // 4. Save
+  // 7. Save output
   const outputPath = isShareCard ? "share-card.svg" : "profile.svg";
   await ports.fileSystem.writeFile(outputPath, svg);
-  console.log(`✅ Terminal Profile generated at ${outputPath}`);
+  logger.log(`✅ Terminal Profile generated at ${outputPath}`);
 }
 
 main().catch((err) => {
