@@ -49,7 +49,7 @@ describe("GenerateShareCardUseCase", () => {
     expect(result.ok).toBe(true);
     if (result.ok) {
       expect(result.value.dimensions).toEqual({ width: 1200, height: 630 });
-      expect(result.value.renderOptions?.disableAnimations).toBe(true);
+      expect(result.value.animation?.enabled).toBe(false);
     }
   });
 });
