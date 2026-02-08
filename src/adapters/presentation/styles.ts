@@ -79,14 +79,21 @@ export const generateAnimationCss = (speed: number): string => {
     .command-output.animate {
       animation: fadeIn var(--fade-duration) ease-out forwards;
     }
+
+    /* Prompt Animation (before each command) */
+    .command-prompt {
+      opacity: 0;
+    }
+
+    .command-prompt.animate {
+      animation: fadeIn var(--fade-duration) ease-out forwards;
+    }
   `;
 };
 
 export const generateCss = (theme: Theme, animationSpeed?: number): string => {
   const variables = generateVariables(theme);
-  const animationStyles = animationSpeed
-    ? generateAnimationCss(animationSpeed)
-    : "";
+  const animationStyles = animationSpeed ? generateAnimationCss(animationSpeed) : "";
 
   return `
     ${variables}

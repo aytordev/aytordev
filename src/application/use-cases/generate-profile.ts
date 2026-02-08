@@ -126,6 +126,7 @@ export const createGenerateProfileUseCase = (ports: Ports): GenerateProfileUseCa
             : null,
           asciiArt: config.content?.ascii_art,
         },
+        animation: config.animation,
       };
 
       return ok(state);

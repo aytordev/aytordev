@@ -71,7 +71,7 @@ github:
 # Animation settings (optional)
 # Enables animated terminal session with scroll simulation
 animation:
-  enabled: false # Set to true to enable animated terminal session
+  enabled: true # Set to true to enable animated terminal session
   speed: 1.0 # Animation speed multiplier (0.1-5.0):
   # 0.5 = slower (more realistic)
   # 1.0 = normal (recommended)

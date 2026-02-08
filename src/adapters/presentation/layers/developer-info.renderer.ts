@@ -10,7 +10,7 @@ export const renderDeveloperInfo = (
   const lineHeight = 20;
 
   return `
-    <g id="developer-info">
+    <g id="developer-info" transform="translate(0, ${y})">
       <!-- Username -->
       <text x="0" y="0" class="dev__username" fill="${theme.colors.text}" font-family="monospace" font-size="16" font-weight="bold">@${sanitizeForSvg(info.username)}</text>
 
