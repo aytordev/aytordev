@@ -1,31 +1,32 @@
 import { describe, expect, it } from "vitest";
 import type { AnimationConfig } from "../../../domain/entities/animation-config";
+import { TEST_ANIMATION } from "../../__support__/constants";
 
 describe("AnimationConfig", () => {
   describe("value object properties", () => {
     it("should be a readonly type", () => {
       const config: AnimationConfig = {
         enabled: true,
-        speed: 1,
+        speed: TEST_ANIMATION.SPEED_NORMAL,
         initialDelay: 0.5,
       };
 
       // TypeScript will enforce readonly at compile time
       expect(config.enabled).toBe(true);
-      expect(config.speed).toBe(1);
+      expect(config.speed).toBe(TEST_ANIMATION.SPEED_NORMAL);
       expect(config.initialDelay).toBe(0.5);
     });
 
     it("should allow all fields to be readonly", () => {
       const config: Readonly<AnimationConfig> = {
         enabled: false,
-        speed: 2,
+        speed: TEST_ANIMATION.SPEED_FAST,
         initialDelay: 1,
       };
 
       expect(config).toEqual({
         enabled: false,
-        speed: 2,
+        speed: TEST_ANIMATION.SPEED_FAST,
         initialDelay: 1,
       });
     });
@@ -35,32 +36,32 @@ describe("AnimationConfig", () => {
     it("should accept enabled:true with default speed", () => {
       const config: AnimationConfig = {
         enabled: true,
-        speed: 1,
+        speed: TEST_ANIMATION.SPEED_NORMAL,
         initialDelay: 0.5,
       };
 
       expect(config.enabled).toBe(true);
-      expect(config.speed).toBe(1);
+      expect(config.speed).toBe(TEST_ANIMATION.SPEED_NORMAL);
     });
 
     it("should accept slow speed (0.5)", () => {
       const config: AnimationConfig = {
         enabled: true,
-        speed: 0.5,
+        speed: TEST_ANIMATION.SPEED_SLOW,
         initialDelay: 0.5,
       };
 
-      expect(config.speed).toBe(0.5);
+      expect(config.speed).toBe(TEST_ANIMATION.SPEED_SLOW);
     });
 
     it("should accept fast speed (2.0)", () => {
       const config: AnimationConfig = {
         enabled: true,
-        speed: 2,
+        speed: TEST_ANIMATION.SPEED_FAST,
         initialDelay: 0.5,
       };
 
-      expect(config.speed).toBe(2);
+      expect(config.speed).toBe(TEST_ANIMATION.SPEED_FAST);
     });
 
     it("should accept maximum speed (5.0)", () => {
@@ -86,7 +87,7 @@ describe("AnimationConfig", () => {
     it("should accept initialDelay of 0", () => {
       const config: AnimationConfig = {
         enabled: true,
-        speed: 1,
+        speed: TEST_ANIMATION.SPEED_NORMAL,
         initialDelay: 0,
       };
 
@@ -96,7 +97,7 @@ describe("AnimationConfig", () => {
     it("should accept initialDelay of 10", () => {
       const config: AnimationConfig = {
         enabled: true,
-        speed: 1,
+        speed: TEST_ANIMATION.SPEED_NORMAL,
         initialDelay: 10,
       };
 
@@ -108,7 +109,7 @@ describe("AnimationConfig", () => {
     it("should enforce readonly at compile-time", () => {
       const config: AnimationConfig = {
         enabled: true,
-        speed: 1,
+        speed: TEST_ANIMATION.SPEED_NORMAL,
         initialDelay: 0.5,
       };
 
@@ -118,7 +119,7 @@ describe("AnimationConfig", () => {
 
       // At runtime, we can only verify the value is set correctly
       expect(config.enabled).toBe(true);
-      expect(config.speed).toBe(1);
+      expect(config.speed).toBe(TEST_ANIMATION.SPEED_NORMAL);
       expect(config.initialDelay).toBe(0.5);
     });
 
@@ -126,7 +127,7 @@ describe("AnimationConfig", () => {
       const stateWithAnimation: { readonly animation?: AnimationConfig } = {
         animation: {
           enabled: true,
-          speed: 1,
+          speed: TEST_ANIMATION.SPEED_NORMAL,
           initialDelay: 0.5,
         },
       };
