@@ -12,7 +12,7 @@ export const renderContact = (
   }
 
   const itemHeight = 20;
-  let currentY = 0;
+  const currentY = 0;
 
   const elements = items
     .map((item, i) => {

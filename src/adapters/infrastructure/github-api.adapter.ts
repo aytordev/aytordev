@@ -1,8 +1,14 @@
 import { graphql } from "@octokit/graphql";
 import { Octokit } from "@octokit/rest";
-import { parseCommitEmoji, parseCommitType } from "../../domain/services/commit-parser";
+import type {
+  ContributionStats,
+  GitHubDataPort,
+} from "../../domain/ports/github-data.port";
+import {
+  parseCommitEmoji,
+  parseCommitType,
+} from "../../domain/services/commit-parser";
 import { calculateStreak } from "../../domain/services/streak-calculator";
-import type { ContributionStats, GitHubDataPort } from "../../domain/ports/github-data.port";
 import type { Commit } from "../../domain/value-objects/commit";
 import type { LanguageStat } from "../../domain/value-objects/language-stat";
 import type { Owner } from "../../domain/value-objects/owner";
@@ -66,12 +72,17 @@ export const createGitHubApiAdapter = (token: string): GitHubDataPort => {
       }
     },
 
-    getRecentCommits: async (username: string, limit: number): Promise<Result<Commit[], Error>> => {
+    getRecentCommits: async (
+      username: string,
+      limit: number,
+    ): Promise<Result<Commit[], Error>> => {
       try {
-        const { data: events } = await octokit.activity.listPublicEventsForUser({
-          username,
-          per_page: limit * 5,
-        });
+        const { data: events } = await octokit.activity.listPublicEventsForUser(
+          {
+            username,
+            per_page: limit * 5,
+          },
+        );
 
         // Use reduce instead of for loop with mutations
         const commits = (events as GitHubEvent[]).reduce((acc, event) => {
@@ -83,7 +94,9 @@ export const createGitHubApiAdapter = (token: string): GitHubDataPort => {
             message: commit.message.split("\n")[0].substring(0, 50),
             emoji: parseCommitEmoji(commit.message),
             type: parseCommitType(commit.message),
-            relativeTime: formatRelativeTime(new Date(event.created_at ?? Date.now())),
+            relativeTime: formatRelativeTime(
+              new Date(event.created_at ?? Date.now()),
+            ),
           }));
 
           return [...acc, ...newCommits].slice(0, limit);
@@ -95,7 +108,9 @@ export const createGitHubApiAdapter = (token: string): GitHubDataPort => {
       }
     },
 
-    getLanguageStats: async (username: string): Promise<Result<LanguageStat[], Error>> => {
+    getLanguageStats: async (
+      username: string,
+    ): Promise<Result<LanguageStat[], Error>> => {
       try {
         const { data: repos } = await octokit.repos.listForUser({
           username,
@@ -138,7 +153,9 @@ export const createGitHubApiAdapter = (token: string): GitHubDataPort => {
       }
     },
 
-    getContributionStats: async (username: string): Promise<Result<ContributionStats, Error>> => {
+    getContributionStats: async (
+      username: string,
+    ): Promise<Result<ContributionStats, Error>> => {
       try {
         const { user } = await graphqlClient<ContributionResponse>(
           `
@@ -160,11 +177,15 @@ export const createGitHubApiAdapter = (token: string): GitHubDataPort => {
           { username },
         );
 
-        const days = user.contributionsCollection.contributionCalendar.weeks.flatMap(
-          (w) => w.contributionDays,
-        );
+        const days =
+          user.contributionsCollection.contributionCalendar.weeks.flatMap(
+            (w) => w.contributionDays,
+          );
 
-        const totalContributions = days.reduce((sum, day) => sum + day.contributionCount, 0);
+        const totalContributions = days.reduce(
+          (sum, day) => sum + day.contributionCount,
+          0,
+        );
 
         return ok({ totalContributions });
       } catch (error) {
@@ -172,7 +193,9 @@ export const createGitHubApiAdapter = (token: string): GitHubDataPort => {
       }
     },
 
-    getContributionStreak: async (username: string): Promise<Result<StreakInfo, Error>> => {
+    getContributionStreak: async (
+      username: string,
+    ): Promise<Result<StreakInfo, Error>> => {
       try {
         const { user } = await graphqlClient<ContributionResponse>(
           `
@@ -194,9 +217,10 @@ export const createGitHubApiAdapter = (token: string): GitHubDataPort => {
           { username },
         );
 
-        const days = user.contributionsCollection.contributionCalendar.weeks.flatMap(
-          (w) => w.contributionDays,
-        );
+        const days =
+          user.contributionsCollection.contributionCalendar.weeks.flatMap(
+            (w) => w.contributionDays,
+          );
 
         return ok(calculateStreak(days));
       } catch (error) {
@@ -204,7 +228,7 @@ export const createGitHubApiAdapter = (token: string): GitHubDataPort => {
       }
     },
   };
-}
+};
 
 // GitHub language colors (subset)
 function getLanguageColor(language: string): string {

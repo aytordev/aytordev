@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { Commit } from "../../../../domain/value-objects/commit";
 import { renderRecentCommits } from "../../../../adapters/presentation/layers/recent-commits.renderer";
+import type { Commit } from "../../../../domain/value-objects/commit";
 import { KanagawaTheme } from "../../../../theme/kanagawa";
 
 describe("Recent Commits Renderer", () => {

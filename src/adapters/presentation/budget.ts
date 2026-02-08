@@ -37,8 +37,7 @@ export const validateBudget = (svg: string): Result<void, BudgetError> => {
     return err(new BudgetError("Filter count", filterCount, 2));
   }
 
-  const gradientCount = (svg.match(/<linearGradient|<radialGradient/g) || [])
-    .length;
+  const gradientCount = (svg.match(/<linearGradient|<radialGradient/g) || []).length;
   if (gradientCount > 10) {
     return err(new BudgetError("Gradient count", gradientCount, 10));
   }

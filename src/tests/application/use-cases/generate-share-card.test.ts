@@ -27,9 +27,7 @@ const mockPorts: Ports = {
       }),
     ),
     getLanguageStats: vi.fn().mockResolvedValue(ok([])),
-    getContributionStats: vi
-      .fn()
-      .mockResolvedValue(ok({ totalContributions: 0 })),
+    getContributionStats: vi.fn().mockResolvedValue(ok({ totalContributions: 0 })),
   },
   clock: {
     getTimeOfDay: vi.fn().mockReturnValue("day"),

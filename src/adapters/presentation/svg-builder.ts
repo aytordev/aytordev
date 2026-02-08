@@ -3,39 +3,45 @@ import type { Theme } from "../../theme/types";
 import { generateCss } from "./styles";
 
 interface Dimensions {
-  width: number;
-  height: number;
+  readonly width: number;
+  readonly height: number;
 }
 
-export class SvgBuilder {
-  private layers: string[] = [];
-  private defs: string[] = [];
+export interface SvgBuilderState {
+  readonly theme: Theme;
+  readonly dimensions: Dimensions;
+  readonly layers: readonly string[];
+  readonly defs: readonly string[];
+}
 
-  constructor(
-    private readonly theme: Theme,
-    private readonly dimensions: Dimensions,
-  ) {}
+// Factory to create initial state
+export const createSvgBuilder = (theme: Theme, dimensions: Dimensions): SvgBuilderState => ({
+  theme,
+  dimensions,
+  layers: [],
+  defs: [],
+});
 
-  public addLayer(content: string): void {
-    this.layers.push(content);
-  }
+// Pure transformation functions
+export const addLayer = (state: SvgBuilderState, content: string): SvgBuilderState => ({
+  ...state,
+  layers: [...state.layers, content],
+});
 
-  public addDefs(content: string): void {
-    this.defs.push(content);
-  }
+export const addDefs = (state: SvgBuilderState, content: string): SvgBuilderState => ({
+  ...state,
+  defs: [...state.defs, content],
+});
 
-  public sanitize(content: string): string {
-    return sanitizeForSvg(content);
-  }
+export const sanitize = (content: string): string => sanitizeForSvg(content);
 
-  public build(): string {
-    const css = generateCss(this.theme);
-    const { width, height } = this.dimensions;
+export const build = (state: SvgBuilderState): string => {
+  const css = generateCss(state.theme);
+  const { width, height } = state.dimensions;
 
-    const defsBlock =
-      this.defs.length > 0 ? `<defs>\n${this.defs.join("\n")}\n</defs>` : "";
+  const defsBlock = state.defs.length > 0 ? `<defs>\n${state.defs.join("\n")}\n</defs>` : "";
 
-    return `
+  return `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">
   <title>Terminal Profile</title>
   <desc>Developer terminal profile generated with terminal-profile</desc>
@@ -49,8 +55,11 @@ export class SvgBuilder {
   <rect width="100%" height="100%" class="background" rx="10" ry="10" />
 
   <!-- Layers -->
-  ${this.layers.join("\n")}
+  ${state.layers.join("\n")}
 </svg>
-    `.trim();
-  }
-}
+  `.trim();
+};
+
+// Helper for functional composition (pipe)
+export const pipe = <T>(initial: T, ...fns: Array<(x: T) => T>): T =>
+  fns.reduce((acc, fn) => fn(acc), initial);

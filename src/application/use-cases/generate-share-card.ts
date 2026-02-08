@@ -1,8 +1,8 @@
 import type { Ports } from "../../adapters";
 import type { Config } from "../../config/schema";
 import type { TerminalState } from "../../domain/entities/terminal-state";
-import { GenerateShareCardUseCase } from "../../domain/use-cases/generate-share-card";
-import { type Result, map } from "../../shared/result";
+import type { GenerateShareCardUseCase } from "../../domain/use-cases/generate-share-card";
+import { map, type Result } from "../../shared/result";
 
 import { createGenerateProfileUseCase } from "./generate-profile";
 
@@ -10,9 +10,7 @@ import { createGenerateProfileUseCase } from "./generate-profile";
 // We can reuse generate-profile logic and just override the result state?
 // Or create a wrapper.
 
-export const createGenerateShareCardUseCase = (
-  ports: Ports,
-): GenerateShareCardUseCase => {
+export const createGenerateShareCardUseCase = (ports: Ports): GenerateShareCardUseCase => {
   const generateBase = createGenerateProfileUseCase(ports);
 
   return async (config: Config): Promise<Result<TerminalState, Error>> => {

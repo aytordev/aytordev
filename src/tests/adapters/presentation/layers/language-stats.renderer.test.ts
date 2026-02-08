@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { LanguageStat } from "../../../../domain/value-objects/language-stat";
 import { renderLanguageStats } from "../../../../adapters/presentation/layers/language-stats.renderer";
+import type { LanguageStat } from "../../../../domain/value-objects/language-stat";
 import { KanagawaTheme } from "../../../../theme/kanagawa";
 
 describe("Language Stats Renderer", () => {

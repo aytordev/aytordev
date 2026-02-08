@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { DeveloperInfo } from "../../../../domain/entities/terminal-content";
 import { renderDeveloperInfo } from "../../../../adapters/presentation/layers/developer-info.renderer";
+import type { DeveloperInfo } from "../../../../domain/entities/terminal-content";
 import { KanagawaTheme } from "../../../../theme/kanagawa";
 
 describe("Developer Info Renderer", () => {

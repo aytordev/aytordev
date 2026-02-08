@@ -7,11 +7,7 @@ const LABEL_WIDTH = 100;
 const BAR_MAX_WIDTH = 150;
 const PERCENTAGE_OFFSET = 16;
 
-function createLanguageGradient(
-  id: string,
-  baseColor: string,
-  theme: Theme,
-): string {
+function createLanguageGradient(id: string, baseColor: string, theme: Theme): string {
   return `
     <linearGradient id="${id}" x1="0%" x2="100%">
       <stop offset="0%" stop-color="${theme.colors.springBlue}"/>
@@ -20,19 +16,13 @@ function createLanguageGradient(
   `;
 }
 
-export function renderLanguageStats(
-  stats: readonly LanguageStat[],
-  theme: Theme,
-  y = 0,
-): string {
+export function renderLanguageStats(stats: readonly LanguageStat[], theme: Theme, y = 0): string {
   if (stats.length === 0) {
     return "";
   }
 
   const gradients = stats
-    .map((stat, index) =>
-      createLanguageGradient(`lang-grad-${index}`, stat.color, theme),
-    )
+    .map((stat, index) => createLanguageGradient(`lang-grad-${index}`, stat.color, theme))
     .join("\n");
 
   const rows = stats

@@ -3,11 +3,9 @@ import type { Config } from "../../config/schema";
 import type { TerminalState } from "../../domain/entities/terminal-state";
 import { getEasterEgg } from "../../domain/services/easter-egg.service";
 import type { GenerateProfileUseCase } from "../../domain/use-cases/generate-profile";
-import { type Result, err, ok } from "../../shared/result";
+import { err, ok, type Result } from "../../shared/result";
 
-export const createGenerateProfileUseCase = (
-  ports: Ports,
-): GenerateProfileUseCase => {
+export const createGenerateProfileUseCase = (ports: Ports): GenerateProfileUseCase => {
   return async (config: Config): Promise<Result<TerminalState, Error>> => {
     try {
       const maxCommits = config.content?.commits?.max_count ?? 5;
@@ -113,9 +111,7 @@ export const createGenerateProfileUseCase = (
               icon: i.icon,
             })) ?? [],
           extraLines: config.content?.extra_lines ?? [],
-          dailyQuote: config.content?.learning?.enabled
-            ? "Keep building!"
-            : null,
+          dailyQuote: config.content?.learning?.enabled ? "Keep building!" : null,
           learningJourney: config.content?.learning?.enabled
             ? { current: config.content.learning.current ?? "" }
             : null,
