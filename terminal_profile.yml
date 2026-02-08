@@ -67,3 +67,13 @@ effects:
 github:
   max_repos: 10
   include_private: false
+
+# Animation settings (optional)
+# Enables animated terminal session with scroll simulation
+animation:
+  enabled: false # Set to true to enable animated terminal session
+  speed: 1.0 # Animation speed multiplier (0.1-5.0):
+  # 0.5 = slower (more realistic)
+  # 1.0 = normal (recommended)
+  # 2.0 = faster (quick demo)
+  initialDelay: 0.5 # Seconds before animation starts (0-10)
