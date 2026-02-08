@@ -10,27 +10,29 @@ export const renderRecentCommits = (
 ): string => {
   const titleHeight = 24;
   const itemHeight = 20;
-  let currentY = 0;
+
+  // Pure function to determine bullet color
+  const getBulletColor = (type: string): string => {
+    if (type === "feat") return theme.colors.springGreen;
+    if (type === "fix") return theme.colors.samuraiRed;
+    if (type === "docs") return theme.colors.crystalBlue;
+    return theme.colors.text;
+  };
 
   // Title
-  let elements = `
-    <text x="0" y="${currentY}" class="stack__title" fill="${theme.colors.roninYellow}" font-family="monospace" font-size="14" font-weight="bold">
+  const titleSvg = `
+    <text x="0" y="0" class="stack__title" fill="${theme.colors.roninYellow}" font-family="monospace" font-size="14" font-weight="bold">
       Recent Commits
     </text>
   `;
-  currentY += titleHeight;
 
-  // Commits
-  const commitList = commits
-    .map((commit, i) => {
-      const cy = currentY + i * itemHeight;
-      // Bullet point color based on type
-      let bulletColor = theme.colors.text;
-      if (commit.type === "feat") bulletColor = theme.colors.springGreen;
-      if (commit.type === "fix") bulletColor = theme.colors.samuraiRed;
-      if (commit.type === "docs") bulletColor = theme.colors.crystalBlue;
+  // Commits - immutable transformation
+  const commitsY = titleHeight;
+  const commitList = commits.map((commit, i) => {
+    const cy = commitsY + i * itemHeight;
+    const bulletColor = getBulletColor(commit.type);
 
-      return `
+    return `
       <g class="commit">
         <circle cx="5" cy="${cy - 4}" r="3" class="commit__type--${commit.type}" fill="${bulletColor}" />
         <text x="15" y="${cy}" class="commit__msg" fill="${theme.colors.text}" font-family="monospace" font-size="12">
@@ -41,10 +43,9 @@ export const renderRecentCommits = (
         </text>
       </g>
     `;
-    })
-    .join("");
+  });
 
-  elements += commitList;
+  const elements = [titleSvg, ...commitList].join("\n");
 
   return `
     <g id="recent-commits" transform="translate(${x}, ${y})">

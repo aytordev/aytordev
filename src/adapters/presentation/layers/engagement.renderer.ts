@@ -16,52 +16,63 @@ export const renderEngagement = (
     return "<g></g>";
   }
 
-  let elements = "";
-  let currentY = 0;
   const lineHeight = 24;
 
-  // Learning Journey
+  // Build items array immutably
+  interface EngagementItem {
+    readonly icon: string;
+    readonly title: string;
+    readonly text: string;
+    readonly textColor: string;
+    readonly italic?: boolean;
+  }
+
+  const items: EngagementItem[] = [];
+
   if (content.learningJourney) {
-    elements += `
-      <text x="0" y="${currentY}" fill="${theme.colors.fujiWhite}" font-size="14" font-family="monospace">
-        📚 Learning Journey
-      </text>
-      <text x="20" y="${currentY + lineHeight}" fill="${theme.colors.text}" font-size="13" font-family="monospace">
-        ${sanitizeForSvg(content.learningJourney.current)}
-      </text>
-    `;
-    currentY += lineHeight * 2 + 10;
+    items.push({
+      icon: "📚",
+      title: "Learning Journey",
+      text: sanitizeForSvg(content.learningJourney.current),
+      textColor: theme.colors.text,
+    });
   }
 
-  // Today Focus
   if (content.todayFocus) {
-    elements += `
-      <text x="0" y="${currentY}" fill="${theme.colors.fujiWhite}" font-size="14" font-family="monospace">
-        🎯 Today's Focus
-      </text>
-      <text x="20" y="${currentY + lineHeight}" fill="${theme.colors.text}" font-size="13" font-family="monospace">
-        ${sanitizeForSvg(content.todayFocus)}
-      </text>
-    `;
-    currentY += lineHeight * 2 + 10;
+    items.push({
+      icon: "🎯",
+      title: "Today's Focus",
+      text: sanitizeForSvg(content.todayFocus),
+      textColor: theme.colors.text,
+    });
   }
 
-  // Daily Quote
   if (content.dailyQuote) {
-    elements += `
-      <text x="0" y="${currentY}" fill="${theme.colors.fujiWhite}" font-size="14" font-family="monospace">
-        💬 Daily Quote
+    items.push({
+      icon: "💬",
+      title: "Daily Quote",
+      text: `"${sanitizeForSvg(content.dailyQuote)}"`,
+      textColor: theme.colors.textMuted,
+      italic: true,
+    });
+  }
+
+  // Render items immutably using map with accumulated Y position
+  const elements = items.map((item, index) => {
+    const itemY = index * (lineHeight * 2 + 10);
+    return `
+      <text x="0" y="${itemY}" fill="${theme.colors.fujiWhite}" font-size="14" font-family="monospace">
+        ${item.icon} ${item.title}
       </text>
-      <text x="20" y="${currentY + lineHeight}" fill="${theme.colors.textMuted}" font-size="13" font-family="monospace" font-style="italic">
-        "${sanitizeForSvg(content.dailyQuote)}"
+      <text x="20" y="${itemY + lineHeight}" fill="${item.textColor}" font-size="13" font-family="monospace"${item.italic ? ' font-style="italic"' : ""}>
+        ${item.text}
       </text>
     `;
-    currentY += lineHeight * 2 + 10;
-  }
+  });
 
   return `
     <g id="engagement" transform="translate(0, ${y})">
-      ${elements}
+      ${elements.join("\n")}
     </g>
   `.trim();
 };

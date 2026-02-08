@@ -49,7 +49,7 @@ export const createGenerateProfileUseCase = (ports: Ports): GenerateProfileUseCa
       const state: TerminalState = {
         themeName: config.theme,
         dimensions: config.dimensions ?? { width: 800, height: 400 },
-        timestamp: new Date(),
+        timestamp: ports.clock.getCurrentTime(config.owner.timezone),
         timeOfDay: ports.clock.getTimeOfDay(config.owner.timezone),
         greeting: getGreeting(config.owner.name, config.owner.timezone),
         owner: config.owner,
@@ -67,17 +67,21 @@ export const createGenerateProfileUseCase = (ports: Ports): GenerateProfileUseCa
           directory: "~/github/profile",
           gitBranch: "main",
           gitStatus: "clean",
-          // TODO: Implement real Git stats fetching
+          // Note: Local git stats require filesystem access and are not available via GitHub API
+          // These would need to be fetched separately if local repository access is available
           gitStats: {
-            added: 12,
-            deleted: 3,
+            added: 0,
+            deleted: 0,
             modified: 0,
           },
 
-          nodeVersion: process.version,
+          nodeVersion: ports.environment.nodeVersion(),
 
           nixIndicator: true,
-          time: ports.clock.formatTime(new Date(), config.owner.timezone),
+          time: ports.clock.formatTime(
+            ports.clock.getCurrentTime(config.owner.timezone),
+            config.owner.timezone,
+          ),
         },
         easterEgg: getEasterEgg(timestamp) || undefined,
         content: {
@@ -95,11 +99,13 @@ export const createGenerateProfileUseCase = (ports: Ports): GenerateProfileUseCa
               })) ?? [],
           },
           recentCommits: commits.value,
+          // Note: GitHub API v3 has rate limits; fetching detailed stats requires additional API calls
+          // Consider implementing if needed, or leave as 0 for minimal API usage
           stats: {
-            publicRepos: 10,
-            followers: 50,
-            following: 10,
-            totalStars: 100,
+            publicRepos: 0,
+            followers: 0,
+            following: 0,
+            totalStars: 0,
           },
           streak: streak.value,
           languageStats: languageStats.value,

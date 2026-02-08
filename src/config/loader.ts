@@ -8,19 +8,24 @@ export type ConfigError = {
   readonly details?: unknown;
 };
 
-export function loadConfigFromString(yaml: string): Result<Config, ConfigError> {
-  let raw: unknown;
-  try {
-    raw = parse(yaml);
-  } catch (error) {
-    return err({
-      type: "parse",
-      message: "Failed to parse YAML",
-      details: error,
-    });
-  }
+export const loadConfigFromString = (yaml: string): Result<Config, ConfigError> => {
+  // Parse YAML using IIFE to avoid let mutation
+  const parseResult = (() => {
+    try {
+      return ok(parse(yaml));
+    } catch (error) {
+      return err({
+        type: "parse" as const,
+        message: "Failed to parse YAML",
+        details: error,
+      });
+    }
+  })();
 
-  const result = ConfigSchema.safeParse(raw);
+  if (!parseResult.ok) return parseResult;
+
+  // Validate parsed data
+  const result = ConfigSchema.safeParse(parseResult.value);
   if (!result.success) {
     return err({
       type: "validation",
@@ -30,4 +35,4 @@ export function loadConfigFromString(yaml: string): Result<Config, ConfigError> 
   }
 
   return ok(result.data);
-}
+};

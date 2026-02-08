@@ -1,3 +1,4 @@
+import { sanitizeForSvg } from "../../../shared/sanitize";
 import type { StarshipPrompt } from "../../../domain/entities/starship-prompt";
 import type { Theme } from "../../../theme/types";
 
@@ -10,89 +11,110 @@ export const renderPrompt = (
   const fontSize = 14;
   const lineHeight = 20;
 
-  let leftX = 10;
+  const initialLeftX = 10;
   const rightX = width - 20; // Padding right
 
   // --- LEFT SIDE ---
 
   // 1. Directory (.../aytordev)
-  // Truncate if too long? For now render as is.
   const dirText = prompt.directory;
   const dirWidth = dirText.length * 8.5;
-  const dirSvg = `<text x="${leftX}" y="${y}" fill="${theme.colors.dragonBlue}" font-family="monospace" font-size="${fontSize}" font-weight="bold">${dirText}</text>`;
-  leftX += dirWidth + 10;
+  const leftX1 = initialLeftX;
+  const dirSvg = `<text x="${leftX1}" y="${y}" fill="${theme.colors.dragonBlue}" font-family="monospace" font-size="${fontSize}" font-weight="bold">${sanitizeForSvg(dirText)}</text>`;
 
-  // Arrow ->
-  const arrowSvg = `<text x="${leftX}" y="${y}" fill="${theme.colors.textMuted}" font-family="monospace" font-size="${fontSize}" font-weight="bold">→</text>`;
-  leftX += 20;
+  // 2. Arrow ->
+  const leftX2 = leftX1 + dirWidth + 10;
+  const arrowSvg = `<text x="${leftX2}" y="${y}" fill="${theme.colors.textMuted}" font-family="monospace" font-size="${fontSize}" font-weight="bold">→</text>`;
 
-  // Git Branch (git:main ?)
-  let gitSvg = "";
-  if (prompt.gitBranch) {
-    const statusChar = prompt.gitStatus === "dirty" ? "?" : "";
-    const branchText = `git:${prompt.gitBranch} ${statusChar}`;
-    // Color: Blue text? Image showed Blue "git:main".
-    const gitColor = theme.colors.oniViolet;
-    gitSvg = `<text x="${leftX}" y="${y}" fill="${gitColor}" font-family="monospace" font-size="${fontSize}">${branchText}</text>`;
-    // No leftX update needed as it's the last item on left?
-    // But good practice to update if we add more.
-    leftX += branchText.length * 8.5 + 10;
-  }
+  // 3. Git Branch (git:main ?)
+  const leftX3 = leftX2 + 20;
+  const gitSvg = prompt.gitBranch
+    ? (() => {
+        const statusChar = prompt.gitStatus === "dirty" ? "?" : "";
+        const branchText = `git:${sanitizeForSvg(prompt.gitBranch)} ${statusChar}`;
+        const gitColor = theme.colors.oniViolet;
+        return `<text x="${leftX3}" y="${y}" fill="${gitColor}" font-family="monospace" font-size="${fontSize}">${branchText}</text>`;
+      })()
+    : "";
 
   // --- RIGHT SIDE ---
-  // We render from Right to Left? Or calculate total width?
-  // SVG text "text-anchor='end'" is easier!
-
-  let rightSvg = "";
-  let currentRightX = rightX;
-
-  const renderRightItem = (text: string, color: string, isSymbol: boolean = false) => {
-    // Estimate width
+  // Pure function to render right item with explicit x position
+  const renderRightItem = (
+    x: number,
+    text: string,
+    color: string,
+    isSymbol: boolean = false,
+  ): { svg: string; nextX: number } => {
     const w = text.length * 8.5; // Monospace approx
-    // Render with anchor end?
-    // <text x="${currentRightX}" text-anchor="end">
-    const itemSvg = `<text x="${currentRightX}" y="${y}" fill="${color}" font-family="monospace" font-size="${fontSize}" text-anchor="end" font-weight="${isSymbol ? "bold" : "normal"}">${text}</text>`;
-    currentRightX -= w + 10; // Spacing
-    return itemSvg;
+    const itemSvg = `<text x="${x}" y="${y}" fill="${color}" font-family="monospace" font-size="${fontSize}" text-anchor="end" font-weight="${isSymbol ? "bold" : "normal"}">${text}</text>`;
+    return {
+      svg: itemSvg,
+      nextX: x - w - 10, // Spacing
+    };
   };
 
-  // Order from Right Edge: Time -> Nix -> Separator -> Node -> GitStats
+  // Build right side items immutably using reduce
+  interface RightAccumulator {
+    readonly x: number;
+    readonly items: readonly string[];
+  }
+
+  const rightItems: Array<{ text: string; color: string; isSymbol?: boolean }> = [];
 
   // 1. Time (23:50)
-  rightSvg += renderRightItem(prompt.time, theme.colors.textMuted);
+  rightItems.push({ text: prompt.time, color: theme.colors.textMuted });
 
   // 2. Nix (❄️)
   if (prompt.nixIndicator) {
-    // Nix icon width might be distinct?
-    // Using simple text render for now.
-    rightSvg += renderRightItem("nix", theme.colors.dragonBlue); // "via nix" or just "nix"? Image: "nix"
-    rightSvg += renderRightItem("❄️", theme.colors.text, true); // Icon
+    rightItems.push({ text: "nix", color: theme.colors.dragonBlue });
+    rightItems.push({ text: "❄️", color: theme.colors.text, isSymbol: true });
   }
 
   // 3. Separator (*)
-  rightSvg += renderRightItem("*", theme.colors.textMuted);
+  rightItems.push({ text: "*", color: theme.colors.textMuted });
 
   // 4. Node (24.13.0)
   if (prompt.nodeVersion) {
-    rightSvg += renderRightItem(prompt.nodeVersion, theme.colors.autumnGreen);
-    rightSvg += renderRightItem("node", theme.colors.autumnGreen, true); // Label? Image: "node 24.13.0"
-    // "node" icon? NerdFont? ⬢
-    rightSvg += renderRightItem("⬢", theme.colors.autumnGreen, true);
+    rightItems.push({ text: prompt.nodeVersion, color: theme.colors.autumnGreen });
+    rightItems.push({ text: "node", color: theme.colors.autumnGreen, isSymbol: true });
+    rightItems.push({ text: "⬢", color: theme.colors.autumnGreen, isSymbol: true });
   }
 
   // 5. Git Stats (+12 ~5 -3)
-  // "A la izquierda de node aparecen los cambios" -> So next in Right-to-Left chain.
   if (prompt.gitStats) {
     if (prompt.gitStats.deleted > 0) {
-      rightSvg += renderRightItem(`-${prompt.gitStats.deleted}`, theme.colors.samuraiRed);
+      rightItems.push({
+        text: `-${prompt.gitStats.deleted}`,
+        color: theme.colors.samuraiRed,
+      });
     }
     if (prompt.gitStats.modified > 0) {
-      rightSvg += renderRightItem(`~${prompt.gitStats.modified}`, theme.colors.roninYellow);
+      rightItems.push({
+        text: `~${prompt.gitStats.modified}`,
+        color: theme.colors.roninYellow,
+      });
     }
     if (prompt.gitStats.added > 0) {
-      rightSvg += renderRightItem(`+${prompt.gitStats.added}`, theme.colors.autumnGreen);
+      rightItems.push({
+        text: `+${prompt.gitStats.added}`,
+        color: theme.colors.autumnGreen,
+      });
     }
   }
+
+  // Render right items immutably
+  const rightResult = rightItems.reduce<RightAccumulator>(
+    (acc, item) => {
+      const result = renderRightItem(acc.x, item.text, item.color, item.isSymbol);
+      return {
+        x: result.nextX,
+        items: [...acc.items, result.svg],
+      };
+    },
+    { x: rightX, items: [] },
+  );
+
+  const rightSvg = rightResult.items.join("\n");
 
   // Line 2: Indicator
   const line2Y = y + lineHeight;
