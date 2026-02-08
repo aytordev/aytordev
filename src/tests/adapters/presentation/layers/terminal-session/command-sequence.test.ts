@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { buildCommandSequence, estimateRenderHeight } from "../command-sequence";
+import { buildCommandSequence, estimateRenderHeight } from "../../../../../adapters/presentation/layers/terminal-session/command-sequence";
 import type { TerminalState } from "../../../../../domain/entities/terminal-state";
-import { createMockTheme } from "../../../../../tests/mocks/theme";
+import { createMockTheme } from "../../../../mocks/theme";
 
 const mockConfig: TerminalState = {
   timestamp: new Date("2024-01-15T12:00:00Z"),

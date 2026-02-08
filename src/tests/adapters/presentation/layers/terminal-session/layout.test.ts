@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { createMockTheme } from "../../../../../tests/mocks/theme";
-import { calculateLayout } from "../layout";
-import type { AnimatedCommand, AnimationTiming } from "../types";
+import { createMockTheme } from "../../../../mocks/theme";
+import { calculateLayout } from "../../../../../adapters/presentation/layers/terminal-session/layout";
+import type { AnimatedCommand, AnimationTiming } from "../../../../../adapters/presentation/layers/terminal-session/types";
 
 const mockTiming: AnimationTiming = {
   typingDuration: 2,

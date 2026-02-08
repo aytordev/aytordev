@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { generateAllScrollKeyframes, generateScrollKeyframe } from "../scroll";
-import type { ScrollPoint } from "../types";
+import { generateAllScrollKeyframes, generateScrollKeyframe } from "../../../../../adapters/presentation/layers/terminal-session/scroll";
+import type { ScrollPoint } from "../../../../../adapters/presentation/layers/terminal-session/types";
 
 describe("generateScrollKeyframe", () => {
   it("should generate CSS keyframe for a scroll animation", () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { AnimationConfig } from "../animation-config";
+import type { AnimationConfig } from "../../../domain/entities/animation-config";
 
 describe("AnimationConfig", () => {
   describe("value object properties", () => {

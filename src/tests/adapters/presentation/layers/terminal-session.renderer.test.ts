@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { TerminalState } from "../../../../domain/entities/terminal-state";
-import { createMockTheme } from "../../../../tests/mocks/theme";
-import { renderTerminalSession } from "../terminal-session.renderer";
+import { createMockTheme } from "../../../mocks/theme";
+import { renderTerminalSession } from "../../../../adapters/presentation/layers/terminal-session.renderer";
 
 const createMockState = (overrides: Partial<TerminalState> = {}): TerminalState => ({
   themeName: "kanagawa-wave",
