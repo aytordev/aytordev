@@ -71,10 +71,12 @@ describe("Domain Ports", () => {
     const mockEnv: EnvironmentPort = {
       get: vi.fn().mockReturnValue("test-value"),
       cwd: vi.fn().mockReturnValue("/test/path"),
+      nodeVersion: vi.fn().mockReturnValue("v20.0.0"),
     };
 
     expect(mockEnv.get("TEST_KEY")).toBe("test-value");
     expect(mockEnv.cwd()).toBe("/test/path");
+    expect(mockEnv.nodeVersion()).toBe("v20.0.0");
   });
 
   it("should define ProcessPort interface correctly", () => {
