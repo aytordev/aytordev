@@ -1,3 +1,4 @@
+import { sanitizeForSvg } from "../../../shared/sanitize";
 import type { TechStack } from "../../../domain/value-objects/tech-stack";
 import type { Theme } from "../../../theme/types";
 
@@ -20,7 +21,7 @@ export const renderTechStack = (
     // Category Title
     elements += `
       <text x="0" y="${currentY}" class="stack__title" fill="${theme.colors.roninYellow}" font-family="monospace" font-size="14" font-weight="bold">
-        ${category.name}
+        ${sanitizeForSvg(category.name)}
       </text>
     `;
     currentY += titleHeight;
@@ -30,7 +31,7 @@ export const renderTechStack = (
       .map((item, i) => {
         // Basic layout: inline or list?
         // "list" style for clean terminal look
-        return `<text x="15" y="${currentY + i * itemHeight}" class="stack__item" fill="${theme.colors.text}" font-family="monospace" font-size="12">- ${item}</text>`;
+        return `<text x="15" y="${currentY + i * itemHeight}" class="stack__item" fill="${theme.colors.text}" font-family="monospace" font-size="12">- ${sanitizeForSvg(item)}</text>`;
       })
       .join("");
 

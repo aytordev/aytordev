@@ -1,3 +1,4 @@
+import { sanitizeForSvg } from "../../../shared/sanitize";
 import type { StarshipPrompt } from "../../../domain/entities/starship-prompt";
 import type { Theme } from "../../../theme/types";
 
@@ -19,7 +20,7 @@ export const renderPrompt = (
   // Truncate if too long? For now render as is.
   const dirText = prompt.directory;
   const dirWidth = dirText.length * 8.5;
-  const dirSvg = `<text x="${leftX}" y="${y}" fill="${theme.colors.dragonBlue}" font-family="monospace" font-size="${fontSize}" font-weight="bold">${dirText}</text>`;
+  const dirSvg = `<text x="${leftX}" y="${y}" fill="${theme.colors.dragonBlue}" font-family="monospace" font-size="${fontSize}" font-weight="bold">${sanitizeForSvg(dirText)}</text>`;
   leftX += dirWidth + 10;
 
   // Arrow ->
@@ -30,7 +31,7 @@ export const renderPrompt = (
   let gitSvg = "";
   if (prompt.gitBranch) {
     const statusChar = prompt.gitStatus === "dirty" ? "?" : "";
-    const branchText = `git:${prompt.gitBranch} ${statusChar}`;
+    const branchText = `git:${sanitizeForSvg(prompt.gitBranch)} ${statusChar}`;
     // Color: Blue text? Image showed Blue "git:main".
     const gitColor = theme.colors.oniViolet;
     gitSvg = `<text x="${leftX}" y="${y}" fill="${gitColor}" font-family="monospace" font-size="${fontSize}">${branchText}</text>`;

@@ -1,3 +1,4 @@
+import { sanitizeForSvg } from "../../../shared/sanitize";
 import type { LanguageStat } from "../../../domain/value-objects/language-stat";
 import type { Theme } from "../../../theme/types";
 
@@ -33,7 +34,7 @@ export function renderLanguageStats(stats: readonly LanguageStat[], theme: Theme
       return `
       <g transform="translate(0, ${rowY})">
         <text fill="${theme.colors.text}" font-family="monospace" font-size="12" dominant-baseline="middle" y="${BAR_HEIGHT / 2}">
-          ${stat.name}
+          ${sanitizeForSvg(stat.name)}
         </text>
         <rect x="${LABEL_WIDTH}" y="0" width="${barWidth}" height="${BAR_HEIGHT}" fill="url(#lang-grad-${index})" rx="2"/>
         <text x="${LABEL_WIDTH + BAR_MAX_WIDTH + PERCENTAGE_OFFSET}" fill="${theme.colors.fujiGray}" font-family="monospace" font-size="11" dominant-baseline="middle" y="${BAR_HEIGHT / 2}">
