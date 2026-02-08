@@ -1,14 +1,14 @@
 import { graphql } from "@octokit/graphql";
 import { Octokit } from "@octokit/rest";
-import type {
-  ContributionStats,
-  GitHubDataPort,
-} from "../../domain/ports/github-data.port";
-import type { Commit, CommitType } from "../../domain/value-objects/commit";
+import { parseCommitEmoji, parseCommitType } from "../../domain/services/commit-parser";
+import { calculateStreak } from "../../domain/services/streak-calculator";
+import type { ContributionStats, GitHubDataPort } from "../../domain/ports/github-data.port";
+import type { Commit } from "../../domain/value-objects/commit";
 import type { LanguageStat } from "../../domain/value-objects/language-stat";
 import type { Owner } from "../../domain/value-objects/owner";
 import type { StreakInfo } from "../../domain/value-objects/streak-info";
-import { type Result, err, ok } from "../../shared/result";
+import { err, ok, type Result } from "../../shared/result";
+import { formatRelativeTime } from "../../shared/time-formatter";
 
 interface ContributionDay {
   contributionCount: number;
@@ -42,91 +42,6 @@ interface GitHubEvent {
   payload: PushEventPayload;
 }
 
-function parseCommitType(message: string): CommitType {
-  const match = message.match(/^(feat|fix|docs|style|refactor|test|chore)/i);
-  if (match) {
-    return match[1].toLowerCase() as CommitType;
-  }
-  return "chore";
-}
-
-function parseCommitEmoji(message: string): string {
-  const emojiMatch = message.match(
-    /^(:\w+:|[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}])/u,
-  );
-  if (emojiMatch) return emojiMatch[1];
-
-  const type = parseCommitType(message);
-  const emojiMap: Record<CommitType, string> = {
-    feat: "✨",
-    fix: "🐛",
-    docs: "📝",
-    style: "💄",
-    refactor: "♻️",
-    test: "✅",
-    chore: "🔧",
-  };
-  return emojiMap[type];
-}
-
-function formatRelativeTime(date: Date): string {
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMins / 60);
-  const diffDays = Math.floor(diffHours / 24);
-
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays < 7) return `${diffDays}d ago`;
-  return `${Math.floor(diffDays / 7)}w ago`;
-}
-
-function calculateStreak(days: ContributionDay[]): StreakInfo {
-  let currentStreak = 0;
-  let longestStreak = 0;
-  let tempStreak = 0;
-  let isActive = false;
-
-  // Sort by date descending (most recent first)
-  const sortedDays = [...days].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-  );
-
-  // Check if today or yesterday has contributions (active streak)
-  const today = new Date().toISOString().split("T")[0];
-  const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
-
-  for (let i = 0; i < sortedDays.length; i++) {
-    const day = sortedDays[i];
-    if (day.contributionCount > 0) {
-      tempStreak++;
-      if (i === 0 && (day.date === today || day.date === yesterday)) {
-        isActive = true;
-      }
-    } else {
-      if (tempStreak > 0) {
-        if (currentStreak === 0) currentStreak = tempStreak;
-        longestStreak = Math.max(longestStreak, tempStreak);
-        tempStreak = 0;
-      }
-    }
-  }
-
-  // Handle case where streak continues to end
-  if (tempStreak > 0) {
-    if (currentStreak === 0) currentStreak = tempStreak;
-    longestStreak = Math.max(longestStreak, tempStreak);
-  }
-
-  return {
-    currentStreak: isActive ? currentStreak : 0,
-    longestStreak,
-    lastContributionDate: new Date(sortedDays[0]?.date ?? Date.now()),
-    isActive,
-  };
-}
-
 export class GitHubApiAdapter implements GitHubDataPort {
   private readonly octokit: Octokit;
   private readonly graphqlClient: typeof graphql;
@@ -153,16 +68,12 @@ export class GitHubApiAdapter implements GitHubDataPort {
     }
   }
 
-  async getRecentCommits(
-    username: string,
-    limit: number,
-  ): Promise<Result<Commit[], Error>> {
+  async getRecentCommits(username: string, limit: number): Promise<Result<Commit[], Error>> {
     try {
-      const { data: events } =
-        await this.octokit.activity.listPublicEventsForUser({
-          username,
-          per_page: limit * 5, // Fetch more to filter PushEvents
-        });
+      const { data: events } = await this.octokit.activity.listPublicEventsForUser({
+        username,
+        per_page: limit * 5, // Fetch more to filter PushEvents
+      });
 
       const commits: Commit[] = [];
 
@@ -174,9 +85,7 @@ export class GitHubApiAdapter implements GitHubDataPort {
               message: commit.message.split("\n")[0].substring(0, 50),
               emoji: parseCommitEmoji(commit.message),
               type: parseCommitType(commit.message),
-              relativeTime: formatRelativeTime(
-                new Date(event.created_at ?? Date.now()),
-              ),
+              relativeTime: formatRelativeTime(new Date(event.created_at ?? Date.now())),
             });
             if (commits.length >= limit) break;
           }
@@ -190,9 +99,7 @@ export class GitHubApiAdapter implements GitHubDataPort {
     }
   }
 
-  async getLanguageStats(
-    username: string,
-  ): Promise<Result<LanguageStat[], Error>> {
+  async getLanguageStats(username: string): Promise<Result<LanguageStat[], Error>> {
     try {
       const { data: repos } = await this.octokit.repos.listForUser({
         username,
@@ -235,9 +142,7 @@ export class GitHubApiAdapter implements GitHubDataPort {
     }
   }
 
-  async getContributionStats(
-    username: string,
-  ): Promise<Result<ContributionStats, Error>> {
+  async getContributionStats(username: string): Promise<Result<ContributionStats, Error>> {
     try {
       const { user } = await this.graphqlClient<ContributionResponse>(
         `
@@ -259,15 +164,11 @@ export class GitHubApiAdapter implements GitHubDataPort {
         { username },
       );
 
-      const days =
-        user.contributionsCollection.contributionCalendar.weeks.flatMap(
-          (w) => w.contributionDays,
-        );
-
-      const totalContributions = days.reduce(
-        (sum, day) => sum + day.contributionCount,
-        0,
+      const days = user.contributionsCollection.contributionCalendar.weeks.flatMap(
+        (w) => w.contributionDays,
       );
+
+      const totalContributions = days.reduce((sum, day) => sum + day.contributionCount, 0);
 
       return ok({ totalContributions });
     } catch (error) {
@@ -275,9 +176,7 @@ export class GitHubApiAdapter implements GitHubDataPort {
     }
   }
 
-  async getContributionStreak(
-    username: string,
-  ): Promise<Result<StreakInfo, Error>> {
+  async getContributionStreak(username: string): Promise<Result<StreakInfo, Error>> {
     try {
       const { user } = await this.graphqlClient<ContributionResponse>(
         `
@@ -299,10 +198,9 @@ export class GitHubApiAdapter implements GitHubDataPort {
         { username },
       );
 
-      const days =
-        user.contributionsCollection.contributionCalendar.weeks.flatMap(
-          (w) => w.contributionDays,
-        );
+      const days = user.contributionsCollection.contributionCalendar.weeks.flatMap(
+        (w) => w.contributionDays,
+      );
 
       return ok(calculateStreak(days));
     } catch (error) {
