@@ -9,7 +9,6 @@ export type ConfigError = {
 };
 
 export const loadConfigFromString = (yaml: string): Result<Config, ConfigError> => {
-  // Parse YAML using IIFE to avoid let mutation
   const parseResult = (() => {
     try {
       return ok(parse(yaml));
@@ -24,7 +23,6 @@ export const loadConfigFromString = (yaml: string): Result<Config, ConfigError> 
 
   if (!parseResult.ok) return parseResult;
 
-  // Validate parsed data
   const result = ConfigSchema.safeParse(parseResult.value);
   if (!result.success) {
     return err({

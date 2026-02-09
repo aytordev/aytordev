@@ -8,9 +8,8 @@ import { err, ok, type Result } from "../../shared/result";
 export const createGenerateProfileUseCase = (ports: Ports): GenerateProfileUseCase => {
   return async (config: Config): Promise<Result<TerminalState, Error>> => {
     try {
-      const maxCommits = config.content?.commits?.max_count ?? 5;
+      const maxCommits = 5;
 
-      // Get Time
       const timestamp = ports.clock.getCurrentTime(config.owner.timezone);
 
       const [userInfo, commits, streak, languageStats] = await Promise.all([
@@ -25,7 +24,6 @@ export const createGenerateProfileUseCase = (ports: Ports): GenerateProfileUseCa
       if (!streak.ok) return err(streak.error);
       if (!languageStats.ok) return err(languageStats.error);
 
-      // Build State
       const tmuxSessionName = config.tmux?.session_name ?? "dev";
       const tmuxWindows = config.tmux?.windows ?? ["zsh", "nvim"];
 
@@ -49,16 +47,8 @@ export const createGenerateProfileUseCase = (ports: Ports): GenerateProfileUseCa
           directory: "~/github/profile",
           gitBranch: "main",
           gitStatus: "clean",
-          // Note: Local git stats require filesystem access and are not available via GitHub API
-          // These would need to be fetched separately if local repository access is available
-          gitStats: {
-            added: 0,
-            deleted: 0,
-            modified: 0,
-          },
-
+          gitStats: { added: 0, deleted: 0, modified: 0 },
           nodeVersion: ports.environment.nodeVersion(),
-
           nixIndicator: true,
           time: ports.clock.formatTime(
             ports.clock.getCurrentTime(config.owner.timezone),
@@ -75,14 +65,12 @@ export const createGenerateProfileUseCase = (ports: Ports): GenerateProfileUseCa
           },
           techStack: {
             categories:
-              config.content?.tech_stack?.categories?.map((c) => ({
+              config.tech_stack?.categories?.map((c) => ({
                 name: c.name,
-                items: c.items,
+                items: [...c.items],
               })) ?? [],
           },
           recentCommits: commits.value,
-          // Note: GitHub API v3 has rate limits; fetching detailed stats requires additional API calls
-          // Consider implementing if needed, or leave as 0 for minimal API usage
           stats: {
             publicRepos: 0,
             followers: 0,
@@ -93,20 +81,15 @@ export const createGenerateProfileUseCase = (ports: Ports): GenerateProfileUseCa
           languageStats: languageStats.value,
           careerTimeline: [],
           contactInfo:
-            config.content?.contact?.items?.map((i) => ({
+            config.contact?.items?.map((i) => ({
               label: i.label,
               value: i.value,
               icon: i.icon,
             })) ?? [],
-          extraLines: config.content?.extra_lines ?? [],
-          dailyQuote: config.content?.learning?.enabled ? "Keep building!" : null,
-          learningJourney: config.content?.learning?.enabled
-            ? { current: config.content.learning.current ?? "" }
-            : null,
-          todayFocus: config.content?.current_focus?.enabled
-            ? (config.content.current_focus.text ?? null)
-            : null,
-          asciiArt: config.content?.ascii_art,
+          extraLines: [],
+          dailyQuote: null,
+          learningJourney: null,
+          todayFocus: null,
         },
         animation: config.animation,
       };

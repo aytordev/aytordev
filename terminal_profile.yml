@@ -1,4 +1,6 @@
-version: 1
+version: 2
+profile_mode: "story-driven"
+
 owner:
   username: "aytordev"
   name: "Aytor"
@@ -6,60 +8,66 @@ owner:
   location: "Madrid, Spain"
   timezone: "Europe/Madrid"
 
+system:
+  os: "macOS Sequoia"
+  shell: "zsh 5.9"
+  editor: "neovim"
+  terminal: "ghostty"
+  theme: "Kanagawa 🌊"
+
+journey:
+  - year: 2020
+    icon: "🌱"
+    title: "Started coding"
+  - year: 2021
+    icon: "🔧"
+    title: "Backend Focus"
+    tags: ["Node.js", "PostgreSQL", "Docker"]
+  - year: 2022
+    icon: "🌟"
+    title: "First OSS contribution"
+  - year: 2023
+    icon: "❄️"
+    title: "NixOS & Systems"
+    tags: ["NixOS", "Nix"]
+  - year: 2024
+    icon: "🤖"
+    title: "AI Engineering"
+    tags: ["LLMs", "Agents", "Claude"]
+
 theme: "kanagawa-wave"
 
 dimensions:
   width: 800
   height: 1000
 
-content:
-  developer_info:
-    enabled: true
-    tagline: "Building autonomous agents"
+tech_stack:
+  categories:
+    - name: "Languages"
+      items: ["TypeScript", "Rust", "Go", "Python", "Nix"]
+    - name: "AI/ML"
+      items: ["PyTorch", "TensorFlow", "LangChain"]
+    - name: "Infra"
+      items: ["Docker", "Kubernetes", "NixOS"]
+    - name: "Web"
+      items: ["React", "Node.js", "JavaScript"]
 
-  tech_stack:
-    enabled: true
-    categories:
-      - name: "Languages"
-        items: ["TypeScript", "Rust", "Go", "Python", "Nix"]
-      - name: "AI/ML"
-        items: ["PyTorch", "TensorFlow", "LangChain"]
-      - name: "Infra"
-        items: ["Docker", "Kubernetes", "NixOS"]
-      - name: "Web"
-        items: ["React", "Node.js", "JavaScript"]
+featured_repos:
+  source: "pinned"
+  limit: 3
 
-  commits:
-    enabled: true
-    max_count: 5
-
-  streak:
-    enabled: true
-
-  learning:
-    enabled: true
-    current: "Advanced Agent Patterns"
-
-  current_focus:
-    enabled: true
-    text: "Building terminal-profile generator"
-
-  contact:
-    enabled: true
-    items:
-      - label: "GitHub"
-        value: "@aytordev"
-        icon: "gh"
-      - label: "Web"
-        value: "aytor.dev"
-        icon: "web"
-
-  extra_lines: []
-
-growth:
-  powered_by:
-    enabled: true
-    text: "Powered by Terminal Profile"
+contact:
+  cta: "Let's connect! 💬"
+  items:
+    - label: "gh"
+      value: "@aytordev"
+      icon: "gh"
+    - label: "web"
+      value: "aytor.dev"
+      icon: "web"
+    - label: "mail"
+      value: "hello@aytor.dev"
+      icon: "mail"
 
 effects:
   cursor_blink: true
@@ -70,12 +78,7 @@ github:
   max_repos: 10
   include_private: false
 
-# Animation settings (optional)
-# Enables animated terminal session with scroll simulation
 animation:
-  enabled: true # Set to true to enable animated terminal session
-  speed: 1.0 # Animation speed multiplier (0.1-5.0):
-  # 0.5 = slower (more realistic)
-  # 1.0 = normal (recommended)
-  # 2.0 = faster (quick demo)
-  initialDelay: 0.5 # Seconds before animation starts (0-10)
+  enabled: true
+  speed: 1.0
+  initialDelay: 0.5
