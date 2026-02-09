@@ -45,6 +45,97 @@ describe("Tech Stack Renderer", () => {
     const svg = renderTechStack(techStack, KanagawaTheme, 100, 200);
     expect(svg).toContain('transform="translate(100, 200)"');
   });
+
+  describe("multi-column layout", () => {
+    it("should render categories as side-by-side columns", () => {
+      const svg = renderTechStack(techStack, KanagawaTheme, 0, 0, 760);
+      // 2 categories at 760px width = 380px per column
+      expect(svg).toContain('transform="translate(0, 0)"');
+      expect(svg).toContain('transform="translate(380, 0)"');
+    });
+
+    it("should evenly divide width across 4 categories", () => {
+      const fourCats: TechStack = {
+        categories: [
+          { name: "A", items: ["a1"] },
+          { name: "B", items: ["b1"] },
+          { name: "C", items: ["c1"] },
+          { name: "D", items: ["d1"] },
+        ],
+      };
+      const svg = renderTechStack(fourCats, KanagawaTheme, 0, 0, 800);
+      // 4 categories at 800px = 200px per column
+      expect(svg).toContain('transform="translate(0, 0)"');
+      expect(svg).toContain('transform="translate(200, 0)"');
+      expect(svg).toContain('transform="translate(400, 0)"');
+      expect(svg).toContain('transform="translate(600, 0)"');
+    });
+
+    it("should use full width for single category", () => {
+      const singleCat: TechStack = {
+        categories: [{ name: "Languages", items: ["TypeScript"] }],
+      };
+      const svg = renderTechStack(singleCat, KanagawaTheme, 0, 0, 760);
+      // Single column at x=0
+      expect(svg).toContain('transform="translate(0, 0)"');
+    });
+
+    it("should accept width parameter", () => {
+      const svg = renderTechStack(techStack, KanagawaTheme, 0, 0, 600);
+      // 2 categories at 600px = 300px per column
+      expect(svg).toContain('transform="translate(300, 0)"');
+    });
+  });
+
+  describe("badge rendering", () => {
+    it("should render rect badges for known technologies", () => {
+      const svg = renderTechStack(techStack, KanagawaTheme);
+      // TypeScript has icon mapping
+      expect(svg).toContain("<rect");
+      expect(svg).toContain('rx="3"');
+    });
+
+    it("should render abbreviation text inside badges", () => {
+      const svg = renderTechStack(techStack, KanagawaTheme);
+      // TypeScript → TS, Rust → RS, Docker → DK
+      expect(svg).toContain(">TS</text>");
+      expect(svg).toContain(">RS</text>");
+      expect(svg).toContain(">DK</text>");
+    });
+
+    it("should use technology brand color for badge fill", () => {
+      const svg = renderTechStack(techStack, KanagawaTheme);
+      // TypeScript color: #3178C6
+      expect(svg).toContain('fill="#3178C6"');
+    });
+
+    it("should render fallback circle for unknown technologies", () => {
+      const unknownStack: TechStack = {
+        categories: [{ name: "Custom", items: ["MyCustomTool"] }],
+      };
+      const svg = renderTechStack(unknownStack, KanagawaTheme);
+      expect(svg).toContain("<circle");
+      expect(svg).toContain("MyCustomTool");
+      expect(svg).not.toContain("<rect");
+    });
+  });
+
+  describe("purity", () => {
+    it("should be a pure function (same input produces same output)", () => {
+      const result1 = renderTechStack(techStack, KanagawaTheme);
+      const result2 = renderTechStack(techStack, KanagawaTheme);
+      expect(result1).toBe(result2);
+    });
+
+    it("should not mutate input", () => {
+      const input: TechStack = {
+        categories: [{ name: "Languages", items: ["TypeScript", "Rust"] }],
+      };
+      const original = JSON.parse(JSON.stringify(input));
+      renderTechStack(input, KanagawaTheme);
+      expect(input).toEqual(original);
+    });
+  });
 });
 
 describe("calculateTechStackHeight", () => {
