@@ -138,8 +138,7 @@ export const generateCss = (theme: Theme, animationSpeed?: number): string => {
     .dev__location { fill: var(--text-muted); font-size: 12px; }
 
     /* Tech Stack */
-    .stack__title { fill: var(--border); }
-    .stack__item { fill: var(--text); }
+    .stack__title { fill: var(--violet); }
 
     /* Recent Commits */
     .commit__msg { fill: var(--text); }
