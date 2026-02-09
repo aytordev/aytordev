@@ -93,7 +93,7 @@ const renderCommand = (
   const y = layout.positions[index];
   const cmdTiming = layout.timings[index];
 
-  // 1. Render prompt with fade-in animation
+  // 1. Render prompt - appears immediately when its turn comes
   const promptY = y + PROMPT_HEIGHT; // Text baseline
   const promptSvg = renderPromptForCommand(
     prompt,
@@ -102,17 +102,101 @@ const renderCommand = (
     cmdTiming.promptStart,
   );
 
-  // 2. Render command line with typewriter animation
+  // 2. Render command line with typing animation via clipPath
   const commandY = y + PROMPT_HEIGHT + COMMAND_LINE_HEIGHT;
-  const commandLine = `<text
+  const commandText = `$ ${sanitizeForSvg(cmd.command)}`;
+  const charCount = commandText.length;
+  // Approximate character width in monospace font at 14px
+  const charWidth = 8.4;
+  const textWidth = charCount * charWidth;
+  const clipId = `typing-clip-${index}`;
+  const cursorId = `cursor-${index}`;
+  const typingDuration = cmdTiming.outputStart - cmdTiming.commandStart;
+
+  // Create clipPath with animated rect that reveals text letter by letter
+  const clipPathDef = `
+    <defs>
+      <clipPath id="${clipId}">
+        <rect x="10" y="${commandY - 14}" width="0" height="20">
+          <animate
+            attributeName="width"
+            from="0"
+            to="${textWidth}"
+            dur="${typingDuration}s"
+            begin="${cmdTiming.commandStart}s"
+            fill="freeze"
+            calcMode="discrete"
+            keyTimes="${generateKeyTimesForTyping(charCount)}"
+            values="${generateValuesForTyping(charCount, charWidth)}"
+          />
+        </rect>
+      </clipPath>
+    </defs>`;
+
+  // Create blinking cursor that follows the typing
+  // Cursor starts hidden and appears only during typing
+  const cursorStartX = 10; // Starting position (before first char)
+  const cursorHeight = 16;
+  const cursorWidth = 2;
+
+  const cursor = `
+  <rect
+    id="${cursorId}"
+    x="${cursorStartX}"
+    y="${commandY - 12}"
+    width="${cursorWidth}"
+    height="${cursorHeight}"
+    fill="${theme.colors.springGreen}"
+    opacity="0"
+  >
+    <!-- Show cursor when typing starts -->
+    <animate
+      attributeName="opacity"
+      from="0"
+      to="1"
+      dur="0.01s"
+      begin="${cmdTiming.commandStart}s"
+      fill="freeze"
+    />
+    <!-- Animate cursor position jumping with each character -->
+    <animate
+      attributeName="x"
+      dur="${typingDuration}s"
+      begin="${cmdTiming.commandStart}s"
+      fill="freeze"
+      calcMode="discrete"
+      keyTimes="${generateKeyTimesForTyping(charCount)}"
+      values="${generateCursorPositions(charCount, charWidth, cursorStartX)}"
+    />
+    <!-- Blink animation while typing -->
+    <animate
+      attributeName="opacity"
+      values="1;0;1"
+      dur="1s"
+      begin="${cmdTiming.commandStart}s"
+      end="${cmdTiming.outputStart}s"
+      repeatCount="indefinite"
+    />
+    <!-- Hide cursor when typing completes -->
+    <set
+      attributeName="opacity"
+      to="0"
+      begin="${cmdTiming.outputStart}s"
+      fill="freeze"
+    />
+  </rect>`;
+
+  const commandLine = `${clipPathDef}
+<text
     x="10"
     y="${commandY}"
-    class="command-line animate terminal-text"
+    class="command-line terminal-text"
     fill="${theme.colors.text}"
     font-family="monospace"
     font-size="14"
-    style="animation-delay: ${cmdTiming.commandStart}s"
-  >$ ${sanitizeForSvg(cmd.command)}</text>`;
+    clip-path="url(#${clipId})"
+  >${commandText}</text>
+${cursor}`;
 
   // 3. Render output with fade-in animation
   // Output renderers handle their own positioning via internal transforms
@@ -126,6 +210,55 @@ const renderCommand = (
   >${output.svg}</g>`;
 
   return `${promptSvg}\n${commandLine}\n${outputWrapped}`;
+};
+
+/**
+ * Generates keyTimes for discrete stepping animation (letter by letter).
+ * Each step corresponds to revealing one more character.
+ * Generates charCount + 1 entries (0/charCount to charCount/charCount).
+ * Pure function - functional composition without mutations.
+ */
+export const generateKeyTimesForTyping = (charCount: number): string => {
+  // Handle edge case: division by zero when charCount is 0
+  if (charCount === 0) return "0";
+  return Array.from({ length: charCount + 1 }, (_, i) => i / charCount).join(
+    ";",
+  );
+};
+
+/**
+ * Generates width values for discrete stepping animation.
+ * Each value is the width needed to show i characters.
+ * Generates charCount + 1 entries to match keyTimes.
+ * Pure function - functional composition without mutations.
+ */
+export const generateValuesForTyping = (
+  charCount: number,
+  charWidth: number,
+): string => {
+  // Add full character width extra for each step to ensure full visibility
+  return Array.from(
+    { length: charCount + 1 },
+    (_, i) => i * charWidth + charWidth,
+  ).join(";");
+};
+
+/**
+ * Generates X positions for cursor animation.
+ * Cursor position matches the right edge of the revealed text.
+ * Generates charCount + 1 entries to match keyTimes.
+ * Pure function - functional composition without mutations.
+ */
+export const generateCursorPositions = (
+  charCount: number,
+  charWidth: number,
+  startX: number,
+): string => {
+  // Match the text reveal: position at right edge of revealed text
+  return Array.from(
+    { length: charCount + 1 },
+    (_, i) => startX + i * charWidth + charWidth,
+  ).join(";");
 };
 
 /**
