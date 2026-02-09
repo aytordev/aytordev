@@ -11,7 +11,6 @@ export const mockTerminalState: TerminalState = {
     title: "Developer",
     location: "Internet",
     timezone: "UTC",
-    // githubUrl and avatarUrl removed as they are not in Owner interface
   },
   session: {
     sessionName: "dev",
@@ -32,33 +31,32 @@ export const mockTerminalState: TerminalState = {
     time: "12:00",
   },
   content: {
-    developerInfo: {
-      name: "Test User",
-      username: "testuser",
-      tagline: "Building cool things",
-      location: "Internet",
+    neofetchData: {
+      owner: {
+        name: "Test User",
+        username: "testuser",
+        tagline: "Building cool things",
+        location: "Internet",
+      },
+      system: {
+        os: "NixOS",
+        shell: "zsh",
+        editor: "neovim",
+        terminal: "ghostty",
+        theme: "Kanagawa",
+      },
+      stats: {
+        totalCommits: 500,
+        currentStreak: 5,
+        publicRepos: 10,
+      },
     },
+    journey: [],
     techStack: { categories: [] },
     recentCommits: [],
-    stats: {
-      publicRepos: 10,
-      followers: 100,
-      following: 50,
-      totalStars: 500,
-    },
-    streak: {
-      currentStreak: 5,
-      longestStreak: 10,
-      lastContributionDate: new Date(),
-      isActive: true,
-    },
     languageStats: [],
-    careerTimeline: [],
+    featuredRepos: [],
     contactInfo: [],
-    extraLines: [],
-    dailyQuote: null,
-    learningJourney: null,
-    todayFocus: null,
-    asciiArt: undefined,
+    contactCta: "Let's connect! \u{1F4AC}",
   },
 };

@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { calculateCommandCycleDuration, createAnimationTiming } from "../../../../../adapters/presentation/layers/terminal-session/timing";
+import {
+  calculateCommandCycleDuration,
+  createAnimationTiming,
+} from "../../../../../adapters/presentation/layers/terminal-session/timing";
 import { TEST_ANIMATION } from "../../../../__support__/constants";
 
 describe("createAnimationTiming", () => {

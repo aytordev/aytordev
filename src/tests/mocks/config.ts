@@ -1,7 +1,8 @@
 import type { Config } from "../../config/schema";
 
 export const mockConfig: Config = {
-  version: 1,
+  version: 2,
+  profile_mode: "story-driven",
   owner: {
     name: "Test User",
     username: "testuser",
@@ -9,6 +10,17 @@ export const mockConfig: Config = {
     location: "Earth",
     timezone: "UTC",
   },
+  system: {
+    os: "NixOS",
+    shell: "zsh",
+    editor: "neovim",
+    terminal: "ghostty",
+    theme: "Kanagawa",
+  },
+  journey: [
+    { year: 2020, icon: "🌱", title: "Started coding" },
+    { year: 2024, icon: "🤖", title: "AI Engineering", tags: ["LLMs", "Agents"] },
+  ],
   theme: "kanagawa-wave",
   dimensions: { width: 800, height: 400 },
   tmux: {
@@ -22,17 +34,16 @@ export const mockConfig: Config = {
     show_nix: true,
     show_time: true,
   },
-  content: {
-    developer_info: { enabled: true },
-    tech_stack: { enabled: true, categories: [] },
-    language_stats: { enabled: true, max_languages: 5, show_other: true },
-    commits: { enabled: true, max_count: 5 },
-    streak: { enabled: true },
-    contact: { enabled: true, items: [] },
-    extra_lines: [],
+  tech_stack: {
+    categories: [{ name: "Languages", items: ["TypeScript", "Rust"] }],
   },
-  growth: {
-    powered_by: { enabled: true, text: "Powered by" },
+  featured_repos: {
+    source: "stars",
+    limit: 3,
+  },
+  contact: {
+    cta: "Let's connect! 💬",
+    items: [{ label: "GitHub", value: "@testuser", icon: "gh" }],
   },
   effects: {
     cursor_blink: true,

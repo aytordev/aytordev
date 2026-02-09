@@ -11,35 +11,15 @@ describe("Terminal Renderer Orchestrator", () => {
 
     expect(svg).toContain("<svg");
     expect(svg).toContain("#1F1F28"); // Kanagawa Wave BG
-    // Check for presence of layers
     expect(svg).toContain('id="tmux-bar"');
     expect(svg).toContain('id="prompt"');
-    expect(svg).toContain('id="developer-info"');
-    // Streak presence
-    expect(svg).toContain('id="streak"');
-  });
-
-  it("should render ASCII Art when present", () => {
-    const stateWithAscii = {
-      ...mockState,
-      content: {
-        ...mockState.content,
-        asciiArt: "  /\\_/\\  \n ( o.o ) ",
-      },
-    };
-    const svg = renderTerminal(stateWithAscii);
-
-    expect(svg).toContain(" /\\_/\\ ");
-    expect(svg).toContain("( o.o )");
-    // Check if it pushed content down? hard to check offset in string without parsing attributes
-    // But presence is enough for now.
+    expect(svg).toContain('id="neofetch"');
   });
 
   it("should respect custom dimensions", () => {
-    const customState = {
-      ...mockState,
-      dimensions: TEST_DIMENSIONS.LARGE,
-    };
+    const customState = terminalStateBuilder()
+      .withDimensions(TEST_DIMENSIONS.LARGE.width, TEST_DIMENSIONS.LARGE.height)
+      .build();
     const svg = renderTerminal(customState);
 
     expect(svg).toContain('viewBox="0 0 1200 600"');
@@ -51,92 +31,80 @@ describe("Terminal Renderer Orchestrator", () => {
     it("should use static renderer when animation is undefined", () => {
       const svg = renderTerminal(mockState);
 
-      // Static mode should have all traditional sections
       expect(svg).toContain('id="prompt"');
-      expect(svg).toContain('id="developer-info"');
-      // Should NOT have animation-specific elements
+      expect(svg).toContain('id="neofetch"');
       expect(svg).not.toContain("clipPath");
       expect(svg).not.toContain("terminal-viewport");
       expect(svg).not.toContain("scrollable-content");
     });
 
     it("should use static renderer when animation.enabled is false", () => {
-      const stateWithAnimationDisabled = {
-        ...mockState,
-        animation: {
+      const stateWithAnimationDisabled = terminalStateBuilder()
+        .withAnimation({
           enabled: false,
           speed: TEST_ANIMATION.SPEED_NORMAL,
           initialDelay: 0.5,
-        },
-      };
+        })
+        .build();
       const svg = renderTerminal(stateWithAnimationDisabled);
 
-      // Static mode characteristics
       expect(svg).toContain('id="prompt"');
-      // Should NOT have animation-specific elements
       expect(svg).not.toContain("clipPath");
       expect(svg).not.toContain("terminal-viewport");
     });
 
     it("should use animated renderer when animation.enabled is true", () => {
-      const stateWithAnimationEnabled = {
-        ...mockState,
-        animation: {
+      const stateWithAnimationEnabled = terminalStateBuilder()
+        .withAnimation({
           enabled: true,
           speed: TEST_ANIMATION.SPEED_NORMAL,
           initialDelay: 0.5,
-        },
-      };
+        })
+        .build();
       const svg = renderTerminal(stateWithAnimationEnabled);
 
-      // Animated mode characteristics
       expect(svg).toContain("clipPath");
       expect(svg).toContain('id="terminal-viewport"');
       expect(svg).toContain('id="scrollable-content"');
-      expect(svg).toContain("terminal-profile --info");
+      expect(svg).toContain("neofetch");
     });
 
     it("should include animation classes when in animated mode", () => {
-      const stateWithAnimation = {
-        ...mockState,
-        animation: {
+      const stateWithAnimation = terminalStateBuilder()
+        .withAnimation({
           enabled: true,
           speed: TEST_ANIMATION.SPEED_NORMAL,
           initialDelay: 0.5,
-        },
-      };
+        })
+        .build();
       const svg = renderTerminal(stateWithAnimation);
 
-      // Command line uses clipPath, not .animate class
       expect(svg).toContain('class="command-line terminal-text"');
       expect(svg).toContain('class="command-output animate"');
       expect(svg).toContain("animation-delay:");
     });
 
     it("should pass animation speed to animated renderer", () => {
-      const stateWithFastAnimation = {
-        ...mockState,
-        animation: {
+      const stateWithFastAnimation = terminalStateBuilder()
+        .withAnimation({
           enabled: true,
           speed: TEST_ANIMATION.SPEED_FAST,
           initialDelay: 0.1,
-        },
-      };
+        })
+        .build();
       const svg = renderTerminal(stateWithFastAnimation);
 
-      // With faster speed, animation delays should be shorter
-      // Just verify animation is active
       expect(svg).toContain("animation-delay:");
     });
 
     it("should maintain backward compatibility - static mode unchanged", () => {
       const svgWithoutAnimation = renderTerminal(mockState);
-      const svgWithAnimationDisabled = renderTerminal({
-        ...mockState,
-        animation: { enabled: false, speed: TEST_ANIMATION.SPEED_NORMAL, initialDelay: 0 },
-      });
+      const svgWithAnimationDisabled = renderTerminal(
+        terminalStateBuilder()
+          .withAnimation({ enabled: false, speed: TEST_ANIMATION.SPEED_NORMAL, initialDelay: 0 })
+          .build(),
+      );
 
-      // Both should have same core elements
       expect(svgWithoutAnimation).toContain('id="tmux-bar"');
       expect(svgWithAnimationDisabled).toContain('id="tmux-bar"');
       expect(svgWithoutAnimation).toContain('id="prompt"');

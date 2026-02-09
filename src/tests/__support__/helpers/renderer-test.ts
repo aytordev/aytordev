@@ -2,10 +2,10 @@
  * Helpers for testing renderer functions
  */
 
-import type { Theme } from "../../../theme/types";
 import type { TerminalState } from "../../../domain/entities/terminal-state";
-import { terminalStateBuilder } from "../builders/terminal-state.builder";
+import type { Theme } from "../../../theme/types";
 import { createMockTheme } from "../../mocks/theme";
+import { terminalStateBuilder } from "../builders/terminal-state.builder";
 
 export const rendererTest = {
   /**

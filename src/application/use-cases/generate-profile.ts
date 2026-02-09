@@ -8,24 +8,28 @@ import { err, ok, type Result } from "../../shared/result";
 export const createGenerateProfileUseCase = (ports: Ports): GenerateProfileUseCase => {
   return async (config: Config): Promise<Result<TerminalState, Error>> => {
     try {
-      const maxCommits = config.content?.commits?.max_count ?? 5;
+      const maxCommits = 5;
+      const repoLimit = config.featured_repos?.limit ?? 3;
 
-      // Get Time
       const timestamp = ports.clock.getCurrentTime(config.owner.timezone);
 
-      const [userInfo, commits, streak, languageStats] = await Promise.all([
-        ports.github.getUserInfo(config.owner.username),
-        ports.github.getRecentCommits(config.owner.username, maxCommits),
-        ports.github.getContributionStreak(config.owner.username),
-        ports.github.getLanguageStats(config.owner.username),
-      ]);
+      const [userInfo, commits, streak, languageStats, contributionStats, pinnedRepos] =
+        await Promise.all([
+          ports.github.getUserInfo(config.owner.username),
+          ports.github.getRecentCommits(config.owner.username, maxCommits),
+          ports.github.getContributionStreak(config.owner.username),
+          ports.github.getLanguageStats(config.owner.username),
+          ports.github.getContributionStats(config.owner.username),
+          ports.github.getPinnedRepos(config.owner.username, repoLimit),
+        ]);
 
       if (!userInfo.ok) return err(userInfo.error);
       if (!commits.ok) return err(commits.error);
       if (!streak.ok) return err(streak.error);
       if (!languageStats.ok) return err(languageStats.error);
+      if (!contributionStats.ok) return err(contributionStats.error);
+      if (!pinnedRepos.ok) return err(pinnedRepos.error);
 
-      // Build State
       const tmuxSessionName = config.tmux?.session_name ?? "dev";
       const tmuxWindows = config.tmux?.windows ?? ["zsh", "nvim"];
 
@@ -49,16 +53,8 @@ export const createGenerateProfileUseCase = (ports: Ports): GenerateProfileUseCa
           directory: "~/github/profile",
           gitBranch: "main",
           gitStatus: "clean",
-          // Note: Local git stats require filesystem access and are not available via GitHub API
-          // These would need to be fetched separately if local repository access is available
-          gitStats: {
-            added: 0,
-            deleted: 0,
-            modified: 0,
-          },
-
+          gitStats: { added: 0, deleted: 0, modified: 0 },
           nodeVersion: ports.environment.nodeVersion(),
-
           nixIndicator: true,
           time: ports.clock.formatTime(
             ports.clock.getCurrentTime(config.owner.timezone),
@@ -67,46 +63,44 @@ export const createGenerateProfileUseCase = (ports: Ports): GenerateProfileUseCa
         },
         easterEgg: getEasterEgg(timestamp) || undefined,
         content: {
-          developerInfo: {
-            name: config.owner.name,
-            username: config.owner.username,
-            tagline: config.owner.title,
-            location: config.owner.location,
+          neofetchData: {
+            owner: {
+              name: config.owner.name,
+              username: config.owner.username,
+              tagline: config.owner.title,
+              location: config.owner.location,
+            },
+            system: config.system,
+            stats: {
+              totalCommits: contributionStats.value.totalContributions,
+              currentStreak: streak.value.currentStreak,
+              publicRepos: pinnedRepos.value.length,
+            },
           },
+          journey:
+            config.journey?.map((j) => ({
+              year: j.year,
+              icon: j.icon,
+              title: j.title,
+              tags: j.tags,
+            })) ?? [],
           techStack: {
             categories:
-              config.content?.tech_stack?.categories?.map((c) => ({
+              config.tech_stack?.categories?.map((c) => ({
                 name: c.name,
-                items: c.items,
+                items: [...c.items],
               })) ?? [],
           },
           recentCommits: commits.value,
-          // Note: GitHub API v3 has rate limits; fetching detailed stats requires additional API calls
-          // Consider implementing if needed, or leave as 0 for minimal API usage
-          stats: {
-            publicRepos: 0,
-            followers: 0,
-            following: 0,
-            totalStars: 0,
-          },
-          streak: streak.value,
           languageStats: languageStats.value,
-          careerTimeline: [],
+          featuredRepos: pinnedRepos.value,
           contactInfo:
-            config.content?.contact?.items?.map((i) => ({
+            config.contact?.items?.map((i) => ({
               label: i.label,
               value: i.value,
               icon: i.icon,
             })) ?? [],
-          extraLines: config.content?.extra_lines ?? [],
-          dailyQuote: config.content?.learning?.enabled ? "Keep building!" : null,
-          learningJourney: config.content?.learning?.enabled
-            ? { current: config.content.learning.current ?? "" }
-            : null,
-          todayFocus: config.content?.current_focus?.enabled
-            ? (config.content.current_focus.text ?? null)
-            : null,
-          asciiArt: config.content?.ascii_art,
+          contactCta: config.contact?.cta ?? "Let's connect! \u{1F4AC}",
         },
         animation: config.animation,
       };

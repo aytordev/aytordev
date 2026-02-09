@@ -12,8 +12,8 @@
 
 import { type Mock, vi } from "vitest";
 import type { Ports } from "../../../adapters";
-import { ok, err } from "../../../shared/result";
 import type { Result } from "../../../shared/result";
+import { err, ok } from "../../../shared/result";
 
 export class PortsBuilder {
   private ports: Ports;
@@ -48,6 +48,7 @@ export class PortsBuilder {
             totalContributions: 500,
           }),
         ),
+        getPinnedRepos: vi.fn().mockResolvedValue(ok([])),
       },
       clock: {
         getTimeOfDay: vi.fn().mockReturnValue("afternoon"),
@@ -110,6 +111,11 @@ export class PortsBuilder {
   /**
    * Configure GitHub error for a specific method
    */
+  withGitHubPinnedRepos(repos: any[]): this {
+    (this.ports.github.getPinnedRepos as Mock).mockResolvedValue(ok(repos));
+    return this;
+  }
+
   withGitHubError(method: keyof typeof this.ports.github, error: Error): this {
     (this.ports.github[method] as Mock).mockResolvedValue(err(error));
     return this;

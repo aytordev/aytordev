@@ -1,5 +1,5 @@
-import { sanitizeForSvg } from "../../shared/sanitize";
 import { pipe } from "../../shared/fp-utils";
+import { sanitizeForSvg } from "../../shared/sanitize";
 import type { Theme } from "../../theme/types";
 import { generateCss } from "./styles";
 

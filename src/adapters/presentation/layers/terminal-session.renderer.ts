@@ -5,10 +5,10 @@ import type { Theme } from "../../../theme/types";
 import { renderPromptLeftSide, renderPromptRightSide } from "./prompt.renderer";
 import {
   buildCommandSequence,
+  type CommandTiming,
   calculateLayout,
   createAnimationTiming,
   generateAllScrollKeyframes,
-  type CommandTiming,
 } from "./terminal-session";
 import { COMMAND_LINE_HEIGHT, PROMPT_HEIGHT } from "./terminal-session/types";
 
@@ -50,12 +50,7 @@ export const renderTerminalSession = (
     .join("\n");
 
   // 6. Compose final SVG structure (pure template)
-  return composeTerminalSessionSvg(
-    viewportY,
-    viewportHeight,
-    scrollKeyframes,
-    commandsSvg,
-  );
+  return composeTerminalSessionSvg(viewportY, viewportHeight, scrollKeyframes, commandsSvg);
 };
 
 /**
@@ -77,10 +72,7 @@ export const renderTerminalSession = (
 const renderCommand = (
   cmd: {
     command: string;
-    outputRenderer: (
-      theme: Theme,
-      y: number,
-    ) => { svg: string; height: number };
+    outputRenderer: (theme: Theme, y: number) => { svg: string; height: number };
   },
   layout: {
     positions: ReadonlyArray<number>;
@@ -95,12 +87,7 @@ const renderCommand = (
 
   // 1. Render prompt - appears immediately when its turn comes
   const promptY = y + PROMPT_HEIGHT; // Text baseline
-  const promptSvg = renderPromptForCommand(
-    prompt,
-    theme,
-    promptY,
-    cmdTiming.promptStart,
-  );
+  const promptSvg = renderPromptForCommand(prompt, theme, promptY, cmdTiming.promptStart);
 
   // 2. Render command line with typing animation via clipPath
   const commandY = y + PROMPT_HEIGHT + COMMAND_LINE_HEIGHT;
@@ -221,9 +208,7 @@ ${cursor}`;
 export const generateKeyTimesForTyping = (charCount: number): string => {
   // Handle edge case: division by zero when charCount is 0
   if (charCount === 0) return "0";
-  return Array.from({ length: charCount + 1 }, (_, i) => i / charCount).join(
-    ";",
-  );
+  return Array.from({ length: charCount + 1 }, (_, i) => i / charCount).join(";");
 };
 
 /**
@@ -232,15 +217,9 @@ export const generateKeyTimesForTyping = (charCount: number): string => {
  * Generates charCount + 1 entries to match keyTimes.
  * Pure function - functional composition without mutations.
  */
-export const generateValuesForTyping = (
-  charCount: number,
-  charWidth: number,
-): string => {
+export const generateValuesForTyping = (charCount: number, charWidth: number): string => {
   // Add full character width extra for each step to ensure full visibility
-  return Array.from(
-    { length: charCount + 1 },
-    (_, i) => i * charWidth + charWidth,
-  ).join(";");
+  return Array.from({ length: charCount + 1 }, (_, i) => i * charWidth + charWidth).join(";");
 };
 
 /**
@@ -255,10 +234,9 @@ export const generateCursorPositions = (
   startX: number,
 ): string => {
   // Match the text reveal: position at right edge of revealed text
-  return Array.from(
-    { length: charCount + 1 },
-    (_, i) => startX + i * charWidth + charWidth,
-  ).join(";");
+  return Array.from({ length: charCount + 1 }, (_, i) => startX + i * charWidth + charWidth).join(
+    ";",
+  );
 };
 
 /**

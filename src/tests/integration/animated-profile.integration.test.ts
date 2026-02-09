@@ -7,12 +7,30 @@ describe("Animated Profile Integration", () => {
   const createFullState = () =>
     terminalStateBuilder()
       .withContent({
-        developerInfo: {
-          name: "Aytor Developer",
-          username: "aytordev",
-          tagline: "Full-Stack Developer | NixOS Enthusiast",
-          location: "Madrid, Spain",
+        neofetchData: {
+          owner: {
+            name: "Aytor Developer",
+            username: "aytordev",
+            tagline: "Full-Stack Developer | NixOS Enthusiast",
+            location: "Madrid, Spain",
+          },
+          system: {
+            os: "NixOS",
+            shell: "zsh",
+            editor: "neovim",
+            terminal: "ghostty",
+            theme: "Kanagawa",
+          },
+          stats: {
+            totalCommits: 1200,
+            currentStreak: 42,
+            publicRepos: 42,
+          },
         },
+        journey: [
+          { year: 2020, icon: "\u{1F331}", title: "Started coding" },
+          { year: 2024, icon: "\u{1F916}", title: "AI Engineering", tags: ["LLMs", "Agents"] },
+        ],
         techStack: {
           categories: [
             { name: "Languages", items: ["TypeScript", "Rust", "Python", "Nix"] },
@@ -30,42 +48,32 @@ describe("Animated Profile Integration", () => {
           {
             hash: "a1b2c3d",
             message: "feat: add animation support",
-            emoji: "✨",
+            emoji: "\u{2728}",
             type: "feat",
             relativeTime: "2 hours ago",
           },
           {
             hash: "e4f5g6h",
             message: "fix: correct scroll behavior",
-            emoji: "🐛",
+            emoji: "\u{1F41B}",
             type: "fix",
             relativeTime: "1 day ago",
           },
           {
             hash: "i7j8k9l",
             message: "docs: update README",
-            emoji: "📝",
+            emoji: "\u{1F4DD}",
             type: "docs",
             relativeTime: "3 days ago",
           },
         ],
-        stats: { publicRepos: 42, followers: 150, following: 75, totalStars: 500 },
-        careerTimeline: [],
-        learningJourney: { current: "Diving deep into Rust async programming" },
-        todayFocus: null,
-        dailyQuote: null,
+        featuredRepos: [],
         contactInfo: [
           { label: "GitHub", value: "https://github.com/aytordev", icon: "github" },
           { label: "Website", value: "https://aytor.dev", icon: "globe" },
           { label: "Email", value: "hello@aytor.dev", icon: "mail" },
         ],
-        streak: {
-          currentStreak: 42,
-          longestStreak: 60,
-          lastContributionDate: new Date("2024-01-01T00:00:00Z"),
-          isActive: true,
-        },
-        extraLines: [],
+        contactCta: "Let's connect! \u{1F4AC}",
       })
       .withAnimation({
         enabled: true,
@@ -78,12 +86,10 @@ describe("Animated Profile Integration", () => {
     const state = createFullState();
     const svg = renderTerminal(state);
 
-    // Verify it's valid SVG
     expect(svg).toContain("<svg");
     expect(svg).toContain("</svg>");
     expect(svg).toContain('xmlns="http://www.w3.org/2000/svg"');
 
-    // Verify dimensions
     expect(svg).toContain('viewBox="0 0 800 400"');
     expect(svg).toContain('width="800"');
     expect(svg).toContain('height="400"');
@@ -93,55 +99,46 @@ describe("Animated Profile Integration", () => {
     const state = createFullState();
     const svg = renderTerminal(state);
 
-    // Viewport simulation
     expect(svg).toContain("clipPath");
     expect(svg).toContain('id="terminal-viewport"');
     expect(svg).toContain('clip-path="url(#terminal-viewport)"');
     expect(svg).toContain('id="scrollable-content"');
 
-    // Animation styles (no typewriter, uses SVG clipPath instead)
     expect(svg).toContain("@keyframes fadeIn");
     expect(svg).toContain("--typing-duration:");
     expect(svg).toContain("--fade-duration:");
 
-    // SVG-based typing animation
     expect(svg).toContain('clip-path="url(#typing-clip-');
   });
 
-  it("should include all animated commands", () => {
+  it("should include animated commands", () => {
     const state = createFullState();
     const svg = renderTerminal(state);
 
-    // Verify commands are present
-    expect(svg).toContain("terminal-profile --info");
-    expect(svg).toContain("terminal-profile --stack");
-    expect(svg).toContain("terminal-profile --languages");
-    expect(svg).toContain("terminal-profile --commits");
-    expect(svg).toContain("terminal-profile --engagement");
-    expect(svg).toContain("terminal-profile --contact");
-    expect(svg).toContain("terminal-profile --streak");
+    expect(svg).toContain("neofetch");
+    expect(svg).toContain("cat ~/.stack");
+    expect(svg).toContain("gh api /langs");
+    expect(svg).toContain("git log --oneline");
+    expect(svg).toContain("echo");
   });
 
   it("should include animation classes and delays", () => {
     const state = createFullState();
     const svg = renderTerminal(state);
 
-    // Command animation (clipPath-based, no .animate class)
     expect(svg).toContain('class="command-line terminal-text"');
     expect(svg).toContain('class="command-output animate"');
     expect(svg).toContain("animation-delay:");
 
-    // Multiple delays for sequential commands
     const delayMatches = svg.match(/animation-delay: [\d.]+s/g);
     expect(delayMatches).toBeDefined();
-    expect(delayMatches!.length).toBeGreaterThan(5); // Multiple commands
+    expect(delayMatches!.length).toBeGreaterThan(3);
   });
 
   it("should include scroll keyframes when content is tall", () => {
     const state = createFullState();
     const svg = renderTerminal(state);
 
-    // With full content, scroll should be generated
     expect(svg).toContain("@keyframes scroll-");
     expect(svg).toContain("transform: translateY");
   });
@@ -150,11 +147,9 @@ describe("Animated Profile Integration", () => {
     const state = createFullState();
     const svg = renderTerminal(state);
 
-    // tmux bar
     expect(svg).toContain('id="tmux-bar"');
     expect(svg).toContain(state.session.sessionName);
 
-    // Footer
     expect(svg).toContain("Powered by Terminal Profile");
   });
 
@@ -171,15 +166,12 @@ describe("Animated Profile Integration", () => {
     const state = createFullState();
     const svg = renderTerminal(state);
 
-    // SVG path icons for known technologies
     expect(svg).toContain("<path");
     expect(svg).toContain('viewBox="0 0 24 24"');
 
-    // Brand colors for mapped technologies
     expect(svg).toContain('fill="#3178C6"'); // TypeScript
     expect(svg).toContain('fill="#326CE5"'); // Kubernetes
 
-    // Category titles preserved, item text labels removed
     expect(svg).toContain('class="stack__title"');
     expect(svg).not.toContain('class="stack__item"');
   });
@@ -201,27 +193,12 @@ describe("Animated Profile Integration", () => {
     expect(svg).toContain("2 hours ago");
   });
 
-  it("should include learning journey", () => {
-    const state = createFullState();
-    const svg = renderTerminal(state);
-
-    expect(svg).toContain("Diving deep into Rust async programming");
-  });
-
   it("should include contact info", () => {
     const state = createFullState();
     const svg = renderTerminal(state);
 
     expect(svg).toContain("github.com/aytordev");
     expect(svg).toContain("aytor.dev");
-  });
-
-  it("should include streak information", () => {
-    const state = createFullState();
-    const svg = renderTerminal(state);
-
-    expect(svg).toContain("🔥");
-    expect(svg).toContain("42 day streak");
   });
 
   it("should respect animation speed configuration", () => {
@@ -242,15 +219,12 @@ describe("Animated Profile Integration", () => {
     const normalSvg = renderTerminal(normalState);
     const fastSvg = renderTerminal(fastState);
 
-    // Slow should have longer durations
     expect(slowSvg).toContain("--typing-duration: 4s");
     expect(slowSvg).toContain("--fade-duration: 0.6s");
 
-    // Normal
     expect(normalSvg).toContain("--typing-duration: 2s");
     expect(normalSvg).toContain("--fade-duration: 0.3s");
 
-    // Fast should have shorter durations
     expect(fastSvg).toContain("--typing-duration: 1s");
     expect(fastSvg).toContain("--fade-duration: 0.15s");
   });
@@ -259,13 +233,11 @@ describe("Animated Profile Integration", () => {
     const state = createFullState();
     const svg = renderTerminal(state);
 
-    // Basic XML validation checks
     expect(svg).toMatch(/<svg[^>]*>/);
     expect(svg).toMatch(/<\/svg>/);
     expect(svg).toMatch(/<defs[^>]*>[\s\S]*<\/defs>/);
     expect(svg).toMatch(/<g[^>]*>[\s\S]*<\/g>/);
 
-    // No unclosed tags (basic check)
     const openTags = (svg.match(/<(?!\/)[^>]+>/g) || []).length;
     const closeTags = (svg.match(/<\/[^>]+>/g) || []).length;
     expect(openTags).toBeGreaterThan(0);

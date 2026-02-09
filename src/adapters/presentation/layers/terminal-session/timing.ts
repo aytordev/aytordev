@@ -21,6 +21,5 @@ export const createAnimationTiming = (speed: number): AnimationTiming => ({
  * @param timing - Animation timing configuration
  * @returns Total duration in seconds
  */
-export const calculateCommandCycleDuration = (
-  timing: AnimationTiming,
-): number => timing.typingDuration + timing.fadeDuration + timing.commandDelay;
+export const calculateCommandCycleDuration = (timing: AnimationTiming): number =>
+  timing.typingDuration + timing.fadeDuration + timing.commandDelay;

@@ -8,13 +8,27 @@ import { terminalStateBuilder } from "../../../../__support__/builders";
 import { TEST_ANIMATION } from "../../../../__support__/constants";
 import { createMockTheme } from "../../../../mocks/theme";
 
-const mockConfig = terminalStateBuilder()
+const fullState = terminalStateBuilder()
   .withContent({
-    developerInfo: {
-      name: "Test User",
-      username: "testuser",
-      tagline: "Full Stack Developer",
-      location: "Remote",
+    neofetchData: {
+      owner: {
+        name: "Test User",
+        username: "testuser",
+        tagline: "Full Stack Developer",
+        location: "Remote",
+      },
+      system: {
+        os: "NixOS",
+        shell: "zsh",
+        editor: "neovim",
+        terminal: "ghostty",
+        theme: "Kanagawa",
+      },
+      stats: {
+        totalCommits: 500,
+        currentStreak: 5,
+        publicRepos: 10,
+      },
     },
     techStack: {
       categories: [
@@ -31,30 +45,25 @@ const mockConfig = terminalStateBuilder()
     recentCommits: [
       {
         message: "feat: test commit",
-        emoji: "✨",
+        emoji: "\u{2728}",
         type: "feat",
         hash: "abc1234",
         relativeTime: "2 hours ago",
       },
     ],
-    learningJourney: { current: "Learning Rust" },
-    todayFocus: "TDD",
-    dailyQuote: null,
-    stats: {
-      publicRepos: 10,
-      followers: 100,
-      following: 50,
-      totalStars: 500,
-    },
-    streak: {
-      currentStreak: 5,
-      longestStreak: 10,
-      lastContributionDate: new Date("2024-01-15"),
-      isActive: true,
-    },
-    careerTimeline: [],
-    contactInfo: [],
-    extraLines: [],
+    contactInfo: [{ label: "GitHub", value: "https://github.com/testuser", icon: "github" }],
+    featuredRepos: [
+      {
+        name: "my-repo",
+        nameWithOwner: "testuser/my-repo",
+        description: "A cool repo",
+        stargazerCount: 42,
+        primaryLanguage: { name: "TypeScript", color: "#3178C6" },
+        updatedAt: "2024-01-01T00:00:00Z",
+      },
+    ],
+    journey: [{ year: 2020, icon: "\u{1F331}", title: "Started coding" }],
+    contactCta: "Let's connect! \u{1F4AC}",
   })
   .withAnimation({
     enabled: true,
@@ -64,91 +73,26 @@ const mockConfig = terminalStateBuilder()
   .build();
 
 describe("buildCommandSequence", () => {
-  it("should create command for each enabled section", () => {
-    const commands = buildCommandSequence(mockConfig);
+  it("should return 7 commands when all sections are present", () => {
+    const commands = buildCommandSequence(fullState);
 
-    expect(commands.length).toBeGreaterThan(0);
-    expect(commands.every((cmd) => cmd.command.length > 0)).toBe(true);
-    expect(commands.every((cmd) => typeof cmd.outputRenderer === "function")).toBe(true);
+    expect(commands.length).toBe(7);
   });
 
-  it("should include developer info command when present", () => {
-    const commands = buildCommandSequence(mockConfig);
+  it("should return commands in the correct story-driven order", () => {
+    const commands = buildCommandSequence(fullState);
 
-    const infoCommand = commands.find((cmd) => cmd.command.includes("--info"));
-    expect(infoCommand).toBeDefined();
+    expect(commands[0].command).toBe("neofetch");
+    expect(commands[1].command).toBe("cat journey.md");
+    expect(commands[2].command).toBe("gh api /langs --sort usage");
+    expect(commands[3].command).toBe("cat ~/.stack");
+    expect(commands[4].command).toBe("git log --oneline -5");
+    expect(commands[5].command).toBe("gh repo list --limit 3 --sort stars");
+    expect(commands[6].command).toContain("echo");
   });
 
-  it("should include tech stack command when present", () => {
-    const commands = buildCommandSequence(mockConfig);
-
-    const stackCommand = commands.find((cmd) => cmd.command.includes("--stack"));
-    expect(stackCommand).toBeDefined();
-  });
-
-  it("should include language stats command when present", () => {
-    const commands = buildCommandSequence(mockConfig);
-
-    const langCommand = commands.find((cmd) => cmd.command.includes("--languages"));
-    expect(langCommand).toBeDefined();
-  });
-
-  it("should include commits command when present", () => {
-    const commands = buildCommandSequence(mockConfig);
-
-    const commitsCommand = commands.find((cmd) => cmd.command.includes("--commits"));
-    expect(commitsCommand).toBeDefined();
-  });
-
-  it("should include engagement command when present", () => {
-    const commands = buildCommandSequence(mockConfig);
-
-    const engagementCommand = commands.find((cmd) => cmd.command.includes("--engagement"));
-    expect(engagementCommand).toBeDefined();
-  });
-
-  it("should skip sections that have empty arrays", () => {
-    const minimalState: TerminalState = {
-      ...mockConfig,
-      content: {
-        ...mockConfig.content,
-        languageStats: [],
-        recentCommits: [],
-        careerTimeline: [],
-        contactInfo: [],
-        extraLines: [],
-        learningJourney: null,
-        todayFocus: null,
-        dailyQuote: null,
-      },
-    };
-
-    const commands = buildCommandSequence(minimalState);
-
-    // Should only have developer info, tech stack, and streak
-    expect(commands.length).toBeGreaterThanOrEqual(2);
-  });
-
-  it("should be a pure function (same input = same output)", () => {
-    const commands1 = buildCommandSequence(mockConfig);
-    const commands2 = buildCommandSequence(mockConfig);
-
-    expect(commands1.length).toBe(commands2.length);
-    commands1.forEach((cmd, i) => {
-      expect(cmd.command).toBe(commands2[i].command);
-    });
-  });
-
-  it("should not mutate input state", () => {
-    const originalContent = { ...mockConfig.content };
-
-    buildCommandSequence(mockConfig);
-
-    expect(mockConfig.content.developerInfo).toEqual(originalContent.developerInfo);
-  });
-
-  it("should return renderers that produce valid SVG", () => {
-    const commands = buildCommandSequence(mockConfig);
+  it("should create valid renderers for each command", () => {
+    const commands = buildCommandSequence(fullState);
     const theme = createMockTheme();
 
     commands.forEach((cmd) => {
@@ -161,20 +105,47 @@ describe("buildCommandSequence", () => {
     });
   });
 
-  it("should calculate tech stack height using multi-column layout (tallest column)", () => {
-    const commands = buildCommandSequence(mockConfig);
-    const theme = createMockTheme();
+  it("should skip sections with empty data", () => {
+    const minimalState: TerminalState = {
+      ...fullState,
+      content: {
+        ...fullState.content,
+        languageStats: [],
+        recentCommits: [],
+        contactInfo: [],
+        featuredRepos: [],
+        journey: [],
+      },
+    };
 
-    const stackCommand = commands.find((cmd) => cmd.command.includes("--stack"));
-    expect(stackCommand).toBeDefined();
+    const commands = buildCommandSequence(minimalState);
 
-    const result = stackCommand!.outputRenderer(theme, 0);
-    // PADDING(10) + 1 * LINE_HEIGHT(30) = 40
-    expect(result.height).toBe(40);
+    // Should have neofetch + tech stack = 2
+    expect(commands.length).toBe(2);
+    expect(commands[0].command).toBe("neofetch");
+    expect(commands[1].command).toBe("cat ~/.stack");
+  });
+
+  it("should be a pure function (same input = same output)", () => {
+    const commands1 = buildCommandSequence(fullState);
+    const commands2 = buildCommandSequence(fullState);
+
+    expect(commands1.length).toBe(commands2.length);
+    commands1.forEach((cmd, i) => {
+      expect(cmd.command).toBe(commands2[i].command);
+    });
+  });
+
+  it("should not mutate input state", () => {
+    const originalOwner = { ...fullState.content.neofetchData.owner };
+
+    buildCommandSequence(fullState);
+
+    expect(fullState.content.neofetchData.owner).toEqual(originalOwner);
   });
 
   it("should return renderers that are pure functions", () => {
-    const commands = buildCommandSequence(mockConfig);
+    const commands = buildCommandSequence(fullState);
     const theme = createMockTheme();
 
     commands.forEach((cmd) => {
@@ -184,6 +155,26 @@ describe("buildCommandSequence", () => {
       expect(result1.svg).toBe(result2.svg);
       expect(result1.height).toBe(result2.height);
     });
+  });
+
+  it("should calculate tech stack height correctly", () => {
+    const commands = buildCommandSequence(fullState);
+    const theme = createMockTheme();
+
+    const stackCommand = commands.find((cmd) => cmd.command === "cat ~/.stack");
+    expect(stackCommand).toBeDefined();
+
+    const result = stackCommand!.outputRenderer(theme, 0);
+    // PADDING(10) + 1 * LINE_HEIGHT(30) = 40
+    expect(result.height).toBe(40);
+  });
+
+  it("should include contact CTA in echo command", () => {
+    const commands = buildCommandSequence(fullState);
+
+    const echoCommand = commands.find((cmd) => cmd.command.includes("echo"));
+    expect(echoCommand).toBeDefined();
+    expect(echoCommand!.command).toContain("connect");
   });
 });
 
@@ -207,7 +198,7 @@ describe("estimateRenderHeight", () => {
 
     const height = estimateRenderHeight(svg);
 
-    expect(height).toBeGreaterThanOrEqual(20); // Minimum line height
+    expect(height).toBeGreaterThanOrEqual(20);
   });
 
   it("should handle SVG with transform attributes", () => {
@@ -242,7 +233,6 @@ describe("estimateRenderHeight", () => {
 
     const height = estimateRenderHeight(svg);
 
-    // Should account for the deepest element (rect at y=50 with height=20)
     expect(height).toBeGreaterThanOrEqual(70);
   });
 });

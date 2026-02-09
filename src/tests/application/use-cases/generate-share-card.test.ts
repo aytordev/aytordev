@@ -28,6 +28,7 @@ const mockPorts: Ports = {
     ),
     getLanguageStats: vi.fn().mockResolvedValue(ok([])),
     getContributionStats: vi.fn().mockResolvedValue(ok({ totalContributions: 0 })),
+    getPinnedRepos: vi.fn().mockResolvedValue(ok([])),
   },
   clock: {
     getTimeOfDay: vi.fn().mockReturnValue("day"),

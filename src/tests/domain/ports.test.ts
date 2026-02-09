@@ -26,12 +26,52 @@ describe("Domain Ports", () => {
           lastContributionDate: new Date(),
         }),
       ),
+      getPinnedRepos: vi.fn().mockResolvedValue(ok([])),
     };
 
     const result = await mockGitHub.getContributionStats("user");
     expect(result.ok).toBe(true);
     if (result.ok) {
       expect(result.value.totalContributions).toBe(100);
+    }
+  });
+
+  it("should define getPinnedRepos in GitHubDataPort", async () => {
+    const mockGitHub: GitHubDataPort = {
+      getUserInfo: vi.fn().mockResolvedValue(ok({ name: "Test" } as Owner)),
+      getRecentCommits: vi.fn().mockResolvedValue(ok([])),
+      getLanguageStats: vi.fn().mockResolvedValue(ok([])),
+      getContributionStats: vi
+        .fn()
+        .mockResolvedValue(ok({ totalContributions: 100 } as ContributionStats)),
+      getContributionStreak: vi.fn().mockResolvedValue(
+        ok({
+          currentStreak: 5,
+          isActive: true,
+          longestStreak: 10,
+          lastContributionDate: new Date(),
+        }),
+      ),
+      getPinnedRepos: vi.fn().mockResolvedValue(
+        ok([
+          {
+            name: "my-repo",
+            nameWithOwner: "user/my-repo",
+            description: "A cool repo",
+            stargazerCount: 42,
+            primaryLanguage: { name: "TypeScript", color: "#3178C6" },
+            updatedAt: "2024-01-01T00:00:00Z",
+          },
+        ]),
+      ),
+    };
+
+    const result = await mockGitHub.getPinnedRepos("user", 3);
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value).toHaveLength(1);
+      expect(result.value[0].name).toBe("my-repo");
+      expect(result.value[0].stargazerCount).toBe(42);
     }
   });
 

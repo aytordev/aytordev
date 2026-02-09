@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { generateAnimationCss, generateCss } from "../styles";
 import { createMockTheme } from "../../../tests/mocks/theme";
+import { generateAnimationCss, generateCss } from "../styles";
 
 describe("generateAnimationCss", () => {
   it("should generate CSS animation styles with default speed (1)", () => {
