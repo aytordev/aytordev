@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
-  renderFeaturedRepos,
   calculateFeaturedReposHeight,
+  renderFeaturedRepos,
 } from "../../../../adapters/presentation/layers/featured-repos.renderer";
 import type { FeaturedRepo } from "../../../../domain/value-objects/featured-repo";
 import { createMockTheme } from "../../../mocks/theme";

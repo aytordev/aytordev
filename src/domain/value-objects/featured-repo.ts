@@ -1,4 +1,4 @@
-import { type Result, err, ok } from "../../shared/result";
+import { err, ok, type Result } from "../../shared/result";
 
 export interface FeaturedRepo {
   readonly name: string;

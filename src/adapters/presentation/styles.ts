@@ -85,9 +85,7 @@ export const generateAnimationCss = (speed: number): string => {
 
 export const generateCss = (theme: Theme, animationSpeed?: number): string => {
   const variables = generateVariables(theme);
-  const animationStyles = animationSpeed
-    ? generateAnimationCss(animationSpeed)
-    : "";
+  const animationStyles = animationSpeed ? generateAnimationCss(animationSpeed) : "";
 
   return `
     ${variables}

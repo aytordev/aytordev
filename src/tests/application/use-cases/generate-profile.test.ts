@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createGenerateProfileUseCase } from "../../../application/use-cases/generate-profile";
-import { mockConfig } from "../../mocks/config";
 import { portsBuilder } from "../../__support__/builders";
+import { mockConfig } from "../../mocks/config";
 
 describe("GenerateProfileUseCase", () => {
   it("should generate a valid TerminalState when all ports return success", async () => {
@@ -59,9 +59,7 @@ describe("GenerateProfileUseCase", () => {
   });
 
   it("should return error if a port fails", async () => {
-    const ports = portsBuilder()
-      .withGitHubError("getUserInfo", new Error("GitHub Error"))
-      .build();
+    const ports = portsBuilder().withGitHubError("getUserInfo", new Error("GitHub Error")).build();
 
     const useCase = createGenerateProfileUseCase(ports);
     const result = await useCase(mockConfig);

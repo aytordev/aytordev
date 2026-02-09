@@ -1,5 +1,5 @@
-import { sanitizeForSvg } from "../../../shared/sanitize";
 import type { StarshipPrompt } from "../../../domain/entities/starship-prompt";
+import { sanitizeForSvg } from "../../../shared/sanitize";
 import type { Theme } from "../../../theme/types";
 
 /**

@@ -12,8 +12,8 @@
 
 import { type Mock, vi } from "vitest";
 import type { Ports } from "../../../adapters";
-import { ok, err } from "../../../shared/result";
 import type { Result } from "../../../shared/result";
+import { err, ok } from "../../../shared/result";
 
 export class PortsBuilder {
   private ports: Ports;

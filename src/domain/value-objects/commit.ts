@@ -1,4 +1,4 @@
-import { type Result, ok, err } from "../../shared/result";
+import { err, ok, type Result } from "../../shared/result";
 
 export type CommitType = "feat" | "fix" | "docs" | "style" | "refactor" | "test" | "chore";
 

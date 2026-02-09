@@ -17,11 +17,9 @@ const renderLanguageDot = (repo: FeaturedRepo, x: number): string => {
 const renderRepo = (repo: FeaturedRepo, index: number, theme: Theme): string => {
   const y = index * LINE_HEIGHT;
 
-  const starSvg =
-    `<text x="0" y="0" fill="${theme.colors.carpYellow}" font-family="monospace" font-size="12">${STAR_ICON} ${repo.stargazerCount}</text>`;
+  const starSvg = `<text x="0" y="0" fill="${theme.colors.carpYellow}" font-family="monospace" font-size="12">${STAR_ICON} ${repo.stargazerCount}</text>`;
 
-  const nameSvg =
-    `<text x="60" y="0" fill="${theme.colors.springBlue}" font-family="monospace" font-size="12" font-weight="bold">${sanitizeForSvg(repo.nameWithOwner)}</text>`;
+  const nameSvg = `<text x="60" y="0" fill="${theme.colors.springBlue}" font-family="monospace" font-size="12" font-weight="bold">${sanitizeForSvg(repo.nameWithOwner)}</text>`;
 
   const descSvg = repo.description
     ? `<text x="60" y="16" fill="${theme.colors.textSecondary}" font-family="monospace" font-size="11">${sanitizeForSvg(repo.description)}</text>`
@@ -48,14 +46,9 @@ export const renderFeaturedRepos = (
     return { svg: `<g id="featured-repos" transform="translate(0, ${y})"></g>`, height: 0 };
   }
 
-  const reposSvg = repos
-    .map((repo, i) => renderRepo(repo, i, theme))
-    .join("\n");
+  const reposSvg = repos.map((repo, i) => renderRepo(repo, i, theme)).join("\n");
 
-  const svg =
-    `<g id="featured-repos" transform="translate(0, ${y})">` +
-    reposSvg +
-    `</g>`;
+  const svg = `<g id="featured-repos" transform="translate(0, ${y})">` + reposSvg + `</g>`;
 
   return { svg, height };
 };

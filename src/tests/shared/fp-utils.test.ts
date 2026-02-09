@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { pipe, compose, curry2, curry3, identity, constant } from "../../shared/fp-utils";
+import { compose, constant, curry2, curry3, identity, pipe } from "../../shared/fp-utils";
 
 describe("Functional Programming Utilities", () => {
   describe("pipe", () => {

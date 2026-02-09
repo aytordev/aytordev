@@ -1,14 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { createMockTheme } from "../../../mocks/theme";
 import {
-  renderTerminalSession,
+  generateCursorPositions,
   generateKeyTimesForTyping,
   generateValuesForTyping,
-  generateCursorPositions,
+  renderTerminalSession,
 } from "../../../../adapters/presentation/layers/terminal-session.renderer";
 import { terminalStateBuilder } from "../../../__support__/builders";
-import { svgAssertions } from "../../../__support__/helpers";
 import { TEST_VIEWPORT } from "../../../__support__/constants";
+import { svgAssertions } from "../../../__support__/helpers";
+import { createMockTheme } from "../../../mocks/theme";
 
 describe("renderTerminalSession", () => {
   const theme = createMockTheme();
@@ -150,12 +150,7 @@ describe("renderTerminalSession", () => {
 
   it("should not generate scroll keyframes when content fits viewport", () => {
     const state = terminalStateBuilder().build();
-    const svg = renderTerminalSession(
-      state,
-      theme,
-      viewportY,
-      2000,
-    );
+    const svg = renderTerminalSession(state, theme, viewportY, 2000);
 
     expect(svg).not.toContain("@keyframes scroll-");
   });
@@ -203,9 +198,7 @@ describe("renderTerminalSession", () => {
         techStack: {
           categories: [{ name: "Languages", items: ["TypeScript"] }],
         },
-        languageStats: [
-          { name: "TypeScript", percentage: 100, color: "#3178C6", bytes: 10000 },
-        ],
+        languageStats: [{ name: "TypeScript", percentage: 100, color: "#3178C6", bytes: 10000 }],
         recentCommits: [
           {
             hash: "abc123",

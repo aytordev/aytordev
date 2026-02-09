@@ -43,14 +43,9 @@ export const renderJourney = (
     return { svg: `<g id="journey" transform="translate(0, ${y})"></g>`, height: 0 };
   }
 
-  const entriesSvg = entries
-    .map((entry, i) => renderEntry(entry, i, theme))
-    .join("\n");
+  const entriesSvg = entries.map((entry, i) => renderEntry(entry, i, theme)).join("\n");
 
-  const svg =
-    `<g id="journey" transform="translate(0, ${y})">` +
-    entriesSvg +
-    `</g>`;
+  const svg = `<g id="journey" transform="translate(0, ${y})">` + entriesSvg + `</g>`;
 
   return { svg, height };
 };

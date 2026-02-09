@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
-  renderNeofetch,
   calculateNeofetchHeight,
+  renderNeofetch,
 } from "../../../../adapters/presentation/layers/neofetch.renderer";
 import type { NeofetchData } from "../../../../domain/entities/terminal-content";
 import { createMockTheme } from "../../../mocks/theme";

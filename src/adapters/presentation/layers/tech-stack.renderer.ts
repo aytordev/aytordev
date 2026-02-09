@@ -15,7 +15,11 @@ export const calculateTechStackHeight = (categories: readonly TechStackCategory[
   return PADDING + categories.length * LINE_HEIGHT;
 };
 
-const renderIconAt = (icon: { readonly path: string; readonly color: string }, x: number, y: number): string =>
+const renderIconAt = (
+  icon: { readonly path: string; readonly color: string },
+  x: number,
+  y: number,
+): string =>
   `<svg x="${x}" y="${y}" width="${ICON_SIZE}" height="${ICON_SIZE}" viewBox="0 0 24 24">` +
   `<path d="${icon.path}" fill="${icon.color}"/></svg>`;
 
@@ -31,9 +35,7 @@ const renderRow = (category: TechStackCategory, theme: Theme, rowY: number): str
     .map((item, i) => {
       const icon = getTechIcon(item);
       const ix = TITLE_OFFSET + i * (ICON_SIZE + ICON_GAP);
-      return icon !== null
-        ? renderIconAt(icon, ix, 0)
-        : renderFallbackDot(theme, ix, 0);
+      return icon !== null ? renderIconAt(icon, ix, 0) : renderFallbackDot(theme, ix, 0);
     })
     .join("\n");
 

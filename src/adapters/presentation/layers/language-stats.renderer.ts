@@ -1,5 +1,5 @@
-import { sanitizeForSvg } from "../../../shared/sanitize";
 import type { LanguageStat } from "../../../domain/value-objects/language-stat";
+import { sanitizeForSvg } from "../../../shared/sanitize";
 import type { Theme } from "../../../theme/types";
 
 const BAR_HEIGHT = 14;

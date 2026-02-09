@@ -51,9 +51,7 @@ const fullState = terminalStateBuilder()
         relativeTime: "2 hours ago",
       },
     ],
-    contactInfo: [
-      { label: "GitHub", value: "https://github.com/testuser", icon: "github" },
-    ],
+    contactInfo: [{ label: "GitHub", value: "https://github.com/testuser", icon: "github" }],
     featuredRepos: [
       {
         name: "my-repo",
@@ -64,9 +62,7 @@ const fullState = terminalStateBuilder()
         updatedAt: "2024-01-01T00:00:00Z",
       },
     ],
-    journey: [
-      { year: 2020, icon: "\u{1F331}", title: "Started coding" },
-    ],
+    journey: [{ year: 2020, icon: "\u{1F331}", title: "Started coding" }],
     contactCta: "Let's connect! \u{1F4AC}",
   })
   .withAnimation({

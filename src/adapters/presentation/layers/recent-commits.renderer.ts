@@ -34,9 +34,5 @@ export const renderRecentCommits = (
     })
     .join("\n");
 
-  return (
-    `<g id="recent-commits" transform="translate(${x}, ${y})">` +
-    commitList +
-    `</g>`
-  );
+  return `<g id="recent-commits" transform="translate(${x}, ${y})">` + commitList + `</g>`;
 };

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
-  renderJourney,
   calculateJourneyHeight,
+  renderJourney,
 } from "../../../../adapters/presentation/layers/journey.renderer";
 import type { JourneyEntry } from "../../../../domain/value-objects/journey-entry";
 import { createMockTheme } from "../../../mocks/theme";

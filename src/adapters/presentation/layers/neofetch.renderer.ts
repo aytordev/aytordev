@@ -1,4 +1,8 @@
-import type { DeveloperInfo, NeofetchData, NeofetchStats } from "../../../domain/entities/terminal-content";
+import type {
+  DeveloperInfo,
+  NeofetchData,
+  NeofetchStats,
+} from "../../../domain/entities/terminal-content";
 import type { SystemInfo } from "../../../domain/value-objects/system-info";
 import { sanitizeForSvg } from "../../../shared/sanitize";
 import type { Theme } from "../../../theme/types";
@@ -59,8 +63,7 @@ const buildInfoLines = (data: NeofetchData): ReadonlyArray<InfoLine> => [
   ...buildStatsLines(data.stats),
 ];
 
-const countInfoLines = (data: NeofetchData): number =>
-  buildInfoLines(data).length;
+const countInfoLines = (data: NeofetchData): number => buildInfoLines(data).length;
 
 const renderAsciiArtSvg = (theme: Theme): string =>
   ASCII_ART.map(
@@ -71,7 +74,7 @@ const renderAsciiArtSvg = (theme: Theme): string =>
 const renderInfoLineSvg = (line: InfoLine, index: number, theme: Theme): string => {
   const y = index * LINE_HEIGHT;
 
-  if (line.label === "" ) {
+  if (line.label === "") {
     const isUsername = line.value.startsWith("@");
     const fill = isUsername ? theme.colors.springBlue : theme.colors.textSecondary;
     const weight = isUsername ? "bold" : "normal";
@@ -107,9 +110,7 @@ export const renderNeofetch = (
   const height = calculateNeofetchHeight(data);
 
   const asciiSvg = renderAsciiArtSvg(theme);
-  const infoSvg = infoLines
-    .map((line, i) => renderInfoLineSvg(line, i, theme))
-    .join("\n");
+  const infoSvg = infoLines.map((line, i) => renderInfoLineSvg(line, i, theme)).join("\n");
 
   const svg =
     `<g id="neofetch" transform="translate(0, ${y})">` +

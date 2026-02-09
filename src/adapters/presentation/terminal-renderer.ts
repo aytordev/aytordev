@@ -9,10 +9,10 @@ import { renderNeofetch } from "./layers/neofetch.renderer";
 import { renderPrompt } from "./layers/prompt.renderer";
 import { renderRecentCommits } from "./layers/recent-commits.renderer";
 import { renderTechStack } from "./layers/tech-stack.renderer";
-import { renderTmuxBar } from "./layers/tmux-bar.renderer";
 import { renderTerminalSession } from "./layers/terminal-session.renderer";
-import { addDefs, addLayer, build, createSvgBuilder, pipe } from "./svg-builder";
+import { renderTmuxBar } from "./layers/tmux-bar.renderer";
 import { generateCss } from "./styles";
+import { addDefs, addLayer, build, createSvgBuilder, pipe } from "./svg-builder";
 
 type RenderStrategy = (state: TerminalState) => string;
 
