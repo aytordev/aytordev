@@ -136,8 +136,8 @@ describe("calculateTechStackHeight", () => {
 
   it("should calculate height for a single category", () => {
     const categories = [{ name: "Languages", items: ["TypeScript", "Rust", "Go"] }];
-    // PADDING(20) + TITLE_HEIGHT(24) + 3 * ITEM_HEIGHT(28) = 128
-    expect(calculateTechStackHeight(categories)).toBe(128);
+    // PADDING(20) + TITLE_HEIGHT(24) + 3 * ITEM_HEIGHT(24) = 116
+    expect(calculateTechStackHeight(categories)).toBe(116);
   });
 
   it("should use tallest column for multiple categories", () => {
@@ -145,8 +145,8 @@ describe("calculateTechStackHeight", () => {
       { name: "Languages", items: ["TypeScript", "Rust", "Go"] },
       { name: "Tools", items: ["Docker"] },
     ];
-    // Height determined by max items (3): 20 + 24 + 3*28 = 128
-    expect(calculateTechStackHeight(categories)).toBe(128);
+    // Height determined by max items (3): 20 + 24 + 3*24 = 116
+    expect(calculateTechStackHeight(categories)).toBe(116);
   });
 
   it("should be a pure function (same input produces same output)", () => {

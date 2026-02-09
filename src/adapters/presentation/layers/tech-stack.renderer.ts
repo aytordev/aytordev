@@ -6,13 +6,13 @@ import { getTechIcon } from "./tech-stack-icons";
 export const calculateTechStackHeight = (categories: readonly TechStackCategory[]): number => {
   if (categories.length === 0) return 0;
   const TITLE_HEIGHT = 24;
-  const ITEM_HEIGHT = 28;
+  const ITEM_HEIGHT = 24;
   const PADDING = 20;
   const maxItems = Math.max(...categories.map((c) => c.items.length));
   return PADDING + TITLE_HEIGHT + maxItems * ITEM_HEIGHT;
 };
 
-const ICON_SIZE = 24;
+const ICON_SIZE = 20;
 
 const renderIcon = (icon: { readonly path: string; readonly color: string }, y: number): string =>
   `<svg x="0" y="${y - ICON_SIZE}" width="${ICON_SIZE}" height="${ICON_SIZE}" viewBox="0 0 24 24">` +
@@ -24,7 +24,7 @@ const renderFallbackDot = (theme: Theme, y: number): string =>
 const renderItem = (item: string, theme: Theme, y: number): string => {
   const icon = getTechIcon(item);
   const indicator = icon !== null ? renderIcon(icon, y) : renderFallbackDot(theme, y);
-  const textX = icon !== null ? 30 : 15;
+  const textX = icon !== null ? 26 : 15;
   return (
     `${indicator}` +
     `<text x="${textX}" y="${y}" class="stack__item" fill="${theme.colors.text}" font-family="monospace" font-size="12">${sanitizeForSvg(item)}</text>`
@@ -33,7 +33,7 @@ const renderItem = (item: string, theme: Theme, y: number): string => {
 
 const renderColumn = (category: TechStackCategory, theme: Theme, columnX: number): string => {
   const TITLE_HEIGHT = 24;
-  const ITEM_HEIGHT = 28;
+  const ITEM_HEIGHT = 24;
 
   const titleSvg =
     `<text x="0" y="0" class="stack__title" fill="${theme.colors.roninYellow}" font-family="monospace" font-size="14" font-weight="bold">` +
