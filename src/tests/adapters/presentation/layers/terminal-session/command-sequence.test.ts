@@ -169,8 +169,8 @@ describe("buildCommandSequence", () => {
     expect(stackCommand).toBeDefined();
 
     const result = stackCommand!.outputRenderer(theme, 0);
-    // 1 category with 2 items: PADDING(20) + TITLE_HEIGHT(24) + 2 * ITEM_HEIGHT(20) = 84
-    expect(result.height).toBe(84);
+    // 1 category with 2 items: PADDING(20) + TITLE_HEIGHT(24) + 2 * ITEM_HEIGHT(22) = 88
+    expect(result.height).toBe(88);
   });
 
   it("should return renderers that are pure functions", () => {

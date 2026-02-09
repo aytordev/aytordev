@@ -21,11 +21,13 @@ content:
     enabled: true
     categories:
       - name: "Languages"
-        items: ["TypeScript", "Rust", "Nix"]
+        items: ["TypeScript", "Rust", "Go", "Python", "Nix"]
       - name: "AI/ML"
-        items: ["PyTorch", "LangChain"]
+        items: ["PyTorch", "TensorFlow", "LangChain"]
       - name: "Infra"
-        items: ["Docker", "Kubernetes"]
+        items: ["Docker", "Kubernetes", "NixOS"]
+      - name: "Web"
+        items: ["React", "Node.js", "JavaScript"]
 
   commits:
     enabled: true
