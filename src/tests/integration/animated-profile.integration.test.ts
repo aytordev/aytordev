@@ -177,6 +177,25 @@ describe("Animated Profile Integration", () => {
     expect(svg).toContain("Docker");
   });
 
+  it("should render tech stack with multi-column badges", () => {
+    const state = createFullState();
+    const svg = renderTerminal(state);
+
+    // Badge rectangles for known technologies
+    expect(svg).toContain("<rect");
+    expect(svg).toContain('rx="3"');
+
+    // Abbreviation texts inside badges
+    expect(svg).toContain(">TS</text>");
+    expect(svg).toContain(">RS</text>");
+    expect(svg).toContain(">DK</text>");
+    expect(svg).toContain(">K8</text>");
+
+    // Fallback circle for unknown techs should not appear (all techs are mapped)
+    expect(svg).toContain('class="stack__title"');
+    expect(svg).toContain('class="stack__item"');
+  });
+
   it("should include language stats", () => {
     const state = createFullState();
     const svg = renderTerminal(state);
