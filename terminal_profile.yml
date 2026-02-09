@@ -10,7 +10,7 @@ theme: "kanagawa-wave"
 
 dimensions:
   width: 800
-  height: 400
+  height: 1000
 
 content:
   developer_info:

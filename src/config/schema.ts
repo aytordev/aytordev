@@ -24,11 +24,15 @@ export const OwnerSchema = z.object({
   timezone: z.string(),
 });
 
-export const ThemeSchema = z.enum(["kanagawa-wave", "kanagawa-dragon", "kanagawa-lotus"]);
+export const ThemeSchema = z.enum([
+  "kanagawa-wave",
+  "kanagawa-dragon",
+  "kanagawa-lotus",
+]);
 
 export const DimensionsSchema = z.object({
   width: z.number().min(400).max(1200).default(800),
-  height: z.number().min(200).max(600).default(400),
+  height: z.number().min(200).max(1200).default(400),
 });
 
 export const TmuxSchema = z.object({

@@ -22,37 +22,35 @@ describe("generateAnimationCss", () => {
     expect(fastCss).toContain("--fade-duration: 0.15s");
   });
 
-  it("should contain typewriter keyframes", () => {
+  it("should not contain typewriter keyframes (uses SVG clipPath instead)", () => {
     const css = generateAnimationCss(1);
 
-    expect(css).toContain("@keyframes typewriter");
-    expect(css).toContain("from { width: 0; }");
-    expect(css).toContain("to { width: 100%; }");
+    // Typewriter animation is now handled via SVG clipPath, not CSS
+    expect(css).not.toContain("@keyframes typewriter");
   });
 
-  it("should contain fadeIn keyframes", () => {
+  it("should contain fadeIn keyframes (opacity only)", () => {
     const css = generateAnimationCss(1);
 
     expect(css).toContain("@keyframes fadeIn");
-    expect(css).toContain("from { opacity: 0; transform: translateY(5px); }");
-    expect(css).toContain("to { opacity: 1; transform: translateY(0); }");
+    expect(css).toContain("from { opacity: 0; }");
+    expect(css).toContain("to { opacity: 1; }");
   });
 
-  it("should contain command-line class with typewriter animation", () => {
+  it("should contain command-line class with font styling (no layout props)", () => {
     const css = generateAnimationCss(1);
 
+    // Command-line now only has font styling; animation via SVG clipPath
     expect(css).toContain(".command-line");
-    expect(css).toContain("overflow: hidden");
-    expect(css).toContain("white-space: nowrap");
-    expect(css).toContain("width: 0");
-    expect(css).toContain("display: inline-block");
+    expect(css).toContain("font-family:");
+    expect(css).toContain("font-size: 14px");
   });
 
-  it("should contain command-line.animate class with animation", () => {
+  it("should not contain command-line.animate class (uses SVG animation)", () => {
     const css = generateAnimationCss(1);
 
-    expect(css).toContain(".command-line.animate");
-    expect(css).toContain("animation: typewriter var(--typing-duration) steps(40) forwards");
+    // .command-line.animate no longer exists; animation via SVG
+    expect(css).not.toContain(".command-line.animate");
   });
 
   it("should contain command-output class", () => {
@@ -62,11 +60,12 @@ describe("generateAnimationCss", () => {
     expect(css).toContain("opacity: 0");
   });
 
-  it("should contain command-output.animate class with fadeIn animation", () => {
+  it("should contain command-output.animate class with fadeInOutput animation", () => {
     const css = generateAnimationCss(1);
 
     expect(css).toContain(".command-output.animate");
-    expect(css).toContain("animation: fadeIn var(--fade-duration) ease-out forwards");
+    // Uses fadeInOutput to preserve SVG transforms
+    expect(css).toContain("animation: fadeInOutput var(--fade-duration) ease-out forwards");
   });
 
   it("should use monospace font family for command-line", () => {
@@ -109,7 +108,8 @@ describe("generateCss with animation", () => {
   it("should include animation styles when animationSpeed is provided", () => {
     const css = generateCss(theme, 1);
 
-    expect(css).toContain("@keyframes typewriter");
+    // No typewriter keyframes (uses SVG), but has fadeIn and classes
+    expect(css).not.toContain("@keyframes typewriter");
     expect(css).toContain("@keyframes fadeIn");
     expect(css).toContain(".command-line");
     expect(css).toContain(".command-output");
@@ -118,7 +118,6 @@ describe("generateCss with animation", () => {
   it("should not include animation styles when animationSpeed is undefined", () => {
     const css = generateCss(theme);
 
-    expect(css).not.toContain("@keyframes typewriter");
     expect(css).not.toContain("@keyframes fadeIn");
     expect(css).not.toContain(".command-line");
     expect(css).not.toContain(".command-output");

@@ -107,7 +107,8 @@ describe("Terminal Renderer Orchestrator", () => {
       };
       const svg = renderTerminal(stateWithAnimation);
 
-      expect(svg).toContain('class="command-line animate');
+      // Command line uses clipPath, not .animate class
+      expect(svg).toContain('class="command-line terminal-text"');
       expect(svg).toContain('class="command-output animate"');
       expect(svg).toContain("animation-delay:");
     });

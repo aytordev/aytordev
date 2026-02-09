@@ -99,11 +99,13 @@ describe("Animated Profile Integration", () => {
     expect(svg).toContain('clip-path="url(#terminal-viewport)"');
     expect(svg).toContain('id="scrollable-content"');
 
-    // Animation styles
-    expect(svg).toContain("@keyframes typewriter");
+    // Animation styles (no typewriter, uses SVG clipPath instead)
     expect(svg).toContain("@keyframes fadeIn");
     expect(svg).toContain("--typing-duration:");
     expect(svg).toContain("--fade-duration:");
+
+    // SVG-based typing animation
+    expect(svg).toContain('clip-path="url(#typing-clip-');
   });
 
   it("should include all animated commands", () => {
@@ -124,8 +126,8 @@ describe("Animated Profile Integration", () => {
     const state = createFullState();
     const svg = renderTerminal(state);
 
-    // Command animation
-    expect(svg).toContain('class="command-line animate');
+    // Command animation (clipPath-based, no .animate class)
+    expect(svg).toContain('class="command-line terminal-text"');
     expect(svg).toContain('class="command-output animate"');
     expect(svg).toContain("animation-delay:");
 
