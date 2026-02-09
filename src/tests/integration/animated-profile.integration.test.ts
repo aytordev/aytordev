@@ -115,11 +115,11 @@ describe("Animated Profile Integration", () => {
     const state = createFullState();
     const svg = renderTerminal(state);
 
-    expect(svg).toContain("terminal-profile --info");
-    expect(svg).toContain("terminal-profile --stack");
-    expect(svg).toContain("terminal-profile --languages");
-    expect(svg).toContain("terminal-profile --commits");
-    expect(svg).toContain("terminal-profile --contact");
+    expect(svg).toContain("neofetch");
+    expect(svg).toContain("cat ~/.stack");
+    expect(svg).toContain("gh api /langs");
+    expect(svg).toContain("git log --oneline");
+    expect(svg).toContain("echo");
   });
 
   it("should include animation classes and delays", () => {

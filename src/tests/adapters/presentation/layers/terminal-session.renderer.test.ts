@@ -71,7 +71,7 @@ describe("renderTerminalSession", () => {
     const state = terminalStateBuilder().build();
     const svg = renderTerminalSession(state, theme, viewportY, viewportHeight);
 
-    expect(svg).toContain("terminal-profile --info");
+    expect(svg).toContain("neofetch");
   });
 
   it("should include animation delays in command elements", () => {

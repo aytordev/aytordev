@@ -66,7 +66,7 @@ describe("Terminal Renderer Orchestrator", () => {
       expect(svg).toContain("clipPath");
       expect(svg).toContain('id="terminal-viewport"');
       expect(svg).toContain('id="scrollable-content"');
-      expect(svg).toContain("terminal-profile --info");
+      expect(svg).toContain("neofetch");
     });
 
     it("should include animation classes when in animated mode", () => {

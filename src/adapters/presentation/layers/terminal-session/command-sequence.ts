@@ -1,43 +1,112 @@
 import type { TerminalState } from "../../../../domain/entities/terminal-state";
 import { renderContact } from "../contact.renderer";
-import { renderDeveloperInfo } from "../developer-info.renderer";
+import { renderFeaturedRepos } from "../featured-repos.renderer";
+import { renderJourney } from "../journey.renderer";
 import { renderLanguageStats } from "../language-stats.renderer";
+import { renderNeofetch } from "../neofetch.renderer";
 import { renderRecentCommits } from "../recent-commits.renderer";
 import { calculateTechStackHeight, renderTechStack } from "../tech-stack.renderer";
 import type { AnimatedCommand, SectionRenderer } from "./types";
 
+const createCommand = (command: string, renderer: SectionRenderer): AnimatedCommand => ({
+  command,
+  outputRenderer: renderer,
+});
+
+const wrapNeofetchRenderer =
+  (data: TerminalState["content"]["neofetchData"]): SectionRenderer =>
+  (theme, y) => {
+    const result = renderNeofetch(data, theme, y);
+    return { svg: result.svg, height: result.height };
+  };
+
+const wrapJourneyRenderer =
+  (entries: TerminalState["content"]["journey"]): SectionRenderer =>
+  (theme, y) => {
+    const result = renderJourney(entries, theme, y);
+    return { svg: result.svg, height: result.height };
+  };
+
+const wrapLanguageStatsRenderer =
+  (stats: TerminalState["content"]["languageStats"]): SectionRenderer =>
+  (theme, y) => {
+    const svg = renderLanguageStats(stats, theme, y);
+    const HEADER_HEIGHT = 24;
+    const ROW_HEIGHT = 24;
+    const PADDING = 20;
+    const height = HEADER_HEIGHT + stats.length * ROW_HEIGHT + PADDING;
+    return { svg, height };
+  };
+
+const wrapTechStackRenderer =
+  (stack: TerminalState["content"]["techStack"]): SectionRenderer =>
+  (theme, y) => {
+    const svg = renderTechStack(stack, theme, 0, y);
+    const height = calculateTechStackHeight(stack.categories);
+    return { svg, height };
+  };
+
+const wrapRecentCommitsRenderer =
+  (commits: TerminalState["content"]["recentCommits"]): SectionRenderer =>
+  (theme, y) => {
+    const svg = renderRecentCommits(commits, theme, 0, y);
+    const ITEM_HEIGHT = 20;
+    const PADDING = 10;
+    const height = commits.length * ITEM_HEIGHT + PADDING;
+    return { svg, height };
+  };
+
+const wrapFeaturedReposRenderer =
+  (repos: TerminalState["content"]["featuredRepos"]): SectionRenderer =>
+  (theme, y) => {
+    const result = renderFeaturedRepos(repos, theme, y);
+    return { svg: result.svg, height: result.height };
+  };
+
+const wrapContactRenderer =
+  (items: TerminalState["content"]["contactInfo"], cta: string): SectionRenderer =>
+  (theme, y) => {
+    const svg = renderContact(items, theme, y, cta);
+    const ITEM_HEIGHT = 20;
+    const CTA_OFFSET = cta ? 24 : 0;
+    const PADDING = 10;
+    const height = CTA_OFFSET + items.length * ITEM_HEIGHT + PADDING;
+    return { svg, height };
+  };
+
 /**
- * Builds the sequence of animated commands based on enabled sections.
+ * Builds the story-driven command sequence with 7 narrative commands.
  * Pure function - no side effects, no mutations.
- *
- * Temporary adaptation for new TerminalContent shape.
- * Will be fully rewritten to story-driven commands in commit 8.
  */
 export const buildCommandSequence = (state: TerminalState): ReadonlyArray<AnimatedCommand> => {
+  const { content } = state;
+
   return [
-    state.content.neofetchData.owner &&
+    createCommand("neofetch", wrapNeofetchRenderer(content.neofetchData)),
+
+    content.journey.length > 0 &&
+      createCommand("cat journey.md", wrapJourneyRenderer(content.journey)),
+
+    content.languageStats.length > 0 &&
+      createCommand("gh api /langs --sort usage", wrapLanguageStatsRenderer(content.languageStats)),
+
+    content.techStack.categories.length > 0 &&
+      createCommand("cat ~/.stack", wrapTechStackRenderer(content.techStack)),
+
+    content.recentCommits.length > 0 &&
+      createCommand("git log --oneline -5", wrapRecentCommitsRenderer(content.recentCommits)),
+
+    content.featuredRepos.length > 0 &&
       createCommand(
-        "terminal-profile --info",
-        wrapDeveloperInfoRenderer(state.content.neofetchData.owner),
+        "gh repo list --limit 3 --sort stars",
+        wrapFeaturedReposRenderer(content.featuredRepos),
       ),
 
-    state.content.techStack &&
-      createCommand("terminal-profile --stack", wrapTechStackRenderer(state.content.techStack)),
-
-    state.content.languageStats.length > 0 &&
+    content.contactInfo.length > 0 &&
       createCommand(
-        "terminal-profile --languages",
-        wrapLanguageStatsRenderer(state.content.languageStats),
+        `echo "${content.contactCta}"`,
+        wrapContactRenderer(content.contactInfo, content.contactCta),
       ),
-
-    state.content.recentCommits.length > 0 &&
-      createCommand(
-        "terminal-profile --commits",
-        wrapRecentCommitsRenderer(state.content.recentCommits),
-      ),
-
-    state.content.contactInfo.length > 0 &&
-      createCommand("terminal-profile --contact", wrapContactRenderer(state.content.contactInfo)),
   ].filter(
     (cmd): cmd is AnimatedCommand =>
       cmd !== null &&
@@ -47,61 +116,6 @@ export const buildCommandSequence = (state: TerminalState): ReadonlyArray<Animat
       "outputRenderer" in cmd,
   );
 };
-
-const createCommand = (command: string, renderer: SectionRenderer): AnimatedCommand => ({
-  command,
-  outputRenderer: renderer,
-});
-
-const wrapDeveloperInfoRenderer =
-  (content: NonNullable<TerminalState["content"]["neofetchData"]["owner"]>): SectionRenderer =>
-  (theme, y) => {
-    const svg = renderDeveloperInfo(content, theme, y);
-    const LINE_HEIGHT = 20;
-    const PADDING = 20;
-    const height = 3 * LINE_HEIGHT + PADDING;
-    return { svg, height };
-  };
-
-const wrapTechStackRenderer =
-  (content: NonNullable<TerminalState["content"]["techStack"]>): SectionRenderer =>
-  (theme, y) => {
-    const svg = renderTechStack(content, theme, 0, y);
-    const height = calculateTechStackHeight(content.categories);
-    return { svg, height };
-  };
-
-const wrapLanguageStatsRenderer =
-  (content: NonNullable<TerminalState["content"]["languageStats"]>): SectionRenderer =>
-  (theme, y) => {
-    const svg = renderLanguageStats(content, theme, y);
-    const HEADER_HEIGHT = 24;
-    const ROW_HEIGHT = 24;
-    const PADDING = 20;
-    const height = HEADER_HEIGHT + content.length * ROW_HEIGHT + PADDING;
-    return { svg, height };
-  };
-
-const wrapRecentCommitsRenderer =
-  (content: NonNullable<TerminalState["content"]["recentCommits"]>): SectionRenderer =>
-  (theme, y) => {
-    const svg = renderRecentCommits(content, theme, 0, y);
-    const TITLE_HEIGHT = 24;
-    const ITEM_HEIGHT = 20;
-    const PADDING = 20;
-    const height = TITLE_HEIGHT + content.length * ITEM_HEIGHT + PADDING;
-    return { svg, height };
-  };
-
-const wrapContactRenderer =
-  (content: TerminalState["content"]["contactInfo"]): SectionRenderer =>
-  (theme, y) => {
-    const svg = renderContact(content, theme, y);
-    const ITEM_HEIGHT = 20;
-    const PADDING = 20;
-    const height = content.length * ITEM_HEIGHT + PADDING;
-    return { svg, height };
-  };
 
 /**
  * Estimates the height of rendered SVG content.
