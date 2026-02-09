@@ -1,9 +1,9 @@
-import type { CareerMilestone } from "../value-objects/career-milestone";
 import type { Commit } from "../value-objects/commit";
 import type { ContactItem } from "../value-objects/contact-item";
-import type { ExtraLine } from "../value-objects/extra-line";
+import type { FeaturedRepo } from "../value-objects/featured-repo";
+import type { JourneyEntry } from "../value-objects/journey-entry";
 import type { LanguageStat } from "../value-objects/language-stat";
-import type { StreakInfo } from "../value-objects/streak-info";
+import type { SystemInfo } from "../value-objects/system-info";
 import type { TechStack } from "../value-objects/tech-stack";
 
 export interface DeveloperInfo {
@@ -13,29 +13,25 @@ export interface DeveloperInfo {
   readonly location: string;
 }
 
-export interface LearningItem {
-  readonly current: string;
+export interface NeofetchStats {
+  readonly totalCommits: number;
+  readonly currentStreak: number;
+  readonly publicRepos: number;
 }
 
-export interface GitHubStats {
-  readonly publicRepos: number;
-  readonly followers: number;
-  readonly following: number;
-  readonly totalStars: number;
+export interface NeofetchData {
+  readonly owner: DeveloperInfo;
+  readonly system: SystemInfo;
+  readonly stats: NeofetchStats;
 }
 
 export interface TerminalContent {
-  readonly developerInfo: DeveloperInfo;
+  readonly neofetchData: NeofetchData;
+  readonly journey: ReadonlyArray<JourneyEntry>;
   readonly techStack: TechStack;
-  readonly languageStats: readonly LanguageStat[];
-  readonly recentCommits: readonly Commit[];
-  readonly stats: GitHubStats;
-  readonly streak: StreakInfo;
-  readonly learningJourney: LearningItem | null;
-  readonly todayFocus: string | null;
-  readonly dailyQuote: string | null;
-  readonly careerTimeline: readonly CareerMilestone[];
-  readonly contactInfo: readonly ContactItem[];
-  readonly extraLines: readonly ExtraLine[];
-  readonly asciiArt?: string;
+  readonly languageStats: ReadonlyArray<LanguageStat>;
+  readonly recentCommits: ReadonlyArray<Commit>;
+  readonly featuredRepos: ReadonlyArray<FeaturedRepo>;
+  readonly contactInfo: ReadonlyArray<ContactItem>;
+  readonly contactCta: string;
 }

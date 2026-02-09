@@ -33,24 +33,31 @@ describe("Terminal Entities", () => {
 
   it("should structure TerminalContent correctly", () => {
     const content: Partial<import("../../domain/entities/terminal-content").TerminalContent> = {
-      developerInfo: {
-        name: "Dev",
-        username: "dev",
-        tagline: "Coding",
-        location: "Web",
-      },
-      stats: {
-        publicRepos: 10,
-        followers: 5,
-        following: 2,
-        totalStars: 100,
+      neofetchData: {
+        owner: {
+          name: "Dev",
+          username: "dev",
+          tagline: "Coding",
+          location: "Web",
+        },
+        system: {
+          os: "NixOS",
+          shell: "zsh",
+          editor: "neovim",
+          terminal: "ghostty",
+          theme: "Kanagawa",
+        },
+        stats: {
+          totalCommits: 500,
+          currentStreak: 5,
+          publicRepos: 10,
+        },
       },
     };
-    expect(content.developerInfo?.username).toBe("dev");
+    expect(content.neofetchData?.owner.username).toBe("dev");
   });
 
   it("should structure TerminalState correctly", () => {
-    // Top-level aggregate test
     const state: Partial<TerminalState> = {
       themeName: "kanagawa-wave",
       timestamp: new Date(),

@@ -10,11 +10,25 @@ import { createMockTheme } from "../../../../mocks/theme";
 
 const mockConfig = terminalStateBuilder()
   .withContent({
-    developerInfo: {
-      name: "Test User",
-      username: "testuser",
-      tagline: "Full Stack Developer",
-      location: "Remote",
+    neofetchData: {
+      owner: {
+        name: "Test User",
+        username: "testuser",
+        tagline: "Full Stack Developer",
+        location: "Remote",
+      },
+      system: {
+        os: "NixOS",
+        shell: "zsh",
+        editor: "neovim",
+        terminal: "ghostty",
+        theme: "Kanagawa",
+      },
+      stats: {
+        totalCommits: 500,
+        currentStreak: 5,
+        publicRepos: 10,
+      },
     },
     techStack: {
       categories: [
@@ -37,24 +51,10 @@ const mockConfig = terminalStateBuilder()
         relativeTime: "2 hours ago",
       },
     ],
-    learningJourney: { current: "Learning Rust" },
-    todayFocus: "TDD",
-    dailyQuote: null,
-    stats: {
-      publicRepos: 10,
-      followers: 100,
-      following: 50,
-      totalStars: 500,
-    },
-    streak: {
-      currentStreak: 5,
-      longestStreak: 10,
-      lastContributionDate: new Date("2024-01-15"),
-      isActive: true,
-    },
-    careerTimeline: [],
     contactInfo: [],
-    extraLines: [],
+    featuredRepos: [],
+    journey: [],
+    contactCta: "Let's connect! \u{1F4AC}",
   })
   .withAnimation({
     enabled: true,
@@ -100,13 +100,6 @@ describe("buildCommandSequence", () => {
     expect(commitsCommand).toBeDefined();
   });
 
-  it("should include engagement command when present", () => {
-    const commands = buildCommandSequence(mockConfig);
-
-    const engagementCommand = commands.find((cmd) => cmd.command.includes("--engagement"));
-    expect(engagementCommand).toBeDefined();
-  });
-
   it("should skip sections that have empty arrays", () => {
     const minimalState: TerminalState = {
       ...mockConfig,
@@ -114,18 +107,15 @@ describe("buildCommandSequence", () => {
         ...mockConfig.content,
         languageStats: [],
         recentCommits: [],
-        careerTimeline: [],
         contactInfo: [],
-        extraLines: [],
-        learningJourney: null,
-        todayFocus: null,
-        dailyQuote: null,
+        featuredRepos: [],
+        journey: [],
       },
     };
 
     const commands = buildCommandSequence(minimalState);
 
-    // Should only have developer info, tech stack, and streak
+    // Should only have developer info and tech stack
     expect(commands.length).toBeGreaterThanOrEqual(2);
   });
 
@@ -140,11 +130,11 @@ describe("buildCommandSequence", () => {
   });
 
   it("should not mutate input state", () => {
-    const originalContent = { ...mockConfig.content };
+    const originalOwner = { ...mockConfig.content.neofetchData.owner };
 
     buildCommandSequence(mockConfig);
 
-    expect(mockConfig.content.developerInfo).toEqual(originalContent.developerInfo);
+    expect(mockConfig.content.neofetchData.owner).toEqual(originalOwner);
   });
 
   it("should return renderers that produce valid SVG", () => {
@@ -207,7 +197,7 @@ describe("estimateRenderHeight", () => {
 
     const height = estimateRenderHeight(svg);
 
-    expect(height).toBeGreaterThanOrEqual(20); // Minimum line height
+    expect(height).toBeGreaterThanOrEqual(20);
   });
 
   it("should handle SVG with transform attributes", () => {
@@ -242,7 +232,6 @@ describe("estimateRenderHeight", () => {
 
     const height = estimateRenderHeight(svg);
 
-    // Should account for the deepest element (rect at y=50 with height=20)
     expect(height).toBeGreaterThanOrEqual(70);
   });
 });

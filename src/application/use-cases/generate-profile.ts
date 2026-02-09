@@ -57,12 +57,27 @@ export const createGenerateProfileUseCase = (ports: Ports): GenerateProfileUseCa
         },
         easterEgg: getEasterEgg(timestamp) || undefined,
         content: {
-          developerInfo: {
-            name: config.owner.name,
-            username: config.owner.username,
-            tagline: config.owner.title,
-            location: config.owner.location,
+          neofetchData: {
+            owner: {
+              name: config.owner.name,
+              username: config.owner.username,
+              tagline: config.owner.title,
+              location: config.owner.location,
+            },
+            system: config.system,
+            stats: {
+              totalCommits: 0,
+              currentStreak: streak.value.currentStreak,
+              publicRepos: 0,
+            },
           },
+          journey:
+            config.journey?.map((j) => ({
+              year: j.year,
+              icon: j.icon,
+              title: j.title,
+              tags: j.tags,
+            })) ?? [],
           techStack: {
             categories:
               config.tech_stack?.categories?.map((c) => ({
@@ -71,25 +86,15 @@ export const createGenerateProfileUseCase = (ports: Ports): GenerateProfileUseCa
               })) ?? [],
           },
           recentCommits: commits.value,
-          stats: {
-            publicRepos: 0,
-            followers: 0,
-            following: 0,
-            totalStars: 0,
-          },
-          streak: streak.value,
           languageStats: languageStats.value,
-          careerTimeline: [],
+          featuredRepos: [],
           contactInfo:
             config.contact?.items?.map((i) => ({
               label: i.label,
               value: i.value,
               icon: i.icon,
             })) ?? [],
-          extraLines: [],
-          dailyQuote: null,
-          learningJourney: null,
-          todayFocus: null,
+          contactCta: config.contact?.cta ?? "Let's connect! \u{1F4AC}",
         },
         animation: config.animation,
       };
