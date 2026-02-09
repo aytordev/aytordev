@@ -167,14 +167,21 @@ describe("Animated Profile Integration", () => {
     expect(svg).toContain("Madrid, Spain");
   });
 
-  it("should include tech stack content", () => {
+  it("should render tech stack with horizontal icon grid", () => {
     const state = createFullState();
     const svg = renderTerminal(state);
 
-    expect(svg).toContain("TypeScript");
-    expect(svg).toContain("Rust");
-    expect(svg).toContain("PyTorch");
-    expect(svg).toContain("Docker");
+    // SVG path icons for known technologies
+    expect(svg).toContain("<path");
+    expect(svg).toContain('viewBox="0 0 24 24"');
+
+    // Brand colors for mapped technologies
+    expect(svg).toContain('fill="#3178C6"'); // TypeScript
+    expect(svg).toContain('fill="#326CE5"'); // Kubernetes
+
+    // Category titles preserved, item text labels removed
+    expect(svg).toContain('class="stack__title"');
+    expect(svg).not.toContain('class="stack__item"');
   });
 
   it("should include language stats", () => {

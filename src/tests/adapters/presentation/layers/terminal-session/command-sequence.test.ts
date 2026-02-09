@@ -1,9 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { buildCommandSequence, estimateRenderHeight } from "../../../../../adapters/presentation/layers/terminal-session/command-sequence";
+import {
+  buildCommandSequence,
+  estimateRenderHeight,
+} from "../../../../../adapters/presentation/layers/terminal-session/command-sequence";
 import type { TerminalState } from "../../../../../domain/entities/terminal-state";
-import { createMockTheme } from "../../../../mocks/theme";
 import { terminalStateBuilder } from "../../../../__support__/builders";
 import { TEST_ANIMATION } from "../../../../__support__/constants";
+import { createMockTheme } from "../../../../mocks/theme";
 
 const mockConfig = terminalStateBuilder()
   .withContent({
@@ -156,6 +159,18 @@ describe("buildCommandSequence", () => {
       expect(typeof result.height).toBe("number");
       expect(result.height).toBeGreaterThan(0);
     });
+  });
+
+  it("should calculate tech stack height using multi-column layout (tallest column)", () => {
+    const commands = buildCommandSequence(mockConfig);
+    const theme = createMockTheme();
+
+    const stackCommand = commands.find((cmd) => cmd.command.includes("--stack"));
+    expect(stackCommand).toBeDefined();
+
+    const result = stackCommand!.outputRenderer(theme, 0);
+    // PADDING(10) + 1 * LINE_HEIGHT(30) = 40
+    expect(result.height).toBe(40);
   });
 
   it("should return renderers that are pure functions", () => {

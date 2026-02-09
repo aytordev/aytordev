@@ -5,7 +5,7 @@ import { renderEngagement } from "../engagement.renderer";
 import { renderLanguageStats } from "../language-stats.renderer";
 import { renderRecentCommits } from "../recent-commits.renderer";
 import { renderStreak } from "../streak.renderer";
-import { renderTechStack } from "../tech-stack.renderer";
+import { calculateTechStackHeight, renderTechStack } from "../tech-stack.renderer";
 import type { AnimatedCommand, SectionRenderer } from "./types";
 
 /**
@@ -16,9 +16,7 @@ import type { AnimatedCommand, SectionRenderer } from "./types";
  * @param state - Terminal state with content sections
  * @returns Immutable array of commands
  */
-export const buildCommandSequence = (
-  state: TerminalState,
-): ReadonlyArray<AnimatedCommand> => {
+export const buildCommandSequence = (state: TerminalState): ReadonlyArray<AnimatedCommand> => {
   // Build array of potential commands with their conditions
   // Filter out undefined entries for disabled sections
   return [
@@ -31,10 +29,7 @@ export const buildCommandSequence = (
 
     // Tech Stack
     state.content.techStack &&
-      createCommand(
-        "terminal-profile --stack",
-        wrapTechStackRenderer(state.content.techStack),
-      ),
+      createCommand("terminal-profile --stack", wrapTechStackRenderer(state.content.techStack)),
 
     // Language Stats
     state.content.languageStats.length > 0 &&
@@ -51,9 +46,7 @@ export const buildCommandSequence = (
       ),
 
     // Engagement sections
-    (state.content.learningJourney ||
-      state.content.todayFocus ||
-      state.content.dailyQuote) &&
+    (state.content.learningJourney || state.content.todayFocus || state.content.dailyQuote) &&
       createCommand(
         "terminal-profile --engagement",
         wrapEngagementRenderer({
@@ -65,23 +58,18 @@ export const buildCommandSequence = (
 
     // Contact
     state.content.contactInfo.length > 0 &&
-      createCommand(
-        "terminal-profile --contact",
-        wrapContactRenderer(state.content.contactInfo),
-      ),
+      createCommand("terminal-profile --contact", wrapContactRenderer(state.content.contactInfo)),
 
     // Streak
     state.content.streak &&
-      createCommand(
-        "terminal-profile --streak",
-        wrapStreakRenderer(state.content.streak),
-      ),
-  ].filter((cmd): cmd is AnimatedCommand =>
-    cmd !== null &&
-    cmd !== false &&
-    typeof cmd === "object" &&
-    "command" in cmd &&
-    "outputRenderer" in cmd
+      createCommand("terminal-profile --streak", wrapStreakRenderer(state.content.streak)),
+  ].filter(
+    (cmd): cmd is AnimatedCommand =>
+      cmd !== null &&
+      cmd !== false &&
+      typeof cmd === "object" &&
+      "command" in cmd &&
+      "outputRenderer" in cmd,
   );
 };
 
@@ -89,10 +77,7 @@ export const buildCommandSequence = (
  * Factory function for creating commands.
  * Pure function.
  */
-const createCommand = (
-  command: string,
-  renderer: SectionRenderer,
-): AnimatedCommand => ({
+const createCommand = (command: string, renderer: SectionRenderer): AnimatedCommand => ({
   command,
   outputRenderer: renderer,
 });
@@ -102,9 +87,7 @@ const createCommand = (
  */
 
 const wrapDeveloperInfoRenderer =
-  (
-    content: NonNullable<TerminalState["content"]["developerInfo"]>,
-  ): SectionRenderer =>
+  (content: NonNullable<TerminalState["content"]["developerInfo"]>): SectionRenderer =>
   (theme, y) => {
     const svg = renderDeveloperInfo(content, theme, y);
     // Developer info has 3 lines: username, tagline, location (20px each) + padding
@@ -115,27 +98,15 @@ const wrapDeveloperInfoRenderer =
   };
 
 const wrapTechStackRenderer =
-  (
-    content: NonNullable<TerminalState["content"]["techStack"]>,
-  ): SectionRenderer =>
+  (content: NonNullable<TerminalState["content"]["techStack"]>): SectionRenderer =>
   (theme, y) => {
     const svg = renderTechStack(content, theme, 0, y);
-    // Calculate height: for each category, title (24px) + items (20px each) + gap (10px)
-    const TITLE_HEIGHT = 24;
-    const ITEM_HEIGHT = 20;
-    const GAP = 10;
-    const PADDING = 20;
-    let height = PADDING;
-    for (const category of content.categories) {
-      height += TITLE_HEIGHT + category.items.length * ITEM_HEIGHT + GAP;
-    }
+    const height = calculateTechStackHeight(content.categories);
     return { svg, height };
   };
 
 const wrapLanguageStatsRenderer =
-  (
-    content: NonNullable<TerminalState["content"]["languageStats"]>,
-  ): SectionRenderer =>
+  (content: NonNullable<TerminalState["content"]["languageStats"]>): SectionRenderer =>
   (theme, y) => {
     const svg = renderLanguageStats(content, theme, y);
     // Calculate exact height: header line (24px) + rows (24px each) + padding (20px)
@@ -147,9 +118,7 @@ const wrapLanguageStatsRenderer =
   };
 
 const wrapRecentCommitsRenderer =
-  (
-    content: NonNullable<TerminalState["content"]["recentCommits"]>,
-  ): SectionRenderer =>
+  (content: NonNullable<TerminalState["content"]["recentCommits"]>): SectionRenderer =>
   (theme, y) => {
     const svg = renderRecentCommits(content, theme, 0, y); // Changed x from 400 to 0
     // Calculate exact height: title (24px) + commits (20px each) + padding (20px)
@@ -224,9 +193,7 @@ export const estimateRenderHeight = (svg: string): number => {
   }
 
   // Match transform="translate(x, y)"
-  const translateMatches = Array.from(
-    svg.matchAll(/translate\([^,]+,\s*(\d+)\)/g),
-  );
+  const translateMatches = Array.from(svg.matchAll(/translate\([^,]+,\s*(\d+)\)/g));
   for (const match of translateMatches) {
     yCoordinates.push(Number.parseInt(match[1], 10));
   }
