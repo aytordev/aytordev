@@ -3,9 +3,11 @@ import { getTechIcon, TECH_ICONS } from "../../../../adapters/presentation/layer
 
 describe("Tech Stack Icons", () => {
   describe("getTechIcon", () => {
-    it("should return icon for known technology", () => {
+    it("should return icon with SVG path for known technology", () => {
       const icon = getTechIcon("TypeScript");
-      expect(icon).toEqual({ abbr: "TS", color: "#3178C6" });
+      expect(icon).not.toBeNull();
+      expect(icon!.path).toBeDefined();
+      expect(icon!.color).toBe("#3178C6");
     });
 
     it("should be case-insensitive", () => {
@@ -29,10 +31,10 @@ describe("Tech Stack Icons", () => {
   });
 
   describe("TECH_ICONS registry", () => {
-    it("should have abbreviations of 1-2 characters", () => {
+    it("should have non-empty SVG path strings", () => {
       Object.values(TECH_ICONS).forEach((icon) => {
-        expect(icon.abbr.length).toBeGreaterThanOrEqual(1);
-        expect(icon.abbr.length).toBeLessThanOrEqual(2);
+        expect(icon.path.length).toBeGreaterThan(0);
+        expect(icon.path).toContain("M");
       });
     });
 
@@ -41,6 +43,12 @@ describe("Tech Stack Icons", () => {
       Object.values(TECH_ICONS).forEach((icon) => {
         expect(icon.color).toMatch(hexPattern);
       });
+    });
+
+    it("should have total path data within SVG budget", () => {
+      const totalBytes = Object.values(TECH_ICONS).reduce((sum, icon) => sum + icon.path.length, 0);
+      // Total path data should stay under 25KB to leave room in 80KB SVG budget
+      expect(totalBytes).toBeLessThan(25000);
     });
   });
 });

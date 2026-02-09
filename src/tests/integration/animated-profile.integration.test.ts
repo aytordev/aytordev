@@ -177,21 +177,19 @@ describe("Animated Profile Integration", () => {
     expect(svg).toContain("Docker");
   });
 
-  it("should render tech stack with multi-column badges", () => {
+  it("should render tech stack with multi-column SVG icons", () => {
     const state = createFullState();
     const svg = renderTerminal(state);
 
-    // Badge rectangles for known technologies
-    expect(svg).toContain("<rect");
-    expect(svg).toContain('rx="3"');
+    // SVG path icons for known technologies
+    expect(svg).toContain("<path");
+    expect(svg).toContain('viewBox="0 0 24 24"');
 
-    // Abbreviation texts inside badges
-    expect(svg).toContain(">TS</text>");
-    expect(svg).toContain(">RS</text>");
-    expect(svg).toContain(">DK</text>");
-    expect(svg).toContain(">K8</text>");
+    // Brand colors for mapped technologies
+    expect(svg).toContain('fill="#3178C6"'); // TypeScript
+    expect(svg).toContain('fill="#326CE5"'); // Kubernetes
 
-    // Fallback circle for unknown techs should not appear (all techs are mapped)
+    // Layout structure preserved
     expect(svg).toContain('class="stack__title"');
     expect(svg).toContain('class="stack__item"');
   });

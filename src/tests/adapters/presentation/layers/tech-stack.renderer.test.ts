@@ -87,23 +87,14 @@ describe("Tech Stack Renderer", () => {
     });
   });
 
-  describe("badge rendering", () => {
-    it("should render rect badges for known technologies", () => {
+  describe("icon rendering", () => {
+    it("should render SVG path icons for known technologies", () => {
       const svg = renderTechStack(techStack, KanagawaTheme);
-      // TypeScript has icon mapping
-      expect(svg).toContain("<rect");
-      expect(svg).toContain('rx="3"');
+      expect(svg).toContain("<path");
+      expect(svg).toContain('viewBox="0 0 24 24"');
     });
 
-    it("should render abbreviation text inside badges", () => {
-      const svg = renderTechStack(techStack, KanagawaTheme);
-      // TypeScript → TS, Rust → RS, Docker → DK
-      expect(svg).toContain(">TS</text>");
-      expect(svg).toContain(">RS</text>");
-      expect(svg).toContain(">DK</text>");
-    });
-
-    it("should use technology brand color for badge fill", () => {
+    it("should use technology brand color for icon fill", () => {
       const svg = renderTechStack(techStack, KanagawaTheme);
       // TypeScript color: #3178C6
       expect(svg).toContain('fill="#3178C6"');
@@ -116,7 +107,7 @@ describe("Tech Stack Renderer", () => {
       const svg = renderTechStack(unknownStack, KanagawaTheme);
       expect(svg).toContain("<circle");
       expect(svg).toContain("MyCustomTool");
-      expect(svg).not.toContain("<rect");
+      expect(svg).not.toContain("<path");
     });
   });
 

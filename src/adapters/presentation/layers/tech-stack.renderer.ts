@@ -12,17 +12,19 @@ export const calculateTechStackHeight = (categories: readonly TechStackCategory[
   return PADDING + TITLE_HEIGHT + maxItems * ITEM_HEIGHT;
 };
 
-const renderBadge = (icon: { readonly abbr: string; readonly color: string }, y: number): string =>
-  `<rect x="0" y="${y - 10}" width="24" height="14" rx="3" fill="${icon.color}"/>` +
-  `<text x="12" y="${y}" text-anchor="middle" font-size="8" fill="#fff" font-family="monospace">${icon.abbr}</text>`;
+const ICON_SIZE = 14;
+
+const renderIcon = (icon: { readonly path: string; readonly color: string }, y: number): string =>
+  `<svg x="0" y="${y - ICON_SIZE}" width="${ICON_SIZE}" height="${ICON_SIZE}" viewBox="0 0 24 24">` +
+  `<path d="${icon.path}" fill="${icon.color}"/></svg>`;
 
 const renderFallbackDot = (theme: Theme, y: number): string =>
   `<circle cx="5" cy="${y - 4}" r="4" fill="${theme.colors.textMuted}"/>`;
 
 const renderItem = (item: string, theme: Theme, y: number): string => {
   const icon = getTechIcon(item);
-  const indicator = icon !== null ? renderBadge(icon, y) : renderFallbackDot(theme, y);
-  const textX = icon !== null ? 30 : 15;
+  const indicator = icon !== null ? renderIcon(icon, y) : renderFallbackDot(theme, y);
+  const textX = icon !== null ? 20 : 15;
   return (
     `${indicator}` +
     `<text x="${textX}" y="${y}" class="stack__item" fill="${theme.colors.text}" font-family="monospace" font-size="12">${sanitizeForSvg(item)}</text>`
