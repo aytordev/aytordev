@@ -12,7 +12,7 @@ export const calculateTechStackHeight = (categories: readonly TechStackCategory[
   return PADDING + TITLE_HEIGHT + maxItems * ITEM_HEIGHT;
 };
 
-const ICON_SIZE = 20;
+const ICON_SIZE = 22;
 
 const renderIcon = (icon: { readonly path: string; readonly color: string }, y: number): string =>
   `<svg x="0" y="${y - ICON_SIZE}" width="${ICON_SIZE}" height="${ICON_SIZE}" viewBox="0 0 24 24">` +
