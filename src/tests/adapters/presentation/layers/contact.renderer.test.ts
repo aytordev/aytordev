@@ -14,4 +14,16 @@ describe("Contact Renderer", () => {
     expect(svg).toContain("Email");
     expect(svg).toContain("test@test.com");
   });
+
+  it("should render CTA header when provided", () => {
+    const items = [{ label: "Email", value: "test@test.com", icon: "E" }];
+    const svg = renderContact(items, KanagawaTheme, 0, "Let's connect! \u{1F4AC}");
+    expect(svg).toContain("Let&#39;s connect!");
+  });
+
+  it("should not render CTA header when not provided", () => {
+    const items = [{ label: "Email", value: "test@test.com", icon: "E" }];
+    const svg = renderContact(items, KanagawaTheme, 0);
+    expect(svg).not.toContain("cta");
+  });
 });

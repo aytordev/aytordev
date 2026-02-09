@@ -51,7 +51,7 @@ export function renderLanguageStats(stats: readonly LanguageStat[], theme: Theme
     </defs>
     <g id="language-stats" transform="translate(16, ${y})">
       <text fill="${theme.colors.fujiGray}" font-family="monospace" font-size="11">
-        Code distribution (public repos):
+        Language usage (by bytes):
       </text>
       ${rows}
     </g>

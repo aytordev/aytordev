@@ -6,17 +6,22 @@ export const renderContact = (
   items: readonly ContactItem[],
   theme: Theme,
   y: number = 0,
+  cta?: string,
 ): string => {
   if (!items || items.length === 0) {
     return "<g></g>";
   }
 
   const itemHeight = 20;
-  const currentY = 0;
+  const ctaOffset = cta ? 24 : 0;
+
+  const ctaSvg = cta
+    ? `<text x="0" y="0" class="contact__cta" fill="${theme.colors.carpYellow}" font-family="monospace" font-size="13" font-weight="bold">${sanitizeForSvg(cta)}</text>`
+    : "";
 
   const elements = items
     .map((item, i) => {
-      const cy = currentY + i * itemHeight;
+      const cy = ctaOffset + i * itemHeight;
       return `
         <text x="0" y="${cy}" fill="${theme.colors.textMuted}" font-size="12" font-family="monospace">
           ${sanitizeForSvg(item.icon)} ${sanitizeForSvg(item.label)}:
@@ -30,6 +35,7 @@ export const renderContact = (
 
   return `
     <g id="contact" transform="translate(0, ${y})">
+      ${ctaSvg}
       ${elements}
     </g>
   `.trim();

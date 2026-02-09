@@ -44,6 +44,6 @@ describe("Language Stats Renderer", () => {
 
   it("should render header text", () => {
     const svg = renderLanguageStats(stats, KanagawaTheme);
-    expect(svg).toContain("Code distribution (public repos):");
+    expect(svg).toContain("Language usage (by bytes):");
   });
 });
