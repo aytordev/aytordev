@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { createMockTheme } from "../../../mocks/theme";
-import { renderTerminalSession } from "../../../../adapters/presentation/layers/terminal-session.renderer";
+import {
+  renderTerminalSession,
+  generateKeyTimesForTyping,
+  generateValuesForTyping,
+  generateCursorPositions,
+} from "../../../../adapters/presentation/layers/terminal-session.renderer";
 import { terminalStateBuilder } from "../../../__support__/builders";
 import { svgAssertions } from "../../../__support__/helpers";
 import { TEST_VIEWPORT } from "../../../__support__/constants";
@@ -77,11 +82,13 @@ describe("renderTerminalSession", () => {
     expect(svg).toContain("animation-delay:");
   });
 
-  it("should include command-line class for typewriter effect", () => {
+  it("should include command-line class with clipPath animation", () => {
     const state = terminalStateBuilder().build();
     const svg = renderTerminalSession(state, theme, viewportY, viewportHeight);
 
-    expect(svg).toContain('class="command-line animate');
+    // Command line now uses clipPath for typing animation instead of CSS class
+    expect(svg).toContain('class="command-line terminal-text"');
+    expect(svg).toContain('clip-path="url(#typing-clip-');
   });
 
   it("should include command-output class for fade-in effect", () => {
@@ -260,5 +267,167 @@ describe("renderTerminalSession", () => {
     // With speed=2, timing should be adjusted
     // This is indirectly tested through animation-delay values
     expect(svg).toContain("animation-delay:");
+  });
+});
+
+describe("generateKeyTimesForTyping", () => {
+  it("should generate correct keyTimes for simple case", () => {
+    const result = generateKeyTimesForTyping(3);
+    
+    // Should generate 4 entries (0, 1, 2, 3)
+    expect(result).toBe("0;0.3333333333333333;0.6666666666666666;1");
+  });
+
+  it("should generate correct keyTimes for single character", () => {
+    const result = generateKeyTimesForTyping(1);
+    
+    // Should generate 2 entries (0, 1)
+    expect(result).toBe("0;1");
+  });
+
+  it("should generate correct keyTimes for zero characters", () => {
+    const result = generateKeyTimesForTyping(0);
+    
+    // Should generate 1 entry (0)
+    expect(result).toBe("0");
+  });
+
+  it("should be a pure function (same input = same output)", () => {
+    const result1 = generateKeyTimesForTyping(5);
+    const result2 = generateKeyTimesForTyping(5);
+    
+    expect(result1).toBe(result2);
+  });
+
+  it("should generate increasing values from 0 to 1", () => {
+    const result = generateKeyTimesForTyping(10);
+    const values = result.split(";").map(Number);
+    
+    // Should start at 0 and end at 1
+    expect(values[0]).toBe(0);
+    expect(values[values.length - 1]).toBe(1);
+    
+    // Should be monotonically increasing
+    for (let i = 1; i < values.length; i++) {
+      expect(values[i]).toBeGreaterThan(values[i - 1]);
+    }
+  });
+
+  it("should generate charCount + 1 entries", () => {
+    const charCount = 7;
+    const result = generateKeyTimesForTyping(charCount);
+    const entries = result.split(";");
+    
+    expect(entries.length).toBe(charCount + 1);
+  });
+});
+
+describe("generateValuesForTyping", () => {
+  it("should generate correct width values", () => {
+    const result = generateValuesForTyping(3, 10);
+    
+    // Each step: (i * 10 + 10)
+    expect(result).toBe("10;20;30;40");
+  });
+
+  it("should handle single character", () => {
+    const result = generateValuesForTyping(1, 8.4);
+    
+    expect(result).toBe("8.4;16.8");
+  });
+
+  it("should scale with character width", () => {
+    const result1 = generateValuesForTyping(2, 5);
+    const result2 = generateValuesForTyping(2, 10);
+    
+    expect(result1).toBe("5;10;15");
+    expect(result2).toBe("10;20;30");
+  });
+
+  it("should be a pure function", () => {
+    const result1 = generateValuesForTyping(5, 8.4);
+    const result2 = generateValuesForTyping(5, 8.4);
+    
+    expect(result1).toBe(result2);
+  });
+
+  it("should generate charCount + 1 entries", () => {
+    const charCount = 10;
+    const result = generateValuesForTyping(charCount, 8.4);
+    const entries = result.split(";");
+    
+    expect(entries.length).toBe(charCount + 1);
+  });
+
+  it("should generate increasing values", () => {
+    const result = generateValuesForTyping(5, 8);
+    const values = result.split(";").map(Number);
+    
+    // Should be monotonically increasing
+    for (let i = 1; i < values.length; i++) {
+      expect(values[i]).toBeGreaterThan(values[i - 1]);
+    }
+  });
+});
+
+describe("generateCursorPositions", () => {
+  it("should generate correct cursor positions", () => {
+    const result = generateCursorPositions(3, 10, 0);
+    
+    // Each step: (0 + i * 10 + 10)
+    expect(result).toBe("10;20;30;40");
+  });
+
+  it("should offset by startX", () => {
+    const result = generateCursorPositions(2, 10, 50);
+    
+    // Each step: (50 + i * 10 + 10)
+    expect(result).toBe("60;70;80");
+  });
+
+  it("should handle different character widths", () => {
+    const result1 = generateCursorPositions(2, 5, 10);
+    const result2 = generateCursorPositions(2, 8.4, 10);
+
+    expect(result1).toBe("15;20;25");
+    // Parse and compare as numbers to avoid floating point precision issues
+    const positions = result2.split(";").map(Number);
+    expect(positions[0]).toBeCloseTo(18.4, 1);
+    expect(positions[1]).toBeCloseTo(26.8, 1);
+    expect(positions[2]).toBeCloseTo(35.2, 1);
+  });
+
+  it("should be a pure function", () => {
+    const result1 = generateCursorPositions(5, 8.4, 10);
+    const result2 = generateCursorPositions(5, 8.4, 10);
+    
+    expect(result1).toBe(result2);
+  });
+
+  it("should generate charCount + 1 entries", () => {
+    const charCount = 8;
+    const result = generateCursorPositions(charCount, 8.4, 10);
+    const entries = result.split(";");
+    
+    expect(entries.length).toBe(charCount + 1);
+  });
+
+  it("should generate increasing positions", () => {
+    const result = generateCursorPositions(5, 8, 10);
+    const positions = result.split(";").map(Number);
+    
+    // Should be monotonically increasing
+    for (let i = 1; i < positions.length; i++) {
+      expect(positions[i]).toBeGreaterThan(positions[i - 1]);
+    }
+  });
+
+  it("should start at startX + charWidth", () => {
+    const startX = 20;
+    const charWidth = 8.4;
+    const result = generateCursorPositions(3, charWidth, startX);
+    const positions = result.split(";").map(Number);
+    
+    expect(positions[0]).toBe(startX + charWidth);
   });
 });
