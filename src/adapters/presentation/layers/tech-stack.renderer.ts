@@ -1,6 +1,15 @@
+import type { TechStack, TechStackCategory } from "../../../domain/value-objects/tech-stack";
 import { sanitizeForSvg } from "../../../shared/sanitize";
-import type { TechStack } from "../../../domain/value-objects/tech-stack";
 import type { Theme } from "../../../theme/types";
+
+export const calculateTechStackHeight = (categories: readonly TechStackCategory[]): number => {
+  if (categories.length === 0) return 0;
+  const TITLE_HEIGHT = 24;
+  const ITEM_HEIGHT = 20;
+  const PADDING = 20;
+  const maxItems = Math.max(...categories.map((c) => c.items.length));
+  return PADDING + TITLE_HEIGHT + maxItems * ITEM_HEIGHT;
+};
 
 export const renderTechStack = (
   stack: TechStack,
