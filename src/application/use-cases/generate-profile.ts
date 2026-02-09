@@ -9,20 +9,26 @@ export const createGenerateProfileUseCase = (ports: Ports): GenerateProfileUseCa
   return async (config: Config): Promise<Result<TerminalState, Error>> => {
     try {
       const maxCommits = 5;
+      const repoLimit = config.featured_repos?.limit ?? 3;
 
       const timestamp = ports.clock.getCurrentTime(config.owner.timezone);
 
-      const [userInfo, commits, streak, languageStats] = await Promise.all([
-        ports.github.getUserInfo(config.owner.username),
-        ports.github.getRecentCommits(config.owner.username, maxCommits),
-        ports.github.getContributionStreak(config.owner.username),
-        ports.github.getLanguageStats(config.owner.username),
-      ]);
+      const [userInfo, commits, streak, languageStats, contributionStats, pinnedRepos] =
+        await Promise.all([
+          ports.github.getUserInfo(config.owner.username),
+          ports.github.getRecentCommits(config.owner.username, maxCommits),
+          ports.github.getContributionStreak(config.owner.username),
+          ports.github.getLanguageStats(config.owner.username),
+          ports.github.getContributionStats(config.owner.username),
+          ports.github.getPinnedRepos(config.owner.username, repoLimit),
+        ]);
 
       if (!userInfo.ok) return err(userInfo.error);
       if (!commits.ok) return err(commits.error);
       if (!streak.ok) return err(streak.error);
       if (!languageStats.ok) return err(languageStats.error);
+      if (!contributionStats.ok) return err(contributionStats.error);
+      if (!pinnedRepos.ok) return err(pinnedRepos.error);
 
       const tmuxSessionName = config.tmux?.session_name ?? "dev";
       const tmuxWindows = config.tmux?.windows ?? ["zsh", "nvim"];
@@ -66,9 +72,9 @@ export const createGenerateProfileUseCase = (ports: Ports): GenerateProfileUseCa
             },
             system: config.system,
             stats: {
-              totalCommits: 0,
+              totalCommits: contributionStats.value.totalContributions,
               currentStreak: streak.value.currentStreak,
-              publicRepos: 0,
+              publicRepos: pinnedRepos.value.length,
             },
           },
           journey:
@@ -87,7 +93,7 @@ export const createGenerateProfileUseCase = (ports: Ports): GenerateProfileUseCa
           },
           recentCommits: commits.value,
           languageStats: languageStats.value,
-          featuredRepos: [],
+          featuredRepos: pinnedRepos.value,
           contactInfo:
             config.contact?.items?.map((i) => ({
               label: i.label,
