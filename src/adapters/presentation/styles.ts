@@ -45,16 +45,10 @@ export const generateAnimationCss = (speed: number): string => {
       --fade-duration: ${fadeDuration}s;
     }
 
-    /* Typewriter Effect */
-    @keyframes typewriter {
-      from { width: 0; }
-      to { width: 100%; }
-    }
-
     /* Fade In Effect */
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(5px); }
-      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     /* Fade In for Output (opacity only to preserve SVG transforms) */
@@ -63,18 +57,10 @@ export const generateAnimationCss = (speed: number): string => {
       to { opacity: 1; }
     }
 
-    /* Command Line Styling */
+    /* Command Line Styling - text is revealed via animated clipPath */
     .command-line {
-      overflow: hidden;
-      white-space: nowrap;
-      width: 0;
-      display: inline-block;
       font-family: 'Monaspace Neon', 'JetBrains Mono', monospace;
       font-size: 14px;
-    }
-
-    .command-line.animate {
-      animation: typewriter var(--typing-duration) steps(40) forwards;
     }
 
     /* Output Styling */
@@ -86,20 +72,22 @@ export const generateAnimationCss = (speed: number): string => {
       animation: fadeInOutput var(--fade-duration) ease-out forwards;
     }
 
-    /* Prompt Animation (before each command) */
+    /* Prompt - visible by default, sequence controlled by animation-delay */
     .command-prompt {
       opacity: 0;
     }
 
     .command-prompt.animate {
-      animation: fadeIn var(--fade-duration) ease-out forwards;
+      animation: fadeIn 0.01s forwards;
     }
   `;
 };
 
 export const generateCss = (theme: Theme, animationSpeed?: number): string => {
   const variables = generateVariables(theme);
-  const animationStyles = animationSpeed ? generateAnimationCss(animationSpeed) : "";
+  const animationStyles = animationSpeed
+    ? generateAnimationCss(animationSpeed)
+    : "";
 
   return `
     ${variables}
