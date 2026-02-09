@@ -3,9 +3,9 @@ import { getTheme } from "../../theme";
 import { buildDefs } from "./effects";
 import { renderContact } from "./layers/contact.renderer";
 import { renderContentArea } from "./layers/content-area.renderer";
-import { renderDeveloperInfo } from "./layers/developer-info.renderer";
 import { renderFooter } from "./layers/footer.renderer";
 import { renderLanguageStats } from "./layers/language-stats.renderer";
+import { renderNeofetch } from "./layers/neofetch.renderer";
 import { renderPrompt } from "./layers/prompt.renderer";
 import { renderRecentCommits } from "./layers/recent-commits.renderer";
 import { renderTechStack } from "./layers/tech-stack.renderer";
@@ -56,10 +56,6 @@ const renderAnimatedTerminal = (state: TerminalState): string => {
   return build(finalState);
 };
 
-/**
- * Static mode rendering - temporary adaptation for new TerminalContent shape.
- * Uses neofetchData.owner for developer info, removes asciiArt/extraLines/engagement/streak.
- */
 const renderStaticTerminal = (state: TerminalState): string => {
   const theme = getTheme(state.themeName);
   const { width, height } = state.dimensions;
@@ -74,12 +70,14 @@ const renderStaticTerminal = (state: TerminalState): string => {
   const promptY = 50;
   const contentStartY = 110;
 
+  const neofetchResult = renderNeofetch(state.content.neofetchData, theme);
+
   const innerContent = [
-    `<g transform="translate(0, 0)">${renderDeveloperInfo(state.content.neofetchData.owner, theme)}</g>`,
-    renderTechStack(state.content.techStack, theme, 0, 60),
+    neofetchResult.svg,
+    renderTechStack(state.content.techStack, theme, 0, neofetchResult.height + 20),
     renderLanguageStats(state.content.languageStats, theme, 140),
     renderRecentCommits(state.content.recentCommits, theme, 400, 60),
-    renderContact(state.content.contactInfo, theme, 280),
+    renderContact(state.content.contactInfo, theme, 280, state.content.contactCta),
   ]
     .filter((content) => content.length > 0)
     .join("\n");

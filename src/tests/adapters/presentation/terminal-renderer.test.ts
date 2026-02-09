@@ -13,7 +13,7 @@ describe("Terminal Renderer Orchestrator", () => {
     expect(svg).toContain("#1F1F28"); // Kanagawa Wave BG
     expect(svg).toContain('id="tmux-bar"');
     expect(svg).toContain('id="prompt"');
-    expect(svg).toContain('id="developer-info"');
+    expect(svg).toContain('id="neofetch"');
   });
 
   it("should respect custom dimensions", () => {
@@ -32,7 +32,7 @@ describe("Terminal Renderer Orchestrator", () => {
       const svg = renderTerminal(mockState);
 
       expect(svg).toContain('id="prompt"');
-      expect(svg).toContain('id="developer-info"');
+      expect(svg).toContain('id="neofetch"');
       expect(svg).not.toContain("clipPath");
       expect(svg).not.toContain("terminal-viewport");
       expect(svg).not.toContain("scrollable-content");

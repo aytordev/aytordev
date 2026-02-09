@@ -43,15 +43,6 @@ describe("Domain Value Objects", () => {
     expect(time).toBe("morning");
   });
 
-  it("should support CareerMilestone structure", () => {
-    const milestone: import("../../domain/value-objects/career-milestone").CareerMilestone = {
-      year: 2024,
-      title: "Senior Engineer",
-      company: "Tech Corp",
-    };
-    expect(milestone.year).toBe(2024);
-  });
-
   it("should support ContactItem structure", () => {
     const contact: import("../../domain/value-objects/contact-item").ContactItem = {
       label: "Email",
@@ -59,11 +50,6 @@ describe("Domain Value Objects", () => {
       icon: "📧",
     };
     expect(contact.icon).toBe("📧");
-  });
-
-  it("should support ExtraLine type", () => {
-    const line: import("../../domain/value-objects/extra-line").ExtraLine = "Custom text line";
-    expect(line).toContain("Custom");
   });
 
   it("should support LanguageStat structure", () => {
