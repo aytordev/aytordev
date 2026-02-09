@@ -4,6 +4,7 @@ import type { ContributionStats, GitHubDataPort } from "../../domain/ports/githu
 import { parseCommitEmoji, parseCommitType } from "../../domain/services/commit-parser";
 import { calculateStreak } from "../../domain/services/streak-calculator";
 import type { Commit } from "../../domain/value-objects/commit";
+import type { FeaturedRepo } from "../../domain/value-objects/featured-repo";
 import type { LanguageStat } from "../../domain/value-objects/language-stat";
 import type { Owner } from "../../domain/value-objects/owner";
 import type { StreakInfo } from "../../domain/value-objects/streak-info";
@@ -25,6 +26,23 @@ interface ContributionResponse {
       contributionCalendar: {
         weeks: ContributionWeek[];
       };
+    };
+  };
+}
+
+interface PinnedRepoNode {
+  name: string;
+  nameWithOwner: string;
+  description: string | null;
+  stargazerCount: number;
+  primaryLanguage: { name: string; color: string } | null;
+  updatedAt: string;
+}
+
+interface PinnedReposResponse {
+  user: {
+    pinnedItems: {
+      nodes: PinnedRepoNode[];
     };
   };
 }
@@ -199,6 +217,48 @@ export const createGitHubApiAdapter = (token: string): GitHubDataPort => {
         );
 
         return ok(calculateStreak(days));
+      } catch (error) {
+        return err(error instanceof Error ? error : new Error(String(error)));
+      }
+    },
+
+    getPinnedRepos: async (
+      username: string,
+      limit: number,
+    ): Promise<Result<FeaturedRepo[], Error>> => {
+      try {
+        const { user } = await graphqlClient<PinnedReposResponse>(
+          `
+          query($username: String!, $limit: Int!) {
+            user(login: $username) {
+              pinnedItems(first: $limit, types: [REPOSITORY]) {
+                nodes {
+                  ... on Repository {
+                    name
+                    nameWithOwner
+                    description
+                    stargazerCount
+                    primaryLanguage { name color }
+                    updatedAt
+                  }
+                }
+              }
+            }
+          }
+        `,
+          { username, limit },
+        );
+
+        const repos: FeaturedRepo[] = user.pinnedItems.nodes.map((node) => ({
+          name: node.name,
+          nameWithOwner: node.nameWithOwner,
+          description: node.description ?? undefined,
+          stargazerCount: node.stargazerCount,
+          primaryLanguage: node.primaryLanguage ?? undefined,
+          updatedAt: node.updatedAt,
+        }));
+
+        return ok(repos);
       } catch (error) {
         return err(error instanceof Error ? error : new Error(String(error)));
       }
