@@ -165,8 +165,8 @@ describe("buildCommandSequence", () => {
     expect(stackCommand).toBeDefined();
 
     const result = stackCommand!.outputRenderer(theme, 0);
-    // PADDING(10) + 1 * LINE_HEIGHT(30) = 40
-    expect(result.height).toBe(40);
+    // (1-1) * LINE_HEIGHT(26) + ICON_SIZE(22) = 22
+    expect(result.height).toBe(22);
   });
 
   it("should include contact CTA in echo command", () => {

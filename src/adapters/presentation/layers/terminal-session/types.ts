@@ -6,7 +6,11 @@ import type { Theme } from "../../../../theme/types";
  */
 export const PROMPT_HEIGHT = 20 as const; // Line 1: directory/git info
 export const COMMAND_LINE_HEIGHT = 20 as const; // Line 2: command with typing animation
-export const OUTPUT_GAP = 10 as const; // Gap between command and output
+export const OUTPUT_GAP = 13 as const; // Gap between command line baseline and output visual top
+export const CONTENT_BOTTOM_GAP = 3 as const; // Gap after output visual bottom, before next block
+// Symmetric gap math (monospace font-14: ascent=12, descent=2):
+//   gap_above = OUTPUT_GAP - descent = 13 - 2 = 11px
+//   gap_below = CONTENT_BOTTOM_GAP + (PROMPT_HEIGHT - ascent) = 3 + (20 - 12) = 11px
 export const PROMPT_FADE_DURATION = 0.2 as const; // Duration for prompt fade-in before typing
 
 /**

@@ -48,9 +48,9 @@ describe("Tech Stack Renderer", () => {
   describe("row layout", () => {
     it("should stack categories as vertical rows", () => {
       const svg = renderTechStack(techStack, KanagawaTheme);
-      // 2 categories stacked vertically at LINE_HEIGHT=30
+      // 2 categories stacked vertically at LINE_HEIGHT=26
       expect(svg).toContain('transform="translate(0, 0)"');
-      expect(svg).toContain('transform="translate(0, 30)"');
+      expect(svg).toContain('transform="translate(0, 26)"');
     });
 
     it("should stack 4 categories vertically", () => {
@@ -64,9 +64,9 @@ describe("Tech Stack Renderer", () => {
       };
       const svg = renderTechStack(fourCats, KanagawaTheme);
       expect(svg).toContain('transform="translate(0, 0)"');
-      expect(svg).toContain('transform="translate(0, 30)"');
-      expect(svg).toContain('transform="translate(0, 60)"');
-      expect(svg).toContain('transform="translate(0, 90)"');
+      expect(svg).toContain('transform="translate(0, 26)"');
+      expect(svg).toContain('transform="translate(0, 52)"');
+      expect(svg).toContain('transform="translate(0, 78)"');
     });
 
     it("should render single category at origin", () => {
@@ -126,8 +126,8 @@ describe("calculateTechStackHeight", () => {
 
   it("should calculate height for single category", () => {
     const categories = [{ name: "Languages", items: ["TypeScript", "Rust", "Go"] }];
-    // PADDING(10) + 1 * LINE_HEIGHT(30) = 40
-    expect(calculateTechStackHeight(categories)).toBe(40);
+    // (1-1) * LINE_HEIGHT(26) + ICON_SIZE(22) = 22
+    expect(calculateTechStackHeight(categories)).toBe(22);
   });
 
   it("should scale height with number of categories", () => {
@@ -135,8 +135,8 @@ describe("calculateTechStackHeight", () => {
       { name: "Languages", items: ["TypeScript", "Rust", "Go"] },
       { name: "Tools", items: ["Docker"] },
     ];
-    // PADDING(10) + 2 * LINE_HEIGHT(30) = 70
-    expect(calculateTechStackHeight(categories)).toBe(70);
+    // (2-1) * LINE_HEIGHT(26) + ICON_SIZE(22) = 48
+    expect(calculateTechStackHeight(categories)).toBe(48);
   });
 
   it("should be a pure function (same input produces same output)", () => {

@@ -28,7 +28,7 @@ export function renderLanguageStats(stats: readonly LanguageStat[], theme: Theme
 
   const rows = stats
     .map((stat, index) => {
-      const rowY = 24 + index * ROW_HEIGHT;
+      const rowY = 16 + index * ROW_HEIGHT;
       const barWidth = Math.max(4, (stat.percentage / 100) * BAR_MAX_WIDTH);
 
       return `

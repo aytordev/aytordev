@@ -5,14 +5,14 @@ import { getTechIcon } from "./tech-stack-icons";
 
 const ICON_SIZE = 22;
 const ICON_GAP = 8;
-const LINE_HEIGHT = 30;
-const PADDING = 10;
+const LINE_HEIGHT = 26;
+const PADDING = 0;
 const TITLE_OFFSET = 100;
 const TITLE_BASELINE = Math.round(ICON_SIZE / 2 + 14 * 0.35);
 
 export const calculateTechStackHeight = (categories: readonly TechStackCategory[]): number => {
   if (categories.length === 0) return 0;
-  return PADDING + categories.length * LINE_HEIGHT;
+  return (categories.length - 1) * LINE_HEIGHT + ICON_SIZE;
 };
 
 const renderIconAt = (

@@ -3,7 +3,7 @@ import { sanitizeForSvg } from "../../../shared/sanitize";
 import type { Theme } from "../../../theme/types";
 
 const LINE_HEIGHT = 36;
-const PADDING = 10;
+const ROW_BOTTOM_EXTENT = 19; // desc text (y=16) + descent (~3px)
 const STAR_ICON = "\u2605";
 
 const renderLanguageDot = (repo: FeaturedRepo, x: number): string => {
@@ -32,7 +32,7 @@ const renderRepo = (repo: FeaturedRepo, index: number, theme: Theme): string => 
 
 export const calculateFeaturedReposHeight = (repos: ReadonlyArray<FeaturedRepo>): number => {
   if (repos.length === 0) return 0;
-  return PADDING + repos.length * LINE_HEIGHT;
+  return (repos.length - 1) * LINE_HEIGHT + ROW_BOTTOM_EXTENT;
 };
 
 export const renderFeaturedRepos = (

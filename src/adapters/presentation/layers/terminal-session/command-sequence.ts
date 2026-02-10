@@ -13,6 +13,9 @@ const createCommand = (command: string, renderer: SectionRenderer): AnimatedComm
   outputRenderer: renderer,
 });
 
+/** Approximate SVG text ascent for monospace fonts: ceil(fontSize × 0.8) */
+const svgTextAscent = (fontSize: number): number => Math.ceil(fontSize * 0.8);
+
 const wrapNeofetchRenderer =
   (data: TerminalState["content"]["neofetchData"]): SectionRenderer =>
   (theme, y) => {
@@ -23,18 +26,20 @@ const wrapNeofetchRenderer =
 const wrapJourneyRenderer =
   (entries: TerminalState["content"]["journey"]): SectionRenderer =>
   (theme, y) => {
-    const result = renderJourney(entries, theme, y);
-    return { svg: result.svg, height: result.height };
+    const ascent = svgTextAscent(14); // First element: icon text at font-14
+    const result = renderJourney(entries, theme, y + ascent);
+    return { svg: result.svg, height: result.height + ascent };
   };
 
 const wrapLanguageStatsRenderer =
   (stats: TerminalState["content"]["languageStats"]): SectionRenderer =>
   (theme, y) => {
-    const svg = renderLanguageStats(stats, theme, y);
-    const HEADER_HEIGHT = 24;
+    const ascent = svgTextAscent(11); // First element: header text at font-11
+    const svg = renderLanguageStats(stats, theme, y + ascent);
+    const HEADER_START_Y = 16; // First bar row offset from group origin
     const ROW_HEIGHT = 24;
-    const PADDING = 20;
-    const height = HEADER_HEIGHT + stats.length * ROW_HEIGHT + PADDING;
+    const BAR_HEIGHT = 14; // Actual bar visual height
+    const height = ascent + HEADER_START_Y + (stats.length - 1) * ROW_HEIGHT + BAR_HEIGHT;
     return { svg, height };
   };
 
@@ -49,28 +54,31 @@ const wrapTechStackRenderer =
 const wrapRecentCommitsRenderer =
   (commits: TerminalState["content"]["recentCommits"]): SectionRenderer =>
   (theme, y) => {
-    const svg = renderRecentCommits(commits, theme, 0, y);
+    const ascent = svgTextAscent(12); // First element: commit text at font-12
+    const svg = renderRecentCommits(commits, theme, 0, y + ascent);
     const ITEM_HEIGHT = 20;
-    const PADDING = 10;
-    const height = commits.length * ITEM_HEIGHT + PADDING;
+    const TEXT_DESCENT = 3; // Visual extent below last text baseline
+    const height = ascent + (commits.length - 1) * ITEM_HEIGHT + TEXT_DESCENT;
     return { svg, height };
   };
 
 const wrapFeaturedReposRenderer =
   (repos: TerminalState["content"]["featuredRepos"]): SectionRenderer =>
   (theme, y) => {
-    const result = renderFeaturedRepos(repos, theme, y);
-    return { svg: result.svg, height: result.height };
+    const ascent = svgTextAscent(12); // First element: star count text at font-12
+    const result = renderFeaturedRepos(repos, theme, y + ascent);
+    return { svg: result.svg, height: result.height + ascent };
   };
 
 const wrapContactRenderer =
   (items: TerminalState["content"]["contactInfo"], cta: string): SectionRenderer =>
   (theme, y) => {
-    const svg = renderContact(items, theme, y, cta);
+    const ascent = cta ? svgTextAscent(13) : svgTextAscent(12); // CTA font-13, items font-12
+    const svg = renderContact(items, theme, y + ascent, cta);
     const ITEM_HEIGHT = 20;
+    const TEXT_DESCENT = 3; // Visual extent below last text baseline
     const CTA_OFFSET = cta ? 24 : 0;
-    const PADDING = 10;
-    const height = CTA_OFFSET + items.length * ITEM_HEIGHT + PADDING;
+    const height = ascent + CTA_OFFSET + (items.length - 1) * ITEM_HEIGHT + TEXT_DESCENT;
     return { svg, height };
   };
 

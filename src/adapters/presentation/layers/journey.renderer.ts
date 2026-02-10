@@ -3,7 +3,7 @@ import { sanitizeForSvg } from "../../../shared/sanitize";
 import type { Theme } from "../../../theme/types";
 
 const LINE_HEIGHT = 24;
-const PADDING = 10;
+const ROW_BOTTOM_EXTENT = 6; // Tag rect bottom: y=-10 + height=16 = 6px below baseline
 const YEAR_X = 24;
 const TITLE_X = 80;
 const TAG_START_X = 280;
@@ -29,7 +29,7 @@ const renderEntry = (entry: JourneyEntry, index: number, theme: Theme): string =
 
 export const calculateJourneyHeight = (entries: ReadonlyArray<JourneyEntry>): number => {
   if (entries.length === 0) return 0;
-  return PADDING + entries.length * LINE_HEIGHT;
+  return (entries.length - 1) * LINE_HEIGHT + ROW_BOTTOM_EXTENT;
 };
 
 export const renderJourney = (

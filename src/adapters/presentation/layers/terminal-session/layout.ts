@@ -6,7 +6,13 @@ import type {
   LayoutResult,
   ScrollPoint,
 } from "./types";
-import { COMMAND_LINE_HEIGHT, OUTPUT_GAP, PROMPT_FADE_DURATION, PROMPT_HEIGHT } from "./types";
+import {
+  COMMAND_LINE_HEIGHT,
+  CONTENT_BOTTOM_GAP,
+  OUTPUT_GAP,
+  PROMPT_FADE_DURATION,
+  PROMPT_HEIGHT,
+} from "./types";
 
 /**
  * Internal accumulator type for reduce operation.
@@ -64,7 +70,8 @@ export const calculateLayout = (
       // Output starts after prompt line + command line + gap
       const outputY = commandY + PROMPT_HEIGHT + COMMAND_LINE_HEIGHT + OUTPUT_GAP;
       const output = cmd.outputRenderer(theme, outputY);
-      const blockHeight = PROMPT_HEIGHT + COMMAND_LINE_HEIGHT + OUTPUT_GAP + output.height;
+      const blockHeight =
+        PROMPT_HEIGHT + COMMAND_LINE_HEIGHT + OUTPUT_GAP + output.height + CONTENT_BOTTOM_GAP;
       const nextY = commandY + blockHeight;
       const nextHeight = acc.totalHeight + blockHeight;
 

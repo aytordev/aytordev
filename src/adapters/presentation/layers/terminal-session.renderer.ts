@@ -10,7 +10,7 @@ import {
   createAnimationTiming,
   generateAllScrollKeyframes,
 } from "./terminal-session";
-import { COMMAND_LINE_HEIGHT, PROMPT_HEIGHT } from "./terminal-session/types";
+import { COMMAND_LINE_HEIGHT, OUTPUT_GAP, PROMPT_HEIGHT } from "./terminal-session/types";
 
 /**
  * Renders an animated terminal session with scroll simulation.
@@ -188,7 +188,7 @@ ${cursor}`;
   // 3. Render output with fade-in animation
   // Output renderers handle their own positioning via internal transforms
   // Indent output slightly from command line for visual hierarchy
-  const outputY = commandY + 25; // Gap after command (matches layout.ts OUTPUT_GAP)
+  const outputY = commandY + OUTPUT_GAP;
   const output = cmd.outputRenderer(theme, outputY);
   const outputWrapped = `<g
     class="command-output animate"
