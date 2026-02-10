@@ -10,7 +10,7 @@ const INFO_LINES = 7;
 const LOGO_SIZE = 130;
 const INFO_Y_OFFSET = 15;
 const INFO_X = LOGO_SIZE + 20;
-const PADDING = 10;
+const PADDING = 0;
 
 // NixOS snowflake logo — official SVG paths from nixos-artwork
 // The logo is a single lambda arm rotated 6 times (3 per color)
@@ -120,11 +120,11 @@ const renderInfoLineSvg = (line: InfoLine, index: number, theme: Theme): string 
     case "stats":
       return (
         `<text x="${INFO_X}" y="${y}" font-family="monospace" font-size="12">` +
-        `<tspan fill="${theme.colors.carpYellow}">📊 ${line.stats.totalCommits}</tspan>` +
+        `<tspan fill="${theme.colors.carpYellow}">📊 Commits ${line.stats.totalCommits}</tspan>` +
         `<tspan fill="${theme.colors.textMuted}">  </tspan>` +
-        `<tspan fill="${theme.colors.surimiOrange}">🔥 ${line.stats.currentStreak}d</tspan>` +
+        `<tspan fill="${theme.colors.surimiOrange}">🔥 Streak ${line.stats.currentStreak}d</tspan>` +
         `<tspan fill="${theme.colors.textMuted}">  </tspan>` +
-        `<tspan fill="${theme.colors.springGreen}">📦 ${line.stats.publicRepos}</tspan>` +
+        `<tspan fill="${theme.colors.springGreen}">📦 Repos ${line.stats.publicRepos}</tspan>` +
         `</text>`
       );
   }

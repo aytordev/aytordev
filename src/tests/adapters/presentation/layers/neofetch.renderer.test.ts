@@ -98,12 +98,12 @@ describe("renderNeofetch", () => {
     expect(result.svg).toContain("Kanagawa");
   });
 
-  it("should render stats as compact inline line", () => {
+  it("should render stats with icons and text labels", () => {
     const result = renderNeofetch(createData(), theme);
 
-    expect(result.svg).toContain("1200");
-    expect(result.svg).toContain("42d");
-    expect(result.svg).toContain("30");
+    expect(result.svg).toContain("Commits 1200");
+    expect(result.svg).toContain("Streak 42d");
+    expect(result.svg).toContain("Repos 30");
   });
 
   it("should render optional WM paired with Theme when present", () => {
