@@ -39,26 +39,51 @@ describe("renderNeofetch", () => {
     expect(result.height).toBeGreaterThan(0);
   });
 
-  it("should render ASCII art lines", () => {
+  it("should render NixOS logo as SVG paths", () => {
     const result = renderNeofetch(createData(), theme);
 
-    expect(result.svg).toContain("neofetch");
-    expect(result.svg).toContain("<text");
+    expect(result.svg).toContain("neofetch__logo");
+    expect(result.svg).toContain("<path");
+    expect(result.svg).toContain("viewBox");
   });
 
-  it("should render username with @ prefix", () => {
+  it("should render logo with 6 arms (3 per color)", () => {
+    const result = renderNeofetch(createData(), theme);
+
+    const pathCount = (result.svg.match(/<path /g) ?? []).length;
+    expect(pathCount).toBe(6);
+  });
+
+  it("should render logo with dual colors (springBlue + waveAqua)", () => {
+    const result = renderNeofetch(createData(), theme);
+
+    expect(result.svg).toContain(theme.colors.springBlue);
+    expect(result.svg).toContain(theme.colors.waveAqua);
+  });
+
+  it("should render username as header with @ prefix", () => {
     const result = renderNeofetch(createData(), theme);
 
     expect(result.svg).toContain("@aytordev");
+    expect(result.svg).toContain('font-weight="bold"');
   });
 
-  it("should render tagline", () => {
+  it("should render separator line", () => {
     const result = renderNeofetch(createData(), theme);
 
-    expect(result.svg).toContain("Full-Stack Developer");
+    expect(result.svg).toContain("───");
+    expect(result.svg).toContain(theme.colors.textMuted);
   });
 
-  it("should render system info labels and values", () => {
+  it("should render tagline with location on a single line", () => {
+    const result = renderNeofetch(createData(), theme);
+
+    const svgLines = result.svg.split("\n").join("");
+    expect(svgLines).toContain("Full-Stack Developer");
+    expect(svgLines).toContain("Madrid, Spain");
+  });
+
+  it("should render system info as paired key:value lines", () => {
     const result = renderNeofetch(createData(), theme);
 
     expect(result.svg).toContain("OS");
@@ -73,18 +98,15 @@ describe("renderNeofetch", () => {
     expect(result.svg).toContain("Kanagawa");
   });
 
-  it("should render stats", () => {
+  it("should render stats as compact inline line", () => {
     const result = renderNeofetch(createData(), theme);
 
-    expect(result.svg).toContain("Commits");
     expect(result.svg).toContain("1200");
-    expect(result.svg).toContain("Streak");
-    expect(result.svg).toContain("42");
-    expect(result.svg).toContain("Repos");
+    expect(result.svg).toContain("42d");
     expect(result.svg).toContain("30");
   });
 
-  it("should render optional WM line when present", () => {
+  it("should render optional WM paired with Theme when present", () => {
     const data = createData({
       system: {
         os: "NixOS",
@@ -99,9 +121,11 @@ describe("renderNeofetch", () => {
 
     expect(result.svg).toContain("WM");
     expect(result.svg).toContain("Hyprland");
+    expect(result.svg).toContain("Theme");
+    expect(result.svg).toContain("Kanagawa");
   });
 
-  it("should not render WM line when absent", () => {
+  it("should not render WM when absent", () => {
     const result = renderNeofetch(createData(), theme);
 
     expect(result.svg).not.toContain("WM");
@@ -149,6 +173,22 @@ describe("renderNeofetch", () => {
     expect(result.svg).toContain(theme.colors.springBlue);
     expect(result.svg).toContain(theme.colors.text);
   });
+
+  it("should render 7 info lines", () => {
+    const result = renderNeofetch(createData(), theme);
+
+    const infoGroup = result.svg.match(/neofetch__info[^]*?<\/g>/)?.[0] ?? "";
+    const infoLines = (infoGroup.match(/<text[^>]*>/g) ?? []).length;
+
+    expect(infoLines).toBe(7);
+  });
+
+  it("should vertically center info within the logo area", () => {
+    const result = renderNeofetch(createData(), theme);
+
+    expect(result.svg).toContain('class="neofetch__logo"');
+    expect(result.svg).toMatch(/neofetch__info[^>]*transform="translate\(0, 15\)"/);
+  });
 });
 
 describe("calculateNeofetchHeight", () => {
@@ -158,7 +198,7 @@ describe("calculateNeofetchHeight", () => {
     expect(height).toBeGreaterThan(0);
   });
 
-  it("should be taller with WM field", () => {
+  it("should have same height with and without WM (both fit in 7 lines)", () => {
     const withoutWm = calculateNeofetchHeight(createData());
     const withWm = calculateNeofetchHeight(
       createData({
@@ -173,7 +213,7 @@ describe("calculateNeofetchHeight", () => {
       }),
     );
 
-    expect(withWm).toBeGreaterThan(withoutWm);
+    expect(withWm).toBe(withoutWm);
   });
 
   it("should be a pure function", () => {
