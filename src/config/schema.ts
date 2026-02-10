@@ -25,7 +25,7 @@ export const OwnerSchema = z.object({
 export const SystemInfoSchema = z.object({
   os: z.string().min(1).max(30),
   shell: z.string().min(1).max(20),
-  editor: z.string().min(1).max(20),
+  editor: z.string().min(1).max(50),
   terminal: z.string().min(1).max(20),
   wm: z.string().max(20).optional(),
   theme: z.string().min(1).max(30),

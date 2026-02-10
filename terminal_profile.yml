@@ -9,9 +9,9 @@ owner:
   timezone: "Europe/Madrid"
 
 system:
-  os: "macOS Sequoia"
-  shell: "zsh 5.9"
-  editor: "neovim"
+  os: "macOS Tahoe 26.2"
+  shell: "fish"
+  editor: "neovim · vscode · zed"
   terminal: "ghostty"
   theme: "Kanagawa 🌊"
 
