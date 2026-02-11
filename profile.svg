@@ -266,20 +266,20 @@
       <rect x="0" y="24" width="800" height="952" />
     </clipPath>
     <style>@keyframes reveal { from { opacity: 0; } to { opacity: 1; } }
-    .prompt-0 { animation: reveal 0.001s step-end 0.1s both; }
-    .command-0 { animation: reveal 0.001s step-end 0.30000000000000004s both; }
+    .prompt-0 { animation: reveal 0.05s ease-out 0.1s both; }
+    .command-0 { animation: reveal 0.05s ease-out 0.3s both; }
     .output-0 { animation: reveal 0.3s ease-out 1.6s both; }
-    .prompt-1 { animation: reveal 0.001s step-end 2.3000000000000003s both; }
-    .command-1 { animation: reveal 0.001s step-end 2.5000000000000004s both; }
+    .prompt-1 { animation: reveal 0.05s ease-out 2.3s both; }
+    .command-1 { animation: reveal 0.05s ease-out 2.5s both; }
     .output-1 { animation: reveal 0.3s ease-out 4.52s both; }
-    .prompt-2 { animation: reveal 0.001s step-end 5.220000000000001s both; }
-    .command-2 { animation: reveal 0.001s step-end 5.420000000000001s both; }
+    .prompt-2 { animation: reveal 0.05s ease-out 5.22s both; }
+    .command-2 { animation: reveal 0.05s ease-out 5.42s both; }
     .output-2 { animation: reveal 0.3s ease-out 7.2s both; }
-    .prompt-3 { animation: reveal 0.001s step-end 7.9s both; }
-    .command-3 { animation: reveal 0.001s step-end 8.1s both; }
-    .output-3 { animation: reveal 0.3s ease-out 12.639999999999999s both; }
-    .prompt-4 { animation: reveal 0.001s step-end 13.34s both; }
-    .command-4 { animation: reveal 0.001s step-end 13.54s both; }
+    .prompt-3 { animation: reveal 0.05s ease-out 7.9s both; }
+    .command-3 { animation: reveal 0.05s ease-out 8.1s both; }
+    .output-3 { animation: reveal 0.3s ease-out 12.64s both; }
+    .prompt-4 { animation: reveal 0.05s ease-out 13.34s both; }
+    .command-4 { animation: reveal 0.05s ease-out 13.54s both; }
     .output-4 { animation: reveal 0.3s ease-out 16.76s both; }</style>
   </defs>
 
@@ -289,7 +289,7 @@
     <text x="10" y="20" fill="#658594" font-family="monospace" font-size="14" font-weight="bold">~/github/profile</text>
 <text x="156" y="20" fill="#727169" font-family="monospace" font-size="14" font-weight="bold">→</text>
 <text x="176" y="20" fill="#957FB8" font-family="monospace" font-size="14">git:main </text>
-    <text x="780" y="20" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">16:00</text>
+    <text x="780" y="20" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">16:32</text>
 <text x="727.5" y="20" fill="#658594" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">nix</text>
 <text x="692" y="20" fill="#DCD7BA" font-family="monospace" font-size="14" text-anchor="end" font-weight="bold">❄️</text>
 <text x="665" y="20" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">*</text>
@@ -381,7 +381,7 @@
     <text x="10" y="206" fill="#658594" font-family="monospace" font-size="14" font-weight="bold">~/github/profile</text>
 <text x="156" y="206" fill="#727169" font-family="monospace" font-size="14" font-weight="bold">→</text>
 <text x="176" y="206" fill="#957FB8" font-family="monospace" font-size="14">git:main </text>
-    <text x="780" y="206" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">16:00</text>
+    <text x="780" y="206" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">16:32</text>
 <text x="727.5" y="206" fill="#658594" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">nix</text>
 <text x="692" y="206" fill="#DCD7BA" font-family="monospace" font-size="14" text-anchor="end" font-weight="bold">❄️</text>
 <text x="665" y="206" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">*</text>
@@ -496,7 +496,7 @@
     <text x="10" y="374" fill="#658594" font-family="monospace" font-size="14" font-weight="bold">~/github/profile</text>
 <text x="156" y="374" fill="#727169" font-family="monospace" font-size="14" font-weight="bold">→</text>
 <text x="176" y="374" fill="#957FB8" font-family="monospace" font-size="14">git:main </text>
-    <text x="780" y="374" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">16:00</text>
+    <text x="780" y="374" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">16:32</text>
 <text x="727.5" y="374" fill="#658594" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">nix</text>
 <text x="692" y="374" fill="#DCD7BA" font-family="monospace" font-size="14" text-anchor="end" font-weight="bold">❄️</text>
 <text x="665" y="374" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">*</text>
@@ -614,7 +614,7 @@
     <text x="10" y="556" fill="#658594" font-family="monospace" font-size="14" font-weight="bold">~/github/profile</text>
 <text x="156" y="556" fill="#727169" font-family="monospace" font-size="14" font-weight="bold">→</text>
 <text x="176" y="556" fill="#957FB8" font-family="monospace" font-size="14">git:main </text>
-    <text x="780" y="556" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">16:00</text>
+    <text x="780" y="556" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">16:32</text>
 <text x="727.5" y="556" fill="#658594" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">nix</text>
 <text x="692" y="556" fill="#DCD7BA" font-family="monospace" font-size="14" text-anchor="end" font-weight="bold">❄️</text>
 <text x="665" y="556" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">*</text>
@@ -711,7 +711,7 @@
     <text x="10" y="713" fill="#658594" font-family="monospace" font-size="14" font-weight="bold">~/github/profile</text>
 <text x="156" y="713" fill="#727169" font-family="monospace" font-size="14" font-weight="bold">→</text>
 <text x="176" y="713" fill="#957FB8" font-family="monospace" font-size="14">git:main </text>
-    <text x="780" y="713" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">16:00</text>
+    <text x="780" y="713" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">16:32</text>
 <text x="727.5" y="713" fill="#658594" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">nix</text>
 <text x="692" y="713" fill="#DCD7BA" font-family="monospace" font-size="14" text-anchor="end" font-weight="bold">❄️</text>
 <text x="665" y="713" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">*</text>
