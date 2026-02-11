@@ -69,7 +69,7 @@ describe("Terminal Renderer Orchestrator", () => {
       expect(svg).toContain("neofetch");
     });
 
-    it("should include SMIL animations when in animated mode", () => {
+    it("should include CSS reveal and SMIL typing when in animated mode", () => {
       const stateWithAnimation = terminalStateBuilder()
         .withAnimation({
           enabled: true,
@@ -79,10 +79,13 @@ describe("Terminal Renderer Orchestrator", () => {
         .build();
       const svg = renderTerminal(stateWithAnimation);
 
-      expect(svg).toContain('class="command-line terminal-text"');
-      // Output and prompt use SMIL animations instead of CSS classes
-      expect(svg).toContain('opacity="0"');
-      expect(svg).toContain('attributeName="opacity"');
+      expect(svg).toContain('class="command-0 command-line terminal-text"');
+      // CSS handles progressive reveal (animation-fill-mode: both)
+      expect(svg).toContain("@keyframes reveal");
+      expect(svg).toContain('class="prompt-0"');
+      expect(svg).toContain('class="output-0"');
+      expect(svg).toContain(".command-0 { animation: reveal");
+      // SMIL handles typing animation
       expect(svg).toContain("begin=");
     });
 

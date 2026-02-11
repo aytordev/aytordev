@@ -43,14 +43,23 @@ export const renderTerminalSession = (
   // 4. Generate scroll keyframes (pure)
   const scrollKeyframes = generateAllScrollKeyframes(layout.scrollPoints);
 
-  // 5. Render commands to SVG (pure, functional composition)
-  // Each command includes: prompt (fade-in) + command line (typing) + output (fade-in)
+  // 5. Generate CSS reveal timing for prompts and outputs (pure)
+  const revealCss = generateRevealCss(layout.timings, timing.fadeDuration);
+
+  // 6. Render commands to SVG (pure, functional composition)
+  // Each command includes: prompt (CSS reveal) + command line (SMIL typing) + output (CSS reveal)
   const commandsSvg = commands
-    .map((cmd, i) => renderCommand(cmd, layout, i, theme, state.prompt, timing.fadeDuration))
+    .map((cmd, i) => renderCommand(cmd, layout, i, theme, state.prompt))
     .join("\n");
 
-  // 6. Compose final SVG structure (pure template)
-  return composeTerminalSessionSvg(viewportY, viewportHeight, scrollKeyframes, commandsSvg);
+  // 7. Compose final SVG structure (pure template)
+  return composeTerminalSessionSvg(
+    viewportY,
+    viewportHeight,
+    scrollKeyframes,
+    revealCss,
+    commandsSvg,
+  );
 };
 
 /**
@@ -58,9 +67,9 @@ export const renderTerminalSession = (
  * Pure function.
  *
  * Block structure:
- * - Prompt line 1 (fade-in): directory → git:branch
- * - Command line 2 (typewriter): $ command
- * - Output section (fade-in): command output
+ * - Prompt line 1 (CSS reveal): directory → git:branch
+ * - Command line 2 (SMIL typewriter): $ command
+ * - Output section (CSS reveal): command output
  *
  * @param cmd - Command to render
  * @param layout - Layout calculation result
@@ -81,14 +90,13 @@ const renderCommand = (
   index: number,
   theme: Theme,
   prompt: StarshipPrompt,
-  fadeDuration: number,
 ): string => {
   const y = layout.positions[index];
   const cmdTiming = layout.timings[index];
 
-  // 1. Render prompt - appears immediately when its turn comes
+  // 1. Render prompt - CSS handles reveal timing via .prompt-{index} class
   const promptY = y + PROMPT_HEIGHT; // Text baseline
-  const promptSvg = renderPromptForCommand(prompt, theme, promptY, cmdTiming.promptStart);
+  const promptSvg = renderPromptForCommand(prompt, theme, promptY, index);
 
   // 2. Render command line with typing animation via clipPath
   const commandY = y + PROMPT_HEIGHT + COMMAND_LINE_HEIGHT;
@@ -178,7 +186,7 @@ const renderCommand = (
 <text
     x="10"
     y="${commandY}"
-    class="command-line terminal-text"
+    class="command-${index} command-line terminal-text"
     fill="${theme.colors.text}"
     font-family="monospace"
     font-size="14"
@@ -186,15 +194,12 @@ const renderCommand = (
   >${commandText}</text>
 ${cursor}`;
 
-  // 3. Render output with fade-in animation
+  // 3. Render output - CSS handles reveal timing via .output-{index} class
   // Output renderers handle their own positioning via internal transforms
   // Indent output slightly from command line for visual hierarchy
   const outputY = commandY + OUTPUT_GAP;
   const output = cmd.outputRenderer(theme, outputY);
-  const outputWrapped = `<g
-    opacity="0"
-    transform="translate(10, 0)"
-  ><animate attributeName="opacity" from="0" to="1" dur="${fadeDuration}s" begin="${cmdTiming.outputStart}s" fill="freeze" />${output.svg}</g>`;
+  const outputWrapped = `<g class="output-${index}" transform="translate(10, 0)">${output.svg}</g>`;
 
   return `${promptSvg}\n${commandLine}\n${outputWrapped}`;
 };
@@ -242,20 +247,21 @@ export const generateCursorPositions = (
 /**
  * Renders a complete prompt for use before a command.
  * Renders both left side (directory/git info) and right side (time/node/nix).
+ * CSS handles reveal timing via .prompt-{index} class.
  * Pure function - composes smaller pure functions.
  *
  * @param prompt - Starship prompt configuration
  * @param theme - Theme configuration
  * @param y - Y position for prompt text
- * @param animationDelay - Delay before fade-in starts
+ * @param index - Command index for CSS class
  * @param width - Total width for prompt (default 800)
- * @returns SVG string for prompt with animation
+ * @returns SVG string for prompt with CSS reveal class
  */
 const renderPromptForCommand = (
   prompt: StarshipPrompt,
   theme: Theme,
   y: number,
-  animationDelay: number,
+  index: number,
   width: number = 800,
 ): string => {
   const fontSize = 14;
@@ -273,11 +279,42 @@ const renderPromptForCommand = (
   const leftSide = renderPromptLeftSide(prompt, theme, config);
   const rightSide = renderPromptRightSide(prompt, theme, config);
 
-  return `<g opacity="0">
-    <set attributeName="opacity" to="1" begin="${animationDelay}s" fill="freeze" />
+  return `<g class="prompt-${index}">
     ${leftSide.svg}
     ${rightSide.svg}
   </g>`;
+};
+
+/** Minimum animation duration that mobile browsers handle reliably (50ms). */
+const SNAP_DURATION = 0.05;
+
+/** Round to 3 decimal places to avoid floating-point noise in CSS values. */
+const round3 = (n: number): number => Math.round(n * 1000) / 1000;
+
+/**
+ * Generates CSS rules for progressive reveal of prompts, commands, and outputs.
+ * Uses animation-fill-mode: both for reliable cross-platform hiding:
+ * - Before delay: element at opacity 0 (from 'from' keyframe via backwards fill)
+ * - After delay: element fades/steps to opacity 1
+ * - If CSS animations stripped: default opacity 1 (progressive enhancement)
+ *
+ * Pure function - timings array → CSS string.
+ */
+export const generateRevealCss = (
+  timings: ReadonlyArray<CommandTiming>,
+  fadeDuration: number,
+): string => {
+  const fade = round3(fadeDuration);
+  const rules = timings
+    .map(
+      (t, i) =>
+        `.prompt-${i} { animation: reveal ${SNAP_DURATION}s ease-out ${round3(t.promptStart)}s both; }\n` +
+        `    .command-${i} { animation: reveal ${SNAP_DURATION}s ease-out ${round3(t.commandStart)}s both; }\n` +
+        `    .output-${i} { animation: reveal ${fade}s ease-out ${round3(t.outputStart)}s both; }`,
+    )
+    .join("\n    ");
+
+  return `@keyframes reveal { from { opacity: 0; } to { opacity: 1; } }\n    ${rules}`;
 };
 
 /**
@@ -287,6 +324,7 @@ const renderPromptForCommand = (
  * @param viewportY - Y position where viewport starts
  * @param viewportHeight - Height of visible viewport
  * @param scrollKeyframes - CSS keyframes for scroll animations
+ * @param revealCss - CSS rules for progressive reveal timing
  * @param commandsSvg - Rendered commands SVG
  * @returns Complete SVG structure
  */
@@ -294,14 +332,16 @@ const composeTerminalSessionSvg = (
   viewportY: number,
   viewportHeight: number,
   scrollKeyframes: string,
+  revealCss: string,
   commandsSvg: string,
 ): string => {
+  const cssContent = [revealCss, scrollKeyframes].filter(Boolean).join("\n    ");
   return `
   <defs>
     <clipPath id="terminal-viewport">
       <rect x="0" y="${viewportY}" width="800" height="${viewportHeight}" />
     </clipPath>
-    ${scrollKeyframes ? `<style>${scrollKeyframes}</style>` : ""}
+    <style>${cssContent}</style>
   </defs>
 
   <g clip-path="url(#terminal-viewport)">

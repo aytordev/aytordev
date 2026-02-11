@@ -87,17 +87,18 @@ describe("renderTerminalSession", () => {
     const state = terminalStateBuilder().build();
     const svg = renderTerminalSession(state, theme, viewportY, viewportHeight);
 
-    expect(svg).toContain('class="command-line terminal-text"');
+    expect(svg).toContain('class="command-0 command-line terminal-text"');
     expect(svg).toContain('clip-path="url(#typing-clip-');
   });
 
-  it("should include SMIL fade-in for output elements", () => {
+  it("should include CSS reveal animation for output elements", () => {
     const state = terminalStateBuilder().build();
     const svg = renderTerminalSession(state, theme, viewportY, viewportHeight);
 
-    // Output uses inline SMIL <animate> for fade-in instead of CSS classes
-    expect(svg).toContain('opacity="0"');
-    expect(svg).toContain('<animate attributeName="opacity" from="0" to="1"');
+    // CSS animation-fill-mode: both handles hide/reveal (progressive enhancement)
+    expect(svg).toContain("@keyframes reveal");
+    expect(svg).toContain('class="output-0"');
+    expect(svg).toContain(".output-0 { animation: reveal");
   });
 
   it("should generate scroll keyframes when content exceeds viewport", () => {

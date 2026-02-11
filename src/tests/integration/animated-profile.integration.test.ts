@@ -147,16 +147,20 @@ describe("Animated Profile Integration", () => {
     expect(svg).toContain("echo");
   });
 
-  it("should include SMIL animation timing for commands", () => {
+  it("should include CSS reveal timing and SMIL typing for commands", () => {
     const state = createFullState();
     const svg = renderTerminal(state);
 
-    expect(svg).toContain('class="command-line terminal-text"');
-    // Output and prompt use SMIL animations instead of CSS classes
-    expect(svg).toContain('opacity="0"');
-    expect(svg).toContain('<animate attributeName="opacity" from="0" to="1"');
+    expect(svg).toContain('class="command-0 command-line terminal-text"');
+    // CSS handles progressive reveal (animation-fill-mode: both)
+    expect(svg).toContain("@keyframes reveal");
+    expect(svg).toContain('class="prompt-0"');
+    expect(svg).toContain(".command-0 { animation: reveal");
+    expect(svg).toContain('class="output-0"');
+    expect(svg).toContain(".prompt-0 { animation: reveal");
+    expect(svg).toContain(".output-0 { animation: reveal");
 
-    // SMIL uses begin= for timing instead of animation-delay
+    // SMIL still used for typing animation (begin= on clipPath/cursor)
     const beginMatches = svg.match(/begin="[\d.]+s"/g);
     expect(beginMatches).toBeDefined();
     expect(beginMatches!.length).toBeGreaterThan(3);
