@@ -29,12 +29,11 @@ describe("generateAnimationCss", () => {
     expect(css).not.toContain("@keyframes typewriter");
   });
 
-  it("should contain fadeIn keyframes (opacity only)", () => {
+  it("should not contain fadeIn keyframes (handled via SMIL)", () => {
     const css = generateAnimationCss(1);
 
-    expect(css).toContain("@keyframes fadeIn");
-    expect(css).toContain("from { opacity: 0; }");
-    expect(css).toContain("to { opacity: 1; }");
+    // fadeIn is now handled via SMIL <animate> in SVG markup
+    expect(css).not.toContain("@keyframes fadeIn");
   });
 
   it("should contain command-line class with font styling (no layout props)", () => {
@@ -53,19 +52,12 @@ describe("generateAnimationCss", () => {
     expect(css).not.toContain(".command-line.animate");
   });
 
-  it("should contain command-output class", () => {
+  it("should not contain command-output classes (handled via SMIL)", () => {
     const css = generateAnimationCss(1);
 
-    expect(css).toContain(".command-output");
-    expect(css).toContain("opacity: 0");
-  });
-
-  it("should contain command-output.animate class with fadeInOutput animation", () => {
-    const css = generateAnimationCss(1);
-
-    expect(css).toContain(".command-output.animate");
-    // Uses fadeInOutput to preserve SVG transforms
-    expect(css).toContain("animation: fadeInOutput var(--fade-duration) ease-out forwards");
+    // Output fade-in is now handled via SMIL <animate> in SVG markup
+    expect(css).not.toContain(".command-output");
+    expect(css).not.toContain(".command-output.animate");
   });
 
   it("should use monospace font family for command-line", () => {
@@ -108,11 +100,11 @@ describe("generateCss with animation", () => {
   it("should include animation styles when animationSpeed is provided", () => {
     const css = generateCss(theme, 1);
 
-    // No typewriter keyframes (uses SVG), but has fadeIn and classes
+    // No typewriter or fadeIn keyframes (both handled via SMIL), but has command-line class
     expect(css).not.toContain("@keyframes typewriter");
-    expect(css).toContain("@keyframes fadeIn");
+    expect(css).not.toContain("@keyframes fadeIn");
     expect(css).toContain(".command-line");
-    expect(css).toContain(".command-output");
+    expect(css).not.toContain(".command-output");
   });
 
   it("should not include animation styles when animationSpeed is undefined", () => {

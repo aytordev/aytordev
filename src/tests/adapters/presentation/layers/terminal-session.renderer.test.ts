@@ -74,11 +74,13 @@ describe("renderTerminalSession", () => {
     expect(svg).toContain("neofetch");
   });
 
-  it("should include animation delays in command elements", () => {
+  it("should include SMIL animation timing in command elements", () => {
     const state = terminalStateBuilder().build();
     const svg = renderTerminalSession(state, theme, viewportY, viewportHeight);
 
-    expect(svg).toContain("animation-delay:");
+    // Prompt uses SMIL <set> with begin attribute, output uses SMIL <animate>
+    expect(svg).toContain('attributeName="opacity"');
+    expect(svg).toContain("begin=");
   });
 
   it("should include command-line class with clipPath animation", () => {
@@ -89,11 +91,13 @@ describe("renderTerminalSession", () => {
     expect(svg).toContain('clip-path="url(#typing-clip-');
   });
 
-  it("should include command-output class for fade-in effect", () => {
+  it("should include SMIL fade-in for output elements", () => {
     const state = terminalStateBuilder().build();
     const svg = renderTerminalSession(state, theme, viewportY, viewportHeight);
 
-    expect(svg).toContain('class="command-output animate"');
+    // Output uses inline SMIL <animate> for fade-in instead of CSS classes
+    expect(svg).toContain('opacity="0"');
+    expect(svg).toContain('<animate attributeName="opacity" from="0" to="1"');
   });
 
   it("should generate scroll keyframes when content exceeds viewport", () => {
@@ -238,7 +242,9 @@ describe("renderTerminalSession", () => {
       .build();
     const svg = renderTerminalSession(state, theme, viewportY, viewportHeight);
 
-    expect(svg).toContain("animation-delay:");
+    // SMIL animations use begin= attribute for timing
+    expect(svg).toContain("begin=");
+    expect(svg).toContain('attributeName="opacity"');
   });
 });
 

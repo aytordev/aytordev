@@ -69,7 +69,7 @@ describe("Terminal Renderer Orchestrator", () => {
       expect(svg).toContain("neofetch");
     });
 
-    it("should include animation classes when in animated mode", () => {
+    it("should include SMIL animations when in animated mode", () => {
       const stateWithAnimation = terminalStateBuilder()
         .withAnimation({
           enabled: true,
@@ -80,8 +80,10 @@ describe("Terminal Renderer Orchestrator", () => {
       const svg = renderTerminal(stateWithAnimation);
 
       expect(svg).toContain('class="command-line terminal-text"');
-      expect(svg).toContain('class="command-output animate"');
-      expect(svg).toContain("animation-delay:");
+      // Output and prompt use SMIL animations instead of CSS classes
+      expect(svg).toContain('opacity="0"');
+      expect(svg).toContain('attributeName="opacity"');
+      expect(svg).toContain("begin=");
     });
 
     it("should pass animation speed to animated renderer", () => {
@@ -94,7 +96,8 @@ describe("Terminal Renderer Orchestrator", () => {
         .build();
       const svg = renderTerminal(stateWithFastAnimation);
 
-      expect(svg).toContain("animation-delay:");
+      // SMIL uses begin= for timing instead of animation-delay
+      expect(svg).toContain("begin=");
     });
 
     it("should maintain backward compatibility - static mode unchanged", () => {
