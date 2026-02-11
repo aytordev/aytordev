@@ -79,11 +79,12 @@ describe("Terminal Renderer Orchestrator", () => {
         .build();
       const svg = renderTerminal(stateWithAnimation);
 
-      expect(svg).toContain('class="command-line terminal-text"');
+      expect(svg).toContain('class="command-0 command-line terminal-text"');
       // CSS handles progressive reveal (animation-fill-mode: both)
       expect(svg).toContain("@keyframes reveal");
       expect(svg).toContain('class="prompt-0"');
       expect(svg).toContain('class="output-0"');
+      expect(svg).toContain(".command-0 { animation: reveal");
       // SMIL handles typing animation
       expect(svg).toContain("begin=");
     });

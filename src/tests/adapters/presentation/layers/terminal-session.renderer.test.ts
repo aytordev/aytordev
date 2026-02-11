@@ -87,7 +87,7 @@ describe("renderTerminalSession", () => {
     const state = terminalStateBuilder().build();
     const svg = renderTerminalSession(state, theme, viewportY, viewportHeight);
 
-    expect(svg).toContain('class="command-line terminal-text"');
+    expect(svg).toContain('class="command-0 command-line terminal-text"');
     expect(svg).toContain('clip-path="url(#typing-clip-');
   });
 

@@ -151,10 +151,11 @@ describe("Animated Profile Integration", () => {
     const state = createFullState();
     const svg = renderTerminal(state);
 
-    expect(svg).toContain('class="command-line terminal-text"');
+    expect(svg).toContain('class="command-0 command-line terminal-text"');
     // CSS handles progressive reveal (animation-fill-mode: both)
     expect(svg).toContain("@keyframes reveal");
     expect(svg).toContain('class="prompt-0"');
+    expect(svg).toContain(".command-0 { animation: reveal");
     expect(svg).toContain('class="output-0"');
     expect(svg).toContain(".prompt-0 { animation: reveal");
     expect(svg).toContain(".output-0 { animation: reveal");
