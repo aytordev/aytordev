@@ -21,13 +21,13 @@ const NIXOS_ARM =
 const C1_ARMS: ReadonlyArray<readonly [number, number, number]> = [
   [0, 0, 0],
   [60, 407.112, -715.787],
-  [-60, 407.312, -715.700],
+  [-60, 407.312, -715.7],
 ];
 
 const C2_ARMS: ReadonlyArray<readonly [number, number, number]> = [
   [180, 407.419, -715.757],
   [120, 407.339, -716.084],
-  [-120, 407.288, -715.870],
+  [-120, 407.288, -715.87],
 ];
 
 type InfoLine =
@@ -46,7 +46,11 @@ const buildInfoLines = (data: NeofetchData): ReadonlyArray<InfoLine> => [
   { kind: "header", text: `@${data.owner.username}` },
   { kind: "separator" },
   { kind: "subtitle", text: `${data.owner.tagline} · 📍 ${data.owner.location}` },
-  { kind: "pair", left: { label: "OS", value: data.system.os }, right: { label: "Shell", value: data.system.shell } },
+  {
+    kind: "pair",
+    left: { label: "OS", value: data.system.os },
+    right: { label: "Shell", value: data.system.shell },
+  },
   {
     kind: "pair",
     left: { label: "Editor", value: data.system.editor },

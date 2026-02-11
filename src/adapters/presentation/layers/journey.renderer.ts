@@ -36,7 +36,12 @@ const calculateTagStartX = (entries: ReadonlyArray<JourneyEntry>): number => {
   return Math.max(MIN_TAG_START_X, Math.ceil(titleEndX) + TAG_TITLE_GAP);
 };
 
-const renderEntry = (entry: JourneyEntry, index: number, tagStartX: number, theme: Theme): string => {
+const renderEntry = (
+  entry: JourneyEntry,
+  index: number,
+  tagStartX: number,
+  theme: Theme,
+): string => {
   const y = index * LINE_HEIGHT;
 
   const iconSvg = `<text x="0" y="0" font-family="monospace" font-size="14">${sanitizeForSvg(entry.icon)}</text>`;

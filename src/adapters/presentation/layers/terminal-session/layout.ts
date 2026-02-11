@@ -68,8 +68,7 @@ export const calculateLayout = (
       const cmdTiming: CommandTiming = {
         promptStart: commandTime,
         commandStart: commandTime + PROMPT_FADE_DURATION,
-        outputStart:
-          commandTime + PROMPT_FADE_DURATION + typingDuration + timing.initialDelay,
+        outputStart: commandTime + PROMPT_FADE_DURATION + typingDuration + timing.initialDelay,
       };
 
       // Calculate output height (this calls the renderer in pure way)

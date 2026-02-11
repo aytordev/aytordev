@@ -36,4 +36,5 @@ export const calculateTypingDuration = (charCount: number, timing: AnimationTimi
 export const calculateCommandCycleDuration = (
   timing: AnimationTiming,
   commandCharCount: number,
-): number => calculateTypingDuration(commandCharCount, timing) + timing.fadeDuration + timing.commandDelay;
+): number =>
+  calculateTypingDuration(commandCharCount, timing) + timing.fadeDuration + timing.commandDelay;
