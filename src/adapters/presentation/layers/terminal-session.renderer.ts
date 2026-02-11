@@ -192,9 +192,8 @@ ${cursor}`;
   const outputY = commandY + OUTPUT_GAP;
   const output = cmd.outputRenderer(theme, outputY);
   const outputWrapped = `<g
-    opacity="0"
     transform="translate(10, 0)"
-  ><animate attributeName="opacity" from="0" to="1" dur="${fadeDuration}s" begin="${cmdTiming.outputStart}s" fill="freeze" />${output.svg}</g>`;
+  ><set attributeName="opacity" to="0" begin="0s" fill="freeze" /><animate attributeName="opacity" from="0" to="1" dur="${fadeDuration}s" begin="${cmdTiming.outputStart}s" fill="freeze" />${output.svg}</g>`;
 
   return `${promptSvg}\n${commandLine}\n${outputWrapped}`;
 };
@@ -273,7 +272,8 @@ const renderPromptForCommand = (
   const leftSide = renderPromptLeftSide(prompt, theme, config);
   const rightSide = renderPromptRightSide(prompt, theme, config);
 
-  return `<g opacity="0">
+  return `<g>
+    <set attributeName="opacity" to="0" begin="0s" fill="freeze" />
     <set attributeName="opacity" to="1" begin="${animationDelay}s" fill="freeze" />
     ${leftSide.svg}
     ${rightSide.svg}
