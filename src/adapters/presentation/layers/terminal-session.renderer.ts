@@ -285,6 +285,12 @@ const renderPromptForCommand = (
   </g>`;
 };
 
+/** Minimum animation duration that mobile browsers handle reliably (50ms). */
+const SNAP_DURATION = 0.05;
+
+/** Round to 3 decimal places to avoid floating-point noise in CSS values. */
+const round3 = (n: number): number => Math.round(n * 1000) / 1000;
+
 /**
  * Generates CSS rules for progressive reveal of prompts, commands, and outputs.
  * Uses animation-fill-mode: both for reliable cross-platform hiding:
@@ -298,12 +304,13 @@ export const generateRevealCss = (
   timings: ReadonlyArray<CommandTiming>,
   fadeDuration: number,
 ): string => {
+  const fade = round3(fadeDuration);
   const rules = timings
     .map(
       (t, i) =>
-        `.prompt-${i} { animation: reveal 0.001s step-end ${t.promptStart}s both; }\n` +
-        `    .command-${i} { animation: reveal 0.001s step-end ${t.commandStart}s both; }\n` +
-        `    .output-${i} { animation: reveal ${fadeDuration}s ease-out ${t.outputStart}s both; }`,
+        `.prompt-${i} { animation: reveal ${SNAP_DURATION}s ease-out ${round3(t.promptStart)}s both; }\n` +
+        `    .command-${i} { animation: reveal ${SNAP_DURATION}s ease-out ${round3(t.commandStart)}s both; }\n` +
+        `    .output-${i} { animation: reveal ${fade}s ease-out ${round3(t.outputStart)}s both; }`,
     )
     .join("\n    ");
 
