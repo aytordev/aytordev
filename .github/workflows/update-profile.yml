@@ -11,6 +11,8 @@ on:
     paths:
       - "terminal_profile.yml"
       - "src/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
       - ".github/workflows/update-profile.yml"
 
 permissions:
