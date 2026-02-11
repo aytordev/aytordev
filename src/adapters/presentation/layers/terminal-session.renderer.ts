@@ -186,7 +186,7 @@ const renderCommand = (
 <text
     x="10"
     y="${commandY}"
-    class="command-line terminal-text"
+    class="command-${index} command-line terminal-text"
     fill="${theme.colors.text}"
     font-family="monospace"
     font-size="14"
@@ -286,7 +286,7 @@ const renderPromptForCommand = (
 };
 
 /**
- * Generates CSS rules for progressive reveal of prompts and outputs.
+ * Generates CSS rules for progressive reveal of prompts, commands, and outputs.
  * Uses animation-fill-mode: both for reliable cross-platform hiding:
  * - Before delay: element at opacity 0 (from 'from' keyframe via backwards fill)
  * - After delay: element fades/steps to opacity 1
@@ -302,6 +302,7 @@ export const generateRevealCss = (
     .map(
       (t, i) =>
         `.prompt-${i} { animation: reveal 0.001s step-end ${t.promptStart}s both; }\n` +
+        `    .command-${i} { animation: reveal 0.001s step-end ${t.commandStart}s both; }\n` +
         `    .output-${i} { animation: reveal ${fadeDuration}s ease-out ${t.outputStart}s both; }`,
     )
     .join("\n    ");
