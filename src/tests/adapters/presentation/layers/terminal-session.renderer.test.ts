@@ -95,8 +95,8 @@ describe("renderTerminalSession", () => {
     const state = terminalStateBuilder().build();
     const svg = renderTerminalSession(state, theme, viewportY, viewportHeight);
 
-    // Output uses inline SMIL <animate> for fade-in instead of CSS classes
-    expect(svg).toContain('opacity="0"');
+    // Progressive enhancement: no opacity="0" attribute, SMIL hides/reveals
+    expect(svg).toContain('<set attributeName="opacity" to="0" begin="0s"');
     expect(svg).toContain('<animate attributeName="opacity" from="0" to="1"');
   });
 

@@ -152,8 +152,8 @@ describe("Animated Profile Integration", () => {
     const svg = renderTerminal(state);
 
     expect(svg).toContain('class="command-line terminal-text"');
-    // Output and prompt use SMIL animations instead of CSS classes
-    expect(svg).toContain('opacity="0"');
+    // Progressive enhancement: SMIL hides at t=0, no opacity="0" attribute
+    expect(svg).toContain('<set attributeName="opacity" to="0" begin="0s"');
     expect(svg).toContain('<animate attributeName="opacity" from="0" to="1"');
 
     // SMIL uses begin= for timing instead of animation-delay

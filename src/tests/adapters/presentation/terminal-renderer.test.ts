@@ -80,8 +80,8 @@ describe("Terminal Renderer Orchestrator", () => {
       const svg = renderTerminal(stateWithAnimation);
 
       expect(svg).toContain('class="command-line terminal-text"');
-      // Output and prompt use SMIL animations instead of CSS classes
-      expect(svg).toContain('opacity="0"');
+      // Progressive enhancement: SMIL hides at t=0, no opacity="0" attribute
+      expect(svg).toContain('<set attributeName="opacity" to="0" begin="0s"');
       expect(svg).toContain('attributeName="opacity"');
       expect(svg).toContain("begin=");
     });
