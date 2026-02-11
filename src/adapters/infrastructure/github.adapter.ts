@@ -46,14 +46,32 @@ export const createMockGitHubAdapter = (): GitHubDataPort => ({
     }),
 
   getPinnedRepos: async (username: string, limit: number): Promise<Result<FeaturedRepo[], Error>> =>
-    ok([
-      {
-        name: "mock-repo",
-        nameWithOwner: `${username}/mock-repo`,
-        description: "A mock repository",
-        stargazerCount: 42,
-        primaryLanguage: { name: "TypeScript", color: "#3178C6" },
-        updatedAt: "2024-01-01T00:00:00Z",
-      },
-    ]),
+    ok(
+      [
+        {
+          name: "terminal-profile",
+          nameWithOwner: `${username}/terminal-profile`,
+          description: "Dynamic SVG terminal profile generator",
+          stargazerCount: 234,
+          primaryLanguage: { name: "TypeScript", color: "#3178C6" },
+          updatedAt: "2026-02-10T12:00:00Z",
+        },
+        {
+          name: "system",
+          nameWithOwner: `${username}/system`,
+          description: "NixOS config for all machines",
+          stargazerCount: 89,
+          primaryLanguage: { name: "Nix", color: "#5277C3" },
+          updatedAt: "2026-02-09T08:00:00Z",
+        },
+        {
+          name: "dotfiles",
+          nameWithOwner: `${username}/dotfiles`,
+          description: "Personal dev environment",
+          stargazerCount: 45,
+          primaryLanguage: { name: "Shell", color: "#89e051" },
+          updatedAt: "2026-02-07T15:00:00Z",
+        },
+      ].slice(0, limit),
+    ),
 });

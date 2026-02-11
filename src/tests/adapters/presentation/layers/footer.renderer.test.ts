@@ -4,7 +4,7 @@ import { KanagawaTheme } from "../../../../theme/kanagawa";
 
 describe("Footer Renderer", () => {
   it("should render footer text", () => {
-    const svg = renderFooter("Powered by Terminal Profile", KanagawaTheme);
-    expect(svg).toContain("Powered by Terminal Profile");
+    const svg = renderFooter("powered by @aytordev", KanagawaTheme);
+    expect(svg).toContain("powered by @aytordev");
   });
 });

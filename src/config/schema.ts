@@ -8,7 +8,7 @@ const TechStackCategorySchema = z.object({
 const ContactItemSchema = z.object({
   label: z.string().min(1).max(20),
   value: z.string().min(1).max(50),
-  icon: z.string().max(4).default(""),
+  icon: z.string().max(20).default(""),
 });
 
 export const OwnerSchema = z.object({

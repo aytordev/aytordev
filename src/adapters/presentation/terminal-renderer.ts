@@ -50,7 +50,7 @@ const renderAnimatedTerminal = (state: TerminalState): string => {
     (s) => addDefs(s, `<style>${css}</style>`),
     (s) => addLayer(s, renderTmuxBar(state.session, theme, 0)),
     (s) => addLayer(s, sessionSvg),
-    (s) => addLayer(s, renderFooter("Powered by Terminal Profile", theme, width, height)),
+    (s) => addLayer(s, renderFooter("powered by @aytordev", theme, width, height)),
   );
 
   return build(finalState);
@@ -88,7 +88,7 @@ const renderStaticTerminal = (state: TerminalState): string => {
     (s) => addLayer(s, renderTmuxBar(state.session, theme, 0)),
     (s) => addLayer(s, renderPrompt(state.prompt, theme, promptY, width)),
     (s) => addLayer(s, renderContentArea(contentStartY, innerContent)),
-    (s) => addLayer(s, renderFooter("Powered by Terminal Profile", theme, width, height)),
+    (s) => addLayer(s, renderFooter("powered by @aytordev", theme, width, height)),
   );
 
   return build(finalState);

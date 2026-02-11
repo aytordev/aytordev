@@ -4,7 +4,7 @@ profile_mode: "story-driven"
 owner:
   username: "aytordev"
   name: "Aytor"
-  title: "AI Engineer & Systems Architect"
+  title: "I build teams and the systems they ship"
   location: "Madrid, Spain"
   timezone: "Europe/Madrid"
 
@@ -16,24 +16,26 @@ system:
   theme: "Kanagawa 🌊"
 
 journey:
-  - year: 2020
+  - year: 2017
     icon: "🌱"
-    title: "Started coding"
-  - year: 2021
-    icon: "🔧"
-    title: "Backend Focus"
-    tags: ["Node.js", "PostgreSQL", "Docker"]
+    title: "Hello World (in Java, of all things)"
+    tags: ["Java", "Spring"]
+  - year: 2019
+    icon: "🔄"
+    title: "The browser changed everything"
+    tags: ["Vue", "TypeScript"]
+  - year: 2020
+    icon: "🚀"
+    title: "First time someone reported to me"
+    tags: ["CI/CD", "Testing", "Mentoring"]
   - year: 2022
-    icon: "🌟"
-    title: "First OSS contribution"
-  - year: 2023
-    icon: "❄️"
-    title: "NixOS & Systems"
-    tags: ["NixOS", "Nix"]
-  - year: 2024
-    icon: "🤖"
-    title: "AI Engineering"
-    tags: ["LLMs", "Agents", "Claude"]
+    icon: "🏗️"
+    title: "A blank repo and a team to build"
+    tags: ["Design System", "Vue", "Testing"]
+  - year: 2026
+    icon: "⚡"
+    title: "Now the architecture serves millions"
+    tags: ["AI", "LLM", "Agents", "Skills", "NodeJS"]
 
 theme: "kanagawa-wave"
 
@@ -44,13 +46,15 @@ dimensions:
 tech_stack:
   categories:
     - name: "Languages"
-      items: ["TypeScript", "Rust", "Go", "Python", "Nix"]
-    - name: "AI/ML"
-      items: ["PyTorch", "TensorFlow", "LangChain"]
+      items: ["TypeScript", "JavaScript", "Python"]
+    - name: "Frontend"
+      items: ["Vue", "React", "Storybook"]
+    - name: "Backend"
+      items: ["Node.js", "NestJS", "Express"]
+    - name: "Tools"
+      items: ["Vite", "Vitest", "pnpm", "ESLint"]
     - name: "Infra"
       items: ["Docker", "Kubernetes", "NixOS"]
-    - name: "Web"
-      items: ["React", "Node.js", "JavaScript"]
 
 featured_repos:
   source: "pinned"
@@ -59,15 +63,15 @@ featured_repos:
 contact:
   cta: "Let's connect! 💬"
   items:
-    - label: "gh"
+    - label: "github"
       value: "@aytordev"
-      icon: "gh"
-    - label: "web"
+      icon: "github"
+    - label: "webpage"
       value: "aytor.dev"
-      icon: "web"
-    - label: "mail"
+      icon: "webpage"
+    - label: "email"
       value: "hello@aytor.dev"
-      icon: "mail"
+      icon: "email"
 
 effects:
   cursor_blink: true

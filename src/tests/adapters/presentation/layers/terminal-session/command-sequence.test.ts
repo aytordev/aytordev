@@ -61,6 +61,22 @@ const fullState = terminalStateBuilder()
         primaryLanguage: { name: "TypeScript", color: "#3178C6" },
         updatedAt: "2024-01-01T00:00:00Z",
       },
+      {
+        name: "system",
+        nameWithOwner: "testuser/system",
+        description: "NixOS config for all machines",
+        stargazerCount: 18,
+        primaryLanguage: { name: "Nix", color: "#5277C3" },
+        updatedAt: "2024-01-02T00:00:00Z",
+      },
+      {
+        name: "dotfiles",
+        nameWithOwner: "testuser/dotfiles",
+        description: "Personal dev environment",
+        stargazerCount: 7,
+        primaryLanguage: { name: "Shell", color: "#89e051" },
+        updatedAt: "2024-01-03T00:00:00Z",
+      },
     ],
     journey: [{ year: 2020, icon: "\u{1F331}", title: "Started coding" }],
     contactCta: "Let's connect! \u{1F4AC}",
@@ -73,10 +89,10 @@ const fullState = terminalStateBuilder()
   .build();
 
 describe("buildCommandSequence", () => {
-  it("should return 7 commands when all sections are present", () => {
+  it("should return 5 commands when all sections are present", () => {
     const commands = buildCommandSequence(fullState);
 
-    expect(commands.length).toBe(7);
+    expect(commands.length).toBe(5);
   });
 
   it("should return commands in the correct story-driven order", () => {
@@ -84,11 +100,9 @@ describe("buildCommandSequence", () => {
 
     expect(commands[0].command).toBe("neofetch");
     expect(commands[1].command).toBe("cat journey.md");
-    expect(commands[2].command).toBe("gh api /langs --sort usage");
-    expect(commands[3].command).toBe("cat ~/.stack");
-    expect(commands[4].command).toBe("git log --oneline -5");
-    expect(commands[5].command).toBe("gh repo list --limit 3 --sort stars");
-    expect(commands[6].command).toContain("echo");
+    expect(commands[2].command).toBe("cat ~/.stack");
+    expect(commands[3].command).toBe("gh repo list --limit 3 --sort stars");
+    expect(commands[4].command).toContain("echo");
   });
 
   it("should create valid renderers for each command", () => {

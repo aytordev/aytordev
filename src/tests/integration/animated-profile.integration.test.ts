@@ -67,7 +67,32 @@ describe("Animated Profile Integration", () => {
             relativeTime: "3 days ago",
           },
         ],
-        featuredRepos: [],
+        featuredRepos: [
+          {
+            name: "terminal-profile",
+            nameWithOwner: "aytordev/terminal-profile",
+            description: "Dynamic SVG terminal profile generator",
+            stargazerCount: 234,
+            primaryLanguage: { name: "TypeScript", color: "#3178C6" },
+            updatedAt: "2026-02-10T12:00:00Z",
+          },
+          {
+            name: "system",
+            nameWithOwner: "aytordev/system",
+            description: "NixOS config for all machines",
+            stargazerCount: 89,
+            primaryLanguage: { name: "Nix", color: "#5277C3" },
+            updatedAt: "2026-02-09T08:00:00Z",
+          },
+          {
+            name: "dotfiles",
+            nameWithOwner: "aytordev/dotfiles",
+            description: "Personal dev environment",
+            stargazerCount: 45,
+            primaryLanguage: { name: "Shell", color: "#89e051" },
+            updatedAt: "2026-02-07T15:00:00Z",
+          },
+        ],
         contactInfo: [
           { label: "GitHub", value: "https://github.com/aytordev", icon: "github" },
           { label: "Website", value: "https://aytor.dev", icon: "globe" },
@@ -117,8 +142,7 @@ describe("Animated Profile Integration", () => {
 
     expect(svg).toContain("neofetch");
     expect(svg).toContain("cat ~/.stack");
-    expect(svg).toContain("gh api /langs");
-    expect(svg).toContain("git log --oneline");
+    expect(svg).toContain("cat ~/.stack");
     expect(svg).toContain("echo");
   });
 
@@ -150,7 +174,7 @@ describe("Animated Profile Integration", () => {
     expect(svg).toContain('id="tmux-bar"');
     expect(svg).toContain(state.session.sessionName);
 
-    expect(svg).toContain("Powered by Terminal Profile");
+    expect(svg).toContain("powered by @aytordev");
   });
 
   it("should include developer info content", () => {
@@ -174,23 +198,6 @@ describe("Animated Profile Integration", () => {
 
     expect(svg).toContain('class="stack__title"');
     expect(svg).not.toContain('class="stack__item"');
-  });
-
-  it("should include language stats", () => {
-    const state = createFullState();
-    const svg = renderTerminal(state);
-
-    expect(svg).toContain("45%"); // TypeScript percentage
-    expect(svg).toContain("25%"); // Rust percentage
-  });
-
-  it("should include recent commits", () => {
-    const state = createFullState();
-    const svg = renderTerminal(state);
-
-    expect(svg).toContain("feat: add animation support");
-    expect(svg).toContain("fix: correct scroll behavior");
-    expect(svg).toContain("2 hours ago");
   });
 
   it("should include contact info", () => {

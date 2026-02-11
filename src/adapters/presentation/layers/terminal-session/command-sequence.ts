@@ -2,9 +2,7 @@ import type { TerminalState } from "../../../../domain/entities/terminal-state";
 import { renderContact } from "../contact.renderer";
 import { renderFeaturedRepos } from "../featured-repos.renderer";
 import { renderJourney } from "../journey.renderer";
-import { renderLanguageStats } from "../language-stats.renderer";
 import { renderNeofetch } from "../neofetch.renderer";
-import { renderRecentCommits } from "../recent-commits.renderer";
 import { calculateTechStackHeight, renderTechStack } from "../tech-stack.renderer";
 import type { AnimatedCommand, SectionRenderer } from "./types";
 
@@ -31,34 +29,11 @@ const wrapJourneyRenderer =
     return { svg: result.svg, height: result.height + ascent };
   };
 
-const wrapLanguageStatsRenderer =
-  (stats: TerminalState["content"]["languageStats"]): SectionRenderer =>
-  (theme, y) => {
-    const ascent = svgTextAscent(11); // First element: header text at font-11
-    const svg = renderLanguageStats(stats, theme, y + ascent);
-    const HEADER_START_Y = 16; // First bar row offset from group origin
-    const ROW_HEIGHT = 24;
-    const BAR_HEIGHT = 14; // Actual bar visual height
-    const height = ascent + HEADER_START_Y + (stats.length - 1) * ROW_HEIGHT + BAR_HEIGHT;
-    return { svg, height };
-  };
-
 const wrapTechStackRenderer =
   (stack: TerminalState["content"]["techStack"]): SectionRenderer =>
   (theme, y) => {
     const svg = renderTechStack(stack, theme, 0, y);
     const height = calculateTechStackHeight(stack.categories);
-    return { svg, height };
-  };
-
-const wrapRecentCommitsRenderer =
-  (commits: TerminalState["content"]["recentCommits"]): SectionRenderer =>
-  (theme, y) => {
-    const ascent = svgTextAscent(12); // First element: commit text at font-12
-    const svg = renderRecentCommits(commits, theme, 0, y + ascent);
-    const ITEM_HEIGHT = 20;
-    const TEXT_DESCENT = 3; // Visual extent below last text baseline
-    const height = ascent + (commits.length - 1) * ITEM_HEIGHT + TEXT_DESCENT;
     return { svg, height };
   };
 
@@ -83,7 +58,7 @@ const wrapContactRenderer =
   };
 
 /**
- * Builds the story-driven command sequence with 7 narrative commands.
+ * Builds the story-driven command sequence with 5 narrative commands.
  * Pure function - no side effects, no mutations.
  */
 export const buildCommandSequence = (state: TerminalState): ReadonlyArray<AnimatedCommand> => {
@@ -95,14 +70,8 @@ export const buildCommandSequence = (state: TerminalState): ReadonlyArray<Animat
     content.journey.length > 0 &&
       createCommand("cat journey.md", wrapJourneyRenderer(content.journey)),
 
-    content.languageStats.length > 0 &&
-      createCommand("gh api /langs --sort usage", wrapLanguageStatsRenderer(content.languageStats)),
-
     content.techStack.categories.length > 0 &&
       createCommand("cat ~/.stack", wrapTechStackRenderer(content.techStack)),
-
-    content.recentCommits.length > 0 &&
-      createCommand("git log --oneline -5", wrapRecentCommitsRenderer(content.recentCommits)),
 
     content.featuredRepos.length > 0 &&
       createCommand(
