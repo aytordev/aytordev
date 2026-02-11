@@ -26,6 +26,9 @@ interface LayoutAccumulator {
   readonly totalHeight: number;
 }
 
+/** Character count for the command text including "$ " prefix */
+const commandCharCount = (command: string): number => command.length + 2;
+
 /**
  * Calculates layout (positions, timings) for all commands.
  * Pure function - uses fold/reduce pattern for immutable state accumulation.
@@ -45,8 +48,6 @@ export const calculateLayout = (
   viewportHeight: number,
   timing: AnimationTiming,
 ): LayoutResult => {
-  const cycleDuration =
-    PROMPT_FADE_DURATION + timing.typingDuration + timing.fadeDuration + timing.commandDelay;
   const theme = createMockTheme();
 
   // Use reduce for immutable accumulation (functional approach)
@@ -54,6 +55,11 @@ export const calculateLayout = (
     (acc, cmd) => {
       const commandY = acc.currentY;
       const commandTime = acc.currentTime;
+
+      // Per-command typing duration based on character count
+      const typingDuration = commandCharCount(cmd.command) * timing.typingCharRate;
+      const cycleDuration =
+        PROMPT_FADE_DURATION + typingDuration + timing.fadeDuration + timing.commandDelay;
 
       // Timing for this command block:
       // 1. Prompt fades in
@@ -63,7 +69,7 @@ export const calculateLayout = (
         promptStart: commandTime,
         commandStart: commandTime + PROMPT_FADE_DURATION,
         outputStart:
-          commandTime + PROMPT_FADE_DURATION + timing.typingDuration + timing.initialDelay,
+          commandTime + PROMPT_FADE_DURATION + typingDuration + timing.initialDelay,
       };
 
       // Calculate output height (this calls the renderer in pure way)

@@ -36,7 +36,7 @@ export type SectionRenderer = (
  * Derived from AnimationConfig.speed.
  */
 export interface AnimationTiming {
-  readonly typingDuration: number;
+  readonly typingCharRate: number;
   readonly fadeDuration: number;
   readonly commandDelay: number;
   readonly initialDelay: number;

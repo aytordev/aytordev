@@ -39,7 +39,7 @@ export const TEST_ANIMATION = {
  * Animation timing constants
  */
 export const TEST_TIMING = {
-  TYPING_DURATION: 2,
+  TYPING_CHAR_RATE: 0.12,
   FADE_DURATION: 0.3,
   COMMAND_DELAY: 0.5,
   INITIAL_DELAY: 0.1,

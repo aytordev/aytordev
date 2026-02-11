@@ -7,14 +7,14 @@ import type {
 import { createMockTheme } from "../../../../mocks/theme";
 
 const mockTiming: AnimationTiming = {
-  typingDuration: 2,
+  typingCharRate: 0.12,
   fadeDuration: 0.3,
   commandDelay: 0.5,
   initialDelay: 0.1,
 };
 
-const createMockCommand = (height: number): AnimatedCommand => ({
-  command: "test-command",
+const createMockCommand = (height: number, command = "test-command"): AnimatedCommand => ({
+  command,
   outputRenderer: (theme, y) => ({
     svg: `<text y="${y}">Mock</text>`,
     height,
@@ -118,21 +118,37 @@ describe("calculateLayout", () => {
     expect(layout.scrollPoints).toHaveLength(0);
   });
 
-  it("should space commands with correct timing cycle", () => {
-    const commands: ReadonlyArray<AnimatedCommand> = [createMockCommand(50), createMockCommand(50)];
+  it("should space commands with timing proportional to command length", () => {
+    const commands: ReadonlyArray<AnimatedCommand> = [
+      createMockCommand(50, "test-command"),
+      createMockCommand(50, "test-command"),
+    ];
 
     const layout = calculateLayout(commands, 500, mockTiming);
 
-    // Cycle now includes prompt fade duration (0.2s) + typing + fade + delay
+    // "test-command" = 12 chars + "$ " prefix = 14 chars
+    // cycleDuration = 0.2 + (14 * 0.12) + 0.3 + 0.5 = 0.2 + 1.68 + 0.3 + 0.5 = 2.68
     const promptFadeDuration = 0.2;
+    const typingDuration = 14 * mockTiming.typingCharRate;
     const cycleDuration =
-      promptFadeDuration +
-      mockTiming.typingDuration +
-      mockTiming.fadeDuration +
-      mockTiming.commandDelay;
+      promptFadeDuration + typingDuration + mockTiming.fadeDuration + mockTiming.commandDelay;
     const timeDiff = layout.timings[1].commandStart - layout.timings[0].commandStart;
 
     expect(timeDiff).toBeCloseTo(cycleDuration, 2);
+  });
+
+  it("should give longer commands more typing time", () => {
+    const commands: ReadonlyArray<AnimatedCommand> = [
+      createMockCommand(50, "ls"),
+      createMockCommand(50, "gh repo list --limit 3 --sort stars"),
+    ];
+
+    const layout = calculateLayout(commands, 500, mockTiming);
+
+    const shortTyping = layout.timings[0].outputStart - layout.timings[0].commandStart;
+    const longTyping = layout.timings[1].outputStart - layout.timings[1].commandStart;
+
+    expect(longTyping).toBeGreaterThan(shortTyping);
   });
 
   it("should be a pure function (same input = same output)", () => {
@@ -193,7 +209,8 @@ describe("calculateLayout", () => {
     const layout = calculateLayout(commands, 300, mockTiming);
 
     const timing = layout.timings[0];
-    const expectedDelay = mockTiming.typingDuration + mockTiming.initialDelay;
+    // "test-command" = 12 chars + "$ " = 14 chars → typingDuration = 14 * 0.12 = 1.68
+    const expectedDelay = 14 * mockTiming.typingCharRate + mockTiming.initialDelay;
 
     expect(timing.outputStart - timing.commandStart).toBeCloseTo(expectedDelay, 2);
   });
@@ -210,8 +227,8 @@ describe("calculateLayout", () => {
       const scrollPoint = layout.scrollPoints[0];
       expect(scrollPoint.time).toBeGreaterThan(0);
       // Scroll should happen after command cycle completes
-      const cycleDuration =
-        mockTiming.typingDuration + mockTiming.fadeDuration + mockTiming.commandDelay;
+      const typingDuration = 14 * mockTiming.typingCharRate; // "test-command" + "$ "
+      const cycleDuration = typingDuration + mockTiming.fadeDuration + mockTiming.commandDelay;
       expect(scrollPoint.time).toBeGreaterThanOrEqual(cycleDuration);
     }
   });

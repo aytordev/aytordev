@@ -14,6 +14,7 @@ export { generateAllScrollKeyframes, generateScrollKeyframe } from "./scroll";
 // Timing functions
 export {
   calculateCommandCycleDuration,
+  calculateTypingDuration,
   createAnimationTiming,
 } from "./timing";
 // Type exports

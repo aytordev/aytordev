@@ -8,9 +8,9 @@ export const animationTest = {
   /**
    * Calculate expected animation duration given speed
    */
-  calculateTypingDuration(speed: number): number {
-    const BASE_TYPING_DURATION = TEST_TIMING.TYPING_DURATION;
-    return BASE_TYPING_DURATION / speed;
+  calculateTypingCharRate(speed: number): number {
+    const BASE_TYPING_CHAR_RATE = TEST_TIMING.TYPING_CHAR_RATE;
+    return BASE_TYPING_CHAR_RATE / speed;
   },
 
   /**

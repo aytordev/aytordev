@@ -92,7 +92,7 @@ const renderCommand = (
   // 2. Render command line with typing animation via clipPath
   const commandY = y + PROMPT_HEIGHT + COMMAND_LINE_HEIGHT;
   const commandText = `$ ${sanitizeForSvg(cmd.command)}`;
-  const charCount = commandText.length;
+  const charCount = cmd.command.length + 2; // Visual chars: "$ " prefix + original command (not sanitized entity length)
   // Approximate character width in monospace font at 14px
   const charWidth = 8.4;
   const textWidth = charCount * charWidth;
