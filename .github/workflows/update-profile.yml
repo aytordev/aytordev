@@ -1,0 +1,56 @@
+name: Update Profile
+
+on:
+  schedule:
+    - cron: "0 8 * * *" # Daily at 08:00 UTC (10:00 CEST Madrid)
+
+  workflow_dispatch:
+
+  push:
+    branches: [main]
+    paths:
+      - "terminal_profile.yml"
+      - "src/**"
+      - ".github/workflows/update-profile.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate profile SVG
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm run build
+
+      - name: Check for changes
+        id: changes
+        run: |
+          git diff --quiet -- profile.svg || echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Commit and push
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add profile.svg
+          git commit -m ":robot: chore(profile): auto-update profile SVG"
+          git push
