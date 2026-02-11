@@ -91,13 +91,14 @@ describe("renderTerminalSession", () => {
     expect(svg).toContain('clip-path="url(#typing-clip-');
   });
 
-  it("should include SMIL fade-in for output elements", () => {
+  it("should include CSS reveal animation for output elements", () => {
     const state = terminalStateBuilder().build();
     const svg = renderTerminalSession(state, theme, viewportY, viewportHeight);
 
-    // Progressive enhancement: no opacity="0" attribute, SMIL hides/reveals
-    expect(svg).toContain('<set attributeName="opacity" to="0" begin="0s"');
-    expect(svg).toContain('<animate attributeName="opacity" from="0" to="1"');
+    // CSS animation-fill-mode: both handles hide/reveal (progressive enhancement)
+    expect(svg).toContain("@keyframes reveal");
+    expect(svg).toContain('class="output-0"');
+    expect(svg).toContain(".output-0 { animation: reveal");
   });
 
   it("should generate scroll keyframes when content exceeds viewport", () => {
