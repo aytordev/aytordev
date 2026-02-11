@@ -129,7 +129,8 @@ describe("Animated Profile Integration", () => {
     expect(svg).toContain('clip-path="url(#terminal-viewport)"');
     expect(svg).toContain('id="scrollable-content"');
 
-    expect(svg).toContain("@keyframes fadeIn");
+    // fadeIn is now handled via SMIL, not CSS keyframes
+    expect(svg).not.toContain("@keyframes fadeIn");
     expect(svg).toContain("--typing-duration:");
     expect(svg).toContain("--fade-duration:");
 
@@ -146,17 +147,19 @@ describe("Animated Profile Integration", () => {
     expect(svg).toContain("echo");
   });
 
-  it("should include animation classes and delays", () => {
+  it("should include SMIL animation timing for commands", () => {
     const state = createFullState();
     const svg = renderTerminal(state);
 
     expect(svg).toContain('class="command-line terminal-text"');
-    expect(svg).toContain('class="command-output animate"');
-    expect(svg).toContain("animation-delay:");
+    // Output and prompt use SMIL animations instead of CSS classes
+    expect(svg).toContain('opacity="0"');
+    expect(svg).toContain('<animate attributeName="opacity" from="0" to="1"');
 
-    const delayMatches = svg.match(/animation-delay: [\d.]+s/g);
-    expect(delayMatches).toBeDefined();
-    expect(delayMatches!.length).toBeGreaterThan(3);
+    // SMIL uses begin= for timing instead of animation-delay
+    const beginMatches = svg.match(/begin="[\d.]+s"/g);
+    expect(beginMatches).toBeDefined();
+    expect(beginMatches!.length).toBeGreaterThan(3);
   });
 
   it("should include scroll keyframes when content is tall", () => {
