@@ -265,18 +265,26 @@
     <clipPath id="terminal-viewport">
       <rect x="0" y="24" width="800" height="952" />
     </clipPath>
-    
+    <style>@keyframes reveal { from { opacity: 0; } to { opacity: 1; } }
+    .prompt-0 { animation: reveal 0.001s step-end 0.1s both; }
+    .output-0 { animation: reveal 0.3s ease-out 1.6s both; }
+    .prompt-1 { animation: reveal 0.001s step-end 2.3000000000000003s both; }
+    .output-1 { animation: reveal 0.3s ease-out 4.52s both; }
+    .prompt-2 { animation: reveal 0.001s step-end 5.220000000000001s both; }
+    .output-2 { animation: reveal 0.3s ease-out 7.2s both; }
+    .prompt-3 { animation: reveal 0.001s step-end 7.9s both; }
+    .output-3 { animation: reveal 0.3s ease-out 12.639999999999999s both; }
+    .prompt-4 { animation: reveal 0.001s step-end 13.34s both; }
+    .output-4 { animation: reveal 0.3s ease-out 16.76s both; }</style>
   </defs>
 
   <g clip-path="url(#terminal-viewport)">
     <g id="scrollable-content" class="terminal-scroll" transform="translate(0, 24)">
-      <g>
-    <set attributeName="opacity" to="0" begin="0s" fill="freeze" />
-    <set attributeName="opacity" to="1" begin="0.1s" fill="freeze" />
+      <g class="prompt-0">
     <text x="10" y="20" fill="#658594" font-family="monospace" font-size="14" font-weight="bold">~/github/profile</text>
 <text x="156" y="20" fill="#727169" font-family="monospace" font-size="14" font-weight="bold">→</text>
 <text x="176" y="20" fill="#957FB8" font-family="monospace" font-size="14">git:main </text>
-    <text x="780" y="20" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">12:12</text>
+    <text x="780" y="20" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">12:36</text>
 <text x="727.5" y="20" fill="#658594" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">nix</text>
 <text x="692" y="20" fill="#DCD7BA" font-family="monospace" font-size="14" text-anchor="end" font-weight="bold">❄️</text>
 <text x="665" y="20" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">*</text>
@@ -357,22 +365,18 @@
       fill="freeze"
     />
   </rect>
-<g
-    transform="translate(10, 0)"
-  ><set attributeName="opacity" to="0" begin="0s" fill="freeze" /><animate attributeName="opacity" from="0" to="1" dur="0.3s" begin="1.6s" fill="freeze" /><g id="neofetch" transform="translate(0, 53)"><g class="neofetch__logo"><svg x="0" y="0" width="130" height="130" viewBox="0 0 501.56 501.56"><g transform="translate(-156.41, 933.31)"><g transform="matrix(0.99994,0,0,0.99994,-0.063,33.188)"><g fill="#7FB4CA"><path d="m 309.549,-710.388 122.197,211.675 -56.157,0.527 -32.624,-56.869 -32.856,56.565 -27.902,-0.011 -14.291,-24.69 46.81,-80.49 -33.229,-57.826 z" /><path d="m 309.549,-710.388 122.197,211.675 -56.157,0.527 -32.624,-56.869 -32.856,56.565 -27.902,-0.011 -14.291,-24.69 46.81,-80.49 -33.229,-57.826 z" transform="rotate(60, 407.112, -715.787)" /><path d="m 309.549,-710.388 122.197,211.675 -56.157,0.527 -32.624,-56.869 -32.856,56.565 -27.902,-0.011 -14.291,-24.69 46.81,-80.49 -33.229,-57.826 z" transform="rotate(-60, 407.312, -715.7)" /></g><g fill="#6a9589"><path d="m 309.549,-710.388 122.197,211.675 -56.157,0.527 -32.624,-56.869 -32.856,56.565 -27.902,-0.011 -14.291,-24.69 46.81,-80.49 -33.229,-57.826 z" transform="rotate(180, 407.419, -715.757)" /><path d="m 309.549,-710.388 122.197,211.675 -56.157,0.527 -32.624,-56.869 -32.856,56.565 -27.902,-0.011 -14.291,-24.69 46.81,-80.49 -33.229,-57.826 z" transform="rotate(120, 407.339, -716.084)" /><path d="m 309.549,-710.388 122.197,211.675 -56.157,0.527 -32.624,-56.869 -32.856,56.565 -27.902,-0.011 -14.291,-24.69 46.81,-80.49 -33.229,-57.826 z" transform="rotate(-120, 407.288, -715.87)" /></g></g></g></svg></g><g class="neofetch__info" transform="translate(0, 15)"><text x="150" y="0" fill="#7FB4CA" font-family="monospace" font-size="14" font-weight="bold">@aytordev</text>
+<g class="output-0" transform="translate(10, 0)"><g id="neofetch" transform="translate(0, 53)"><g class="neofetch__logo"><svg x="0" y="0" width="130" height="130" viewBox="0 0 501.56 501.56"><g transform="translate(-156.41, 933.31)"><g transform="matrix(0.99994,0,0,0.99994,-0.063,33.188)"><g fill="#7FB4CA"><path d="m 309.549,-710.388 122.197,211.675 -56.157,0.527 -32.624,-56.869 -32.856,56.565 -27.902,-0.011 -14.291,-24.69 46.81,-80.49 -33.229,-57.826 z" /><path d="m 309.549,-710.388 122.197,211.675 -56.157,0.527 -32.624,-56.869 -32.856,56.565 -27.902,-0.011 -14.291,-24.69 46.81,-80.49 -33.229,-57.826 z" transform="rotate(60, 407.112, -715.787)" /><path d="m 309.549,-710.388 122.197,211.675 -56.157,0.527 -32.624,-56.869 -32.856,56.565 -27.902,-0.011 -14.291,-24.69 46.81,-80.49 -33.229,-57.826 z" transform="rotate(-60, 407.312, -715.7)" /></g><g fill="#6a9589"><path d="m 309.549,-710.388 122.197,211.675 -56.157,0.527 -32.624,-56.869 -32.856,56.565 -27.902,-0.011 -14.291,-24.69 46.81,-80.49 -33.229,-57.826 z" transform="rotate(180, 407.419, -715.757)" /><path d="m 309.549,-710.388 122.197,211.675 -56.157,0.527 -32.624,-56.869 -32.856,56.565 -27.902,-0.011 -14.291,-24.69 46.81,-80.49 -33.229,-57.826 z" transform="rotate(120, 407.339, -716.084)" /><path d="m 309.549,-710.388 122.197,211.675 -56.157,0.527 -32.624,-56.869 -32.856,56.565 -27.902,-0.011 -14.291,-24.69 46.81,-80.49 -33.229,-57.826 z" transform="rotate(-120, 407.288, -715.87)" /></g></g></g></svg></g><g class="neofetch__info" transform="translate(0, 15)"><text x="150" y="0" fill="#7FB4CA" font-family="monospace" font-size="14" font-weight="bold">@aytordev</text>
 <text x="150" y="18" fill="#727169" font-family="monospace" font-size="12">───────────────────</text>
 <text x="150" y="36" fill="#C8C093" font-family="monospace" font-size="12">I build teams and the systems they ship · 📍 Madrid, Spain</text>
 <text x="150" y="54" font-family="monospace" font-size="12"><tspan fill="#7FB4CA" font-weight="bold">OS</tspan><tspan fill="#DCD7BA">: macOS Tahoe 26.2</tspan><tspan fill="#727169"> · </tspan><tspan fill="#7FB4CA" font-weight="bold">Shell</tspan><tspan fill="#DCD7BA">: fish</tspan></text>
 <text x="150" y="72" font-family="monospace" font-size="12"><tspan fill="#7FB4CA" font-weight="bold">Editor</tspan><tspan fill="#DCD7BA">: neovim · vscode · zed</tspan><tspan fill="#727169"> · </tspan><tspan fill="#7FB4CA" font-weight="bold">Terminal</tspan><tspan fill="#DCD7BA">: ghostty</tspan></text>
 <text x="150" y="90" font-family="monospace" font-size="12"><tspan fill="#7FB4CA" font-weight="bold">Theme</tspan><tspan fill="#DCD7BA">: Kanagawa 🌊</tspan></text>
-<text x="150" y="108" font-family="monospace" font-size="12"><tspan fill="#E6C384">📊 Commits 1798</tspan><tspan fill="#727169">  </tspan><tspan fill="#FFA066">🔥 Streak 1d</tspan><tspan fill="#727169">  </tspan><tspan fill="#98BB6C">📦 Repos 2</tspan></text></g></g></g>
-<g>
-    <set attributeName="opacity" to="0" begin="0s" fill="freeze" />
-    <set attributeName="opacity" to="1" begin="2.3000000000000003s" fill="freeze" />
+<text x="150" y="108" font-family="monospace" font-size="12"><tspan fill="#E6C384">📊 Commits 500</tspan><tspan fill="#727169">  </tspan><tspan fill="#FFA066">🔥 Streak 10d</tspan><tspan fill="#727169">  </tspan><tspan fill="#98BB6C">📦 Repos 3</tspan></text></g></g></g>
+<g class="prompt-1">
     <text x="10" y="206" fill="#658594" font-family="monospace" font-size="14" font-weight="bold">~/github/profile</text>
 <text x="156" y="206" fill="#727169" font-family="monospace" font-size="14" font-weight="bold">→</text>
 <text x="176" y="206" fill="#957FB8" font-family="monospace" font-size="14">git:main </text>
-    <text x="780" y="206" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">12:12</text>
+    <text x="780" y="206" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">12:36</text>
 <text x="727.5" y="206" fill="#658594" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">nix</text>
 <text x="692" y="206" fill="#DCD7BA" font-family="monospace" font-size="14" text-anchor="end" font-weight="bold">❄️</text>
 <text x="665" y="206" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">*</text>
@@ -453,9 +457,7 @@
       fill="freeze"
     />
   </rect>
-<g
-    transform="translate(10, 0)"
-  ><set attributeName="opacity" to="0" begin="0s" fill="freeze" /><animate attributeName="opacity" from="0" to="1" dur="0.3s" begin="4.52s" fill="freeze" /><g id="journey" transform="translate(0, 251)"><g transform="translate(0, 0)"><text x="0" y="0" font-family="monospace" font-size="14">🌱</text>
+<g class="output-1" transform="translate(10, 0)"><g id="journey" transform="translate(0, 251)"><g transform="translate(0, 0)"><text x="0" y="0" font-family="monospace" font-size="14">🌱</text>
 <text x="24" y="0" fill="#E6C384" font-family="monospace" font-size="12" font-weight="bold">2017</text>
 <text x="80" y="0" fill="#DCD7BA" font-family="monospace" font-size="12">Hello World (in Java, of all things)</text>
 <rect x="356" y="-12" width="40" height="16" rx="3" fill="#363646"/><text x="362" y="0" fill="#6a9589" font-family="monospace" font-size="10">Java</text>
@@ -485,13 +487,11 @@
 <rect x="431" y="-12" width="54" height="16" rx="3" fill="#363646"/><text x="437" y="0" fill="#6a9589" font-family="monospace" font-size="10">Agents</text>
 <rect x="493" y="-12" width="54" height="16" rx="3" fill="#363646"/><text x="499" y="0" fill="#6a9589" font-family="monospace" font-size="10">Skills</text>
 <rect x="555" y="-12" width="54" height="16" rx="3" fill="#363646"/><text x="561" y="0" fill="#6a9589" font-family="monospace" font-size="10">NodeJS</text></g></g></g>
-<g>
-    <set attributeName="opacity" to="0" begin="0s" fill="freeze" />
-    <set attributeName="opacity" to="1" begin="5.220000000000001s" fill="freeze" />
+<g class="prompt-2">
     <text x="10" y="374" fill="#658594" font-family="monospace" font-size="14" font-weight="bold">~/github/profile</text>
 <text x="156" y="374" fill="#727169" font-family="monospace" font-size="14" font-weight="bold">→</text>
 <text x="176" y="374" fill="#957FB8" font-family="monospace" font-size="14">git:main </text>
-    <text x="780" y="374" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">12:12</text>
+    <text x="780" y="374" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">12:36</text>
 <text x="727.5" y="374" fill="#658594" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">nix</text>
 <text x="692" y="374" fill="#DCD7BA" font-family="monospace" font-size="14" text-anchor="end" font-weight="bold">❄️</text>
 <text x="665" y="374" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">*</text>
@@ -572,9 +572,7 @@
       fill="freeze"
     />
   </rect>
-<g
-    transform="translate(10, 0)"
-  ><set attributeName="opacity" to="0" begin="0s" fill="freeze" /><animate attributeName="opacity" from="0" to="1" dur="0.3s" begin="7.2s" fill="freeze" /><g id="tech-stack" transform="translate(0, 407)">
+<g class="output-2" transform="translate(10, 0)"><g id="tech-stack" transform="translate(0, 407)">
 <g transform="translate(0, 0)">
 <text x="0" y="16" class="stack__title" fill="#957FB8" font-family="monospace" font-size="14" font-weight="bold">Languages</text>
 <svg x="100" y="0" width="22" height="22" viewBox="0 0 24 24"><path d="M1.125 0C.502 0 0 .502 0 1.125v21.75C0 23.498.502 24 1.125 24h21.75c.623 0 1.125-.502 1.125-1.125V1.125C24 .502 23.498 0 22.875 0zm17.363 9.75c.612 0 1.154.037 1.627.111a6.38 6.38 0 0 1 1.306.34v2.458a3.95 3.95 0 0 0-.643-.361 5.093 5.093 0 0 0-.717-.26 5.453 5.453 0 0 0-1.426-.2c-.3 0-.573.028-.819.086a2.1 2.1 0 0 0-.623.242c-.17.104-.3.229-.393.374a.888.888 0 0 0-.14.49c0 .196.053.373.156.529.104.156.252.304.443.444s.423.276.696.41c.273.135.582.274.926.416.47.197.892.407 1.266.628.374.222.695.473.963.753.268.279.472.598.614.957.142.359.214.776.214 1.253 0 .657-.125 1.21-.373 1.656a3.033 3.033 0 0 1-1.012 1.085 4.38 4.38 0 0 1-1.487.596c-.566.12-1.163.18-1.79.18a9.916 9.916 0 0 1-1.84-.164 5.544 5.544 0 0 1-1.512-.493v-2.63a5.033 5.033 0 0 0 3.237 1.2c.333 0 .624-.03.872-.09.249-.06.456-.144.623-.25.166-.108.29-.234.373-.38a1.023 1.023 0 0 0-.074-1.089 2.12 2.12 0 0 0-.537-.5 5.597 5.597 0 0 0-.807-.444 27.72 27.72 0 0 0-1.007-.436c-.918-.383-1.602-.852-2.053-1.405-.45-.553-.676-1.222-.676-2.005 0-.614.123-1.141.369-1.582.246-.441.58-.804 1.004-1.089a4.494 4.494 0 0 1 1.47-.629 7.536 7.536 0 0 1 1.77-.201zm-15.113.188h9.563v2.166H9.506v9.646H6.789v-9.646H3.375z" fill="#3178C6"/></svg>
@@ -607,13 +605,11 @@
 <svg x="160" y="0" width="22" height="22" viewBox="0 0 24 24"><path d="M7.352 1.592l-1.364.002L5.32 2.75l1.557 2.713-3.137-.008-1.32 2.34H14.11l-1.353-2.332-3.192-.006-2.214-3.865zm6.175 0l-2.687.025 5.846 10.127 1.341-2.34-1.59-2.765 2.24-3.85-.683-1.182h-1.336l-1.57 2.705-1.56-2.72zm6.887 4.195l-5.846 10.125 2.696-.008 1.601-2.76 4.453.016.682-1.183-.666-1.157-3.13-.008L21.778 8.1l-1.365-2.313zM9.432 8.086l-2.696.008-1.601 2.76-4.453-.016L0 12.02l.666 1.157 3.13.008-1.575 2.71 1.365 2.315L9.432 8.086zM7.33 12.25l-.006.01-.002-.004-1.342 2.34 1.59 2.765-2.24 3.85.684 1.182H7.35l.004-.006h.001l1.567-2.698 1.558 2.72 2.688-.026-.004-.006h.01L7.33 12.25zm2.55 3.93l1.354 2.332 3.192.006 2.215 3.865 1.363-.002.668-1.156-1.557-2.713 3.137.008 1.32-2.34H9.881Z" fill="#5277C3"/></svg>
 </g>
 </g></g>
-<g>
-    <set attributeName="opacity" to="0" begin="0s" fill="freeze" />
-    <set attributeName="opacity" to="1" begin="7.9s" fill="freeze" />
+<g class="prompt-3">
     <text x="10" y="556" fill="#658594" font-family="monospace" font-size="14" font-weight="bold">~/github/profile</text>
 <text x="156" y="556" fill="#727169" font-family="monospace" font-size="14" font-weight="bold">→</text>
 <text x="176" y="556" fill="#957FB8" font-family="monospace" font-size="14">git:main </text>
-    <text x="780" y="556" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">12:12</text>
+    <text x="780" y="556" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">12:36</text>
 <text x="727.5" y="556" fill="#658594" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">nix</text>
 <text x="692" y="556" fill="#DCD7BA" font-family="monospace" font-size="14" text-anchor="end" font-weight="bold">❄️</text>
 <text x="665" y="556" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">*</text>
@@ -694,34 +690,34 @@
       fill="freeze"
     />
   </rect>
-<g
-    transform="translate(10, 0)"
-  ><set attributeName="opacity" to="0" begin="0s" fill="freeze" /><animate attributeName="opacity" from="0" to="1" dur="0.3s" begin="12.639999999999999s" fill="freeze" /><g id="featured-repos" transform="translate(0, 599)"><g transform="translate(0, 0)"><text x="0" y="0" fill="#E6C384" font-family="monospace" font-size="12">★ 0</text>
+<g class="output-3" transform="translate(10, 0)"><g id="featured-repos" transform="translate(0, 599)"><g transform="translate(0, 0)"><text x="0" y="0" fill="#E6C384" font-family="monospace" font-size="12">★ 234</text>
+<text x="60" y="0" fill="#7FB4CA" font-family="monospace" font-size="12" font-weight="bold">aytordev/terminal-profile</text>
+<text x="60" y="16" fill="#C8C093" font-family="monospace" font-size="11">Dynamic SVG terminal profile generator</text>
+<circle cx="400" cy="-4" r="5" fill="#3178C6"/><text x="410" y="0" fill="#3178C6" font-family="monospace" font-size="10">TypeScript</text></g>
+<g transform="translate(0, 36)"><text x="0" y="0" fill="#E6C384" font-family="monospace" font-size="12">★ 89</text>
 <text x="60" y="0" fill="#7FB4CA" font-family="monospace" font-size="12" font-weight="bold">aytordev/system</text>
-<text x="60" y="16" fill="#C8C093" font-family="monospace" font-size="11">My declarative NixOS ❄️ / macOS 🍏 configuration</text>
-<circle cx="400" cy="-4" r="5" fill="#7e7eff"/><text x="410" y="0" fill="#7e7eff" font-family="monospace" font-size="10">Nix</text></g>
-<g transform="translate(0, 36)"><text x="0" y="0" fill="#E6C384" font-family="monospace" font-size="12">★ 0</text>
-<text x="60" y="0" fill="#7FB4CA" font-family="monospace" font-size="12" font-weight="bold">aytordev/aytordev</text>
-<text x="60" y="16" fill="#C8C093" font-family="monospace" font-size="11">🐚 ~/.profile: A self-updating terminal that tells my dev story through live GitHub data.</text>
-<circle cx="400" cy="-4" r="5" fill="#3178c6"/><text x="410" y="0" fill="#3178c6" font-family="monospace" font-size="10">TypeScript</text></g></g></g>
-<g>
-    <set attributeName="opacity" to="0" begin="0s" fill="freeze" />
-    <set attributeName="opacity" to="1" begin="13.34s" fill="freeze" />
-    <text x="10" y="677" fill="#658594" font-family="monospace" font-size="14" font-weight="bold">~/github/profile</text>
-<text x="156" y="677" fill="#727169" font-family="monospace" font-size="14" font-weight="bold">→</text>
-<text x="176" y="677" fill="#957FB8" font-family="monospace" font-size="14">git:main </text>
-    <text x="780" y="677" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">12:12</text>
-<text x="727.5" y="677" fill="#658594" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">nix</text>
-<text x="692" y="677" fill="#DCD7BA" font-family="monospace" font-size="14" text-anchor="end" font-weight="bold">❄️</text>
-<text x="665" y="677" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">*</text>
-<text x="646.5" y="677" fill="#76946A" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">v24.13.0</text>
-<text x="568.5" y="677" fill="#76946A" font-family="monospace" font-size="14" text-anchor="end" font-weight="bold">node</text>
-<text x="524.5" y="677" fill="#76946A" font-family="monospace" font-size="14" text-anchor="end" font-weight="bold">⬢</text>
+<text x="60" y="16" fill="#C8C093" font-family="monospace" font-size="11">NixOS config for all machines</text>
+<circle cx="400" cy="-4" r="5" fill="#5277C3"/><text x="410" y="0" fill="#5277C3" font-family="monospace" font-size="10">Nix</text></g>
+<g transform="translate(0, 72)"><text x="0" y="0" fill="#E6C384" font-family="monospace" font-size="12">★ 45</text>
+<text x="60" y="0" fill="#7FB4CA" font-family="monospace" font-size="12" font-weight="bold">aytordev/dotfiles</text>
+<text x="60" y="16" fill="#C8C093" font-family="monospace" font-size="11">Personal dev environment</text>
+<circle cx="400" cy="-4" r="5" fill="#89e051"/><text x="410" y="0" fill="#89e051" font-family="monospace" font-size="10">Shell</text></g></g></g>
+<g class="prompt-4">
+    <text x="10" y="713" fill="#658594" font-family="monospace" font-size="14" font-weight="bold">~/github/profile</text>
+<text x="156" y="713" fill="#727169" font-family="monospace" font-size="14" font-weight="bold">→</text>
+<text x="176" y="713" fill="#957FB8" font-family="monospace" font-size="14">git:main </text>
+    <text x="780" y="713" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">12:36</text>
+<text x="727.5" y="713" fill="#658594" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">nix</text>
+<text x="692" y="713" fill="#DCD7BA" font-family="monospace" font-size="14" text-anchor="end" font-weight="bold">❄️</text>
+<text x="665" y="713" fill="#727169" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">*</text>
+<text x="646.5" y="713" fill="#76946A" font-family="monospace" font-size="14" text-anchor="end" font-weight="normal">v24.13.0</text>
+<text x="568.5" y="713" fill="#76946A" font-family="monospace" font-size="14" text-anchor="end" font-weight="bold">node</text>
+<text x="524.5" y="713" fill="#76946A" font-family="monospace" font-size="14" text-anchor="end" font-weight="bold">⬢</text>
   </g>
 
     <defs>
       <clipPath id="typing-clip-4">
-        <rect x="10" y="683" width="0" height="20">
+        <rect x="10" y="719" width="0" height="20">
           <animate
             attributeName="width"
             from="0"
@@ -738,7 +734,7 @@
     </defs>
 <text
     x="10"
-    y="697"
+    y="733"
     class="command-line terminal-text"
     fill="#DCD7BA"
     font-family="monospace"
@@ -749,7 +745,7 @@
   <rect
     id="cursor-4"
     x="10"
-    y="685"
+    y="721"
     width="2"
     height="16"
     fill="#98BB6C"
@@ -791,9 +787,7 @@
       fill="freeze"
     />
   </rect>
-<g
-    transform="translate(10, 0)"
-  ><set attributeName="opacity" to="0" begin="0s" fill="freeze" /><animate attributeName="opacity" from="0" to="1" dur="0.3s" begin="16.76s" fill="freeze" /><g id="contact" transform="translate(0, 721)">
+<g class="output-4" transform="translate(10, 0)"><g id="contact" transform="translate(0, 757)">
       <text x="0" y="0" class="contact__cta" fill="#E6C384" font-family="monospace" font-size="13" font-weight="bold">Let&#39;s connect! 💬</text>
       <svg x="0" y="14" width="12" height="12" viewBox="0 0 12 12"><path d="M6 .28a6 6 0 0 0-1.9 11.69c.3.06.4-.13.4-.28v-1.06c-1.64.36-1.98-.72-1.98-.72a1.56 1.56 0 0 0-.65-.86c-.53-.36.04-.36.04-.36a1.23 1.23 0 0 1 .9.6 1.25 1.25 0 0 0 1.7.49 1.24 1.24 0 0 1 .37-.78c-1.3-.15-2.67-.65-2.67-2.9A2.27 2.27 0 0 1 2.81 4.6a2.1 2.1 0 0 1 .06-1.55s.49-.16 1.62.6a5.6 5.6 0 0 1 2.95 0c1.13-.76 1.63-.6 1.63-.6a2.1 2.1 0 0 1 .05 1.55A2.27 2.27 0 0 1 9.8 6.2c0 2.26-1.38 2.75-2.68 2.9a1.4 1.4 0 0 1 .39 1.08v1.6c0 .15.1.34.4.28A6 6 0 0 0 6 .28" fill="#727169"/></svg>
         <text x="18" y="24" fill="#727169" font-size="12" font-family="monospace">github</text>
