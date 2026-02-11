@@ -46,7 +46,7 @@ export const renderTerminalSession = (
   // 5. Render commands to SVG (pure, functional composition)
   // Each command includes: prompt (fade-in) + command line (typing) + output (fade-in)
   const commandsSvg = commands
-    .map((cmd, i) => renderCommand(cmd, layout, i, theme, state.prompt))
+    .map((cmd, i) => renderCommand(cmd, layout, i, theme, state.prompt, timing.fadeDuration))
     .join("\n");
 
   // 6. Compose final SVG structure (pure template)
@@ -81,6 +81,7 @@ const renderCommand = (
   index: number,
   theme: Theme,
   prompt: StarshipPrompt,
+  fadeDuration: number,
 ): string => {
   const y = layout.positions[index];
   const cmdTiming = layout.timings[index];
@@ -191,10 +192,9 @@ ${cursor}`;
   const outputY = commandY + OUTPUT_GAP;
   const output = cmd.outputRenderer(theme, outputY);
   const outputWrapped = `<g
-    class="command-output animate"
-    style="animation-delay: ${cmdTiming.outputStart}s"
+    opacity="0"
     transform="translate(10, 0)"
-  >${output.svg}</g>`;
+  ><animate attributeName="opacity" from="0" to="1" dur="${fadeDuration}s" begin="${cmdTiming.outputStart}s" fill="freeze" />${output.svg}</g>`;
 
   return `${promptSvg}\n${commandLine}\n${outputWrapped}`;
 };
@@ -273,7 +273,8 @@ const renderPromptForCommand = (
   const leftSide = renderPromptLeftSide(prompt, theme, config);
   const rightSide = renderPromptRightSide(prompt, theme, config);
 
-  return `<g class="command-prompt animate" style="animation-delay: ${animationDelay}s">
+  return `<g opacity="0">
+    <set attributeName="opacity" to="1" begin="${animationDelay}s" fill="freeze" />
     ${leftSide.svg}
     ${rightSide.svg}
   </g>`;
